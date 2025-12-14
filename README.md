@@ -20,9 +20,6 @@ A client-side sticker generator for creating custom antifascist stickers. Adjust
 3. Upload your own icons if desired
 4. Click "Download SVG" or "Download PNG" to save your design
 
-## Known Bugs
-1. SVG Download is still Broken (Text is in Black)
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
