@@ -2,6 +2,8 @@
 
 A client-side sticker generator for creating custom antifascist stickers. Adjust texts, positions, scales and icons to create your own designs. Download as SVG or PNG.
 
+[Antifa Sticker Generator](https://ninso112.github.io/antifa-logo-generator/index.html)
+
 ## Features
 
 - Customizable text for top and bottom of the sticker
