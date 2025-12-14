@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+	<meta charset="utf-8">
+	<title>Antifa Sticker Generator</title>
+	<style>
+	 form {
+	     display: grid;
+	     grid-template-columns: 30% 50%;
+	 }
+	 svg {
+	     background: repeating-conic-gradient(#dddddd 0% 25%, #999999 0% 50%) 50% / 20px 20px;
+	 }
+	</style>
+    </head>
+    <body>
+	<h1>Antifa Sticker Generator</h1>
+        <p>
+            A purely client-side sticker generator. <a href="https://git.kabelsalat.ch/s3lph/antifa-sticker-generator">Source Code.</a>
+        </p>
+	<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 500" width="500" height="500" id="svg">
+	    <defs>
+		<filter id="black">
+        	    <feColorMatrix in="SourceGraphic" type="matrix"
+        			   values="1 0 0 0 0
+				       
+        			       0 1 0 0 0
+        			       0 0 1 0 0
+        			       0 0 0 1 0" />
+		</filter>
+		<filter id="red">
+        	    <feColorMatrix in="SourceGraphic" type="matrix"
+        			       values="1 1 1 1 0
+        			       0 0 0 0 0
+        			       0 0 0 0 0
+        			       0 0 0 1 0" />
+		</filter>
+	    </defs>
+            <g id="svgroot" transform="scale(1, 1)">
+	        <circle id="bleed" cx="250" cy="250" r="249" stroke="#ff00ff" fill="none" stroke-width="0" />
+	        <circle cx="250" cy="250" r="225" stroke="black" fill="white" stroke-width="50" />
+	        <g id="icon">
+		    <image transform="translate(0 0) translate(-9 -2) scale(1, 1)" id="iconred" xlink:href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2ZXJzaW9uPSIxLjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iNTEycHgiCiAgICAgaGVpZ2h0PSI1MTJweCIgdmlld0JveD0iMCAwIDUxMiA1MTIiPgogIDxwYXRoIGZpbGw9IiMwMDAwMDAiIGQ9Ik0xMjUuNjY3LDEyMi45MTdjMCwwLDI4LDMzLjA4Myw4OS4yNSwzNC4zMzNjNjEuMjUxLDEuMjUsOTUuOTE3LTM3LjkxNywxMzAuOTE3LTMzLjMzM3M2Myw0My4zMzMsNzcuNzUsNTAuMTY3TDMzMyw0MjUuNzUKICAgICAgICBjMCwwLTEuODMzLDEuMzM0LTExLDQuNjY3cy0xMS4zMzMsNC4zMzMtMTEuMzMzLDQuMzMzbDQwLjI1LTEyMi45MTdjMCwwLTM4Ljc1LTMyLjY4Ny03My43NS0zNQogICAgICAgIGMtMzUuMDAxLTIuMzEzLTUwLjkxNywyMy43NS0xMTAuMDgzLDEzLjc1QzEwNy45MTcsMjgwLjU4Myw2OS41LDI0My41LDY5LjUsMjQzLjVzLTEuNDE1LTIxLjA2NywxNC41LTU5LjgzMwogICAgICAgIEM5OS45MTQsMTQ0LjkwMiwxMjUuNjY3LDEyMi45MTcsMTI1LjY2NywxMjIuOTE3eiIvPgo8L3N2Zz4K" width="512" height="512" filter="url(#red)" />
+		    <image transform="translate(0 0) translate(-9 -2) scale(1, 1)" id="iconblack" xlink:href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2ZXJzaW9uPSIxLjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iNTEycHgiCiAgICAgaGVpZ2h0PSI1MTJweCIgdmlld0JveD0iMCAwIDUxMiA1MTIiPgogIDxwYXRoIGZpbGw9IiMwMDAwMDAiIGQ9Ik02OS45MTcsMjUxLjI1YzAsMCw0MS4wODQsMzguNDE2LDEwMi40MTcsNDYuMDgzYzYxLjMzMiw3LjY2Nyw2Ny4wMzktMTQuNDkxLDEwMC45MTYtMTQuMjUKICAgICAgICBjMjEuNTQ4LDAuMTUzLDI5LjMzNCw5LjU4NCwyOS4zMzQsOS41ODRsLTUzLjUwNiwxNDkuNjdjMCwwLTQuMTgtMC4wNDQtMTAuMDkyLTAuNjkyYy01LjkxMS0wLjY0OC05LjU0MS0xLjI5NC05LjU0MS0xLjI5NAogICAgICAgIEwyNTcsMzU3LjVjMCwwLTEzLjU4NC04LjcwNy0yNy4yNS0xMC41Yy0xMy42NjgtMS43OTMtMjEuMDQyLDMtNDYuNSwyLjVjLTI0LjA3My0wLjQ3My03MS4yNS0xMi43NS05My4zMzMtNDUuNzUKICAgICAgICBTNjkuOTE3LDI1MS4yNSw2OS45MTcsMjUxLjI1eiIvPgo8L3N2Zz4K" width="512" height="512" filter="url(#black)" />
+	        </g>
+		<path id="upper" stroke="none" fill="none" d="M 250 460 A 210 210 0 0 1 250 40 A 210 210 0 1 1 250 460"/>
+		<path id="lower" stroke="none" fill="none" d="M 250 10 A 240 240 0 1 0 250 490 A 210 210 0 0 0 250 10"/>
+	        <text style="fill: white; font-family: sans-serif; font-weight: bold; font-size: 40px; text-align: center; text-anchor: middle;"><textPath id="uppertext" startOffset="50%" xlink:href="#upper">ANTIFASCHISTISCHE</textPath></text>
+	        <text style="fill: white; font-family: sans-serif; font-weight: bold; font-size: 40px; text-align: center; text-anchor: middle;"><textPath id="lowertext" startOffset="50%" xlink:href="#lower">AKTION</textPath></text>
+            </g>
+	</svg>
+	<form>
+	    <label for="input-text-upper">Upper text</label>
+	    <input type="text" id="input-text-upper" name="upper" value="ANTIFASCHISTISCHE">
+	    <label for="input-text-lower">Lower text</label>
+	    <input type="text" id="input-text-lower" name="lower" value="AKTION">
+	    <label for="input-range-shift-x">X Position</label>
+	    <input type="range" id="input-range-position-x" name="position-x" value="-9" min="-500" max="500">
+	    <label for="input-range-shift-y">Y Position</label>
+	    <input type="range" id="input-range-position-y" name="position-y" value="-2" min="-500" max="500">
+	    <label for="input-range-shift-x">X Shift</label>
+	    <input type="range" id="input-range-shift-x" name="distance-x" value="0" min="-250" max="250">
+	    <label for="input-range-shift-y">Y Shift</label>
+	    <input type="range" id="input-range-shift-y" name="distance-y" value="0" min="-250" max="250">
+	    <label for="input-range-scale-black">Black Scale</label>
+	    <input type="range" id="input-range-scale-black" name="scale-black" value="0" min="-3" max="3" step="0.01">
+	    <label for="input-range-scale-red">Red Scale</label>
+	    <input type="range" id="input-range-scale-red" name="scale-red" value="0" min="-3" max="3" step="0.01">
+	    <label for="input-file-icon-black">Black Icon (black+white+alpha only)</label>
+	    <input type="file" id="input-file-icon-black" name="icon-black" accept="image/*">
+	    <label for="input-file-icon-red">Red Icon (black+white+alpha only)</label>
+	    <input type="file" id="input-file-icon-red" name="icon-red" accept="image/*">
+	    <label for="input-range-bleed">Bleed (black in download)</label>
+	    <input type="range" id="input-range-bleed" name="bleed" value="0" min="0" max="50">
+	    <div>
+		<input type="checkbox" id="input-check-swap-red-black" name="swap-red-black">
+		<label for="input-check-swap-red-black">Red on top of black</label>
+		<input type="checkbox" id="input-check-lock-scale" name="lock-scale">
+		<label for="input-check-lock-scale">Same scale for red and black</label>
+	    </div>
+            <div>
+	        <input type="button" id="input-button-download" value="Download SVG">
+	        <input type="button" id="input-button-download-png" value="Download PNG">
+            </div>
+	    <label for="input-file-import-svg">Import downloaded SVG</label>
+	    <input type="file" id="input-file-import-svg" name="import-svg" accept="image/svg+xml">
+	</form>
+	<a id="download" download="antifa.svg" href="#"></a>
+	<a id="download-png" download="antifa.png" href="#"></a>
+	<script>
+	 let doc = document.getElementById('svg');
+	 let inputTextUpper = document.getElementById("input-text-upper");
+	 let inputTextLower = document.getElementById("input-text-lower");
+	 let inputRangePositionX = document.getElementById("input-range-position-x");
+	 let inputRangePositionY = document.getElementById("input-range-position-y");
+	 let inputRangeShiftX = document.getElementById("input-range-shift-x");
+	 let inputRangeShiftY = document.getElementById("input-range-shift-y");
+	 let inputRangeScaleBlack = document.getElementById("input-range-scale-black");
+	 let inputRangeScaleRed = document.getElementById("input-range-scale-red");
+	 let inputFileIconBlack = document.getElementById("input-file-icon-black");
+	 let inputFileIconRed = document.getElementById("input-file-icon-red");
+	 let inputCheckSwap = document.getElementById("input-check-swap-red-black");
+	 let inputCheckLockScale = document.getElementById("input-check-lock-scale");
+	 let inputRangeBleed = document.getElementById("input-range-bleed");
+	 let inputButtonDownload = document.getElementById("input-button-download");
+	 let inputButtonDownloadPng = document.getElementById("input-button-download-png");
+	 let inputFileImportSvg = document.getElementById("input-file-import-svg");
+	 inputTextUpper.oninput = (ev) => {
+	     doc.getElementById("uppertext").textContent = inputTextUpper.value;
+	 };
+	 inputTextLower.oninput = (ev) => {
+	     doc.getElementById("lowertext").textContent = inputTextLower.value;
+	 };
+	 inputRangePositionX.oninput = (ev) => {
+	     doc.getElementById("iconblack").transform.baseVal[1].matrix.e = inputRangePositionX.value;
+	     doc.getElementById("iconred").transform.baseVal[1].matrix.e = inputRangePositionX.value;
+	 };
+	 inputRangePositionY.oninput = (ev) => {
+	     doc.getElementById("iconblack").transform.baseVal[1].matrix.f = inputRangePositionY.value;
+	     doc.getElementById("iconred").transform.baseVal[1].matrix.f = inputRangePositionY.value;
+	 };
+	 inputRangeShiftX.oninput = (ev) => {
+	     doc.getElementById("iconblack").transform.baseVal[0].matrix.e = inputRangeShiftX.value;
+	     doc.getElementById("iconred").transform.baseVal[0].matrix.e = -inputRangeShiftX.value;
+	 };
+	 inputRangeShiftY.oninput = (ev) => {
+	     doc.getElementById("iconblack").transform.baseVal[0].matrix.f = inputRangeShiftY.value;
+	     doc.getElementById("iconred").transform.baseVal[0].matrix.f = -inputRangeShiftY.value;
+	 };
+	 inputRangeScaleBlack.oninput = (ev) => {
+	     let iconblack = doc.getElementById("iconblack");
+	     iconblack.transform.baseVal[2].matrix.a = Math.pow(10, inputRangeScaleBlack.value);
+	     iconblack.transform.baseVal[2].matrix.d = Math.pow(10, inputRangeScaleBlack.value);
+	     if (inputCheckLockScale.checked) {
+		 let iconred = doc.getElementById("iconred");
+		 iconred.transform.baseVal[2].matrix.a = Math.pow(10, inputRangeScaleBlack.value);
+		 iconred.transform.baseVal[2].matrix.d = Math.pow(10, inputRangeScaleBlack.value);
+	     }
+	 };
+	 inputRangeScaleRed.oninput = (ev) => {
+	     let iconred = doc.getElementById("iconred");
+	     iconred.transform.baseVal[2].matrix.a = Math.pow(10, inputRangeScaleRed.value);
+	     iconred.transform.baseVal[2].matrix.d = Math.pow(10, inputRangeScaleRed.value);
+	 };
+	 inputFileIconBlack.onchange = (ev) => {
+	     let file = ev.target.files[0];
+	     let reader = new FileReader();
+	     let iconblack = doc.getElementById("iconblack");
+	     reader.onload = (re) => {
+		 let img = new Image();
+		 img.onload = (i) => {
+		     iconblack.href.baseVal = re.target.result;
+		     iconblack.setAttributeNS('http://www.w3.org/1999/xlink', 'href', re.target.result);
+		     iconblack.width.baseVal.value = i.path[0].width;
+		     iconblack.height.baseVal.value = i.path[0].height;
+		 };
+		 img.src = re.target.result;
+	     };
+	     reader.readAsDataURL(file);
+	 };
+	 inputFileIconRed.onchange = (ev) => {
+	     let file = ev.target.files[0];
+	     let reader = new FileReader();
+	     let iconred = doc.getElementById("iconred");
+	     reader.onload = (re) => {
+		 let img = new Image();
+		 img.onload = (i) => {
+		     iconred.href.baseVal = re.target.result;
+		     iconred.setAttributeNS('http://www.w3.org/1999/xlink', 'href', re.target.result);
+		     iconred.width.baseVal.value = i.path[0].width;
+		     iconred.height.baseVal.value = i.path[0].height;
+		 };
+		 img.src = re.target.result;
+	     };
+	     reader.readAsDataURL(file);
+	 };
+	 inputCheckSwap.onchange = (ev) => {
+	     if (ev.target.checked) {
+		 doc.getElementById("icon").insertBefore(doc.getElementById("iconblack"), doc.getElementById("iconred"));
+	     } else {
+		 doc.getElementById("icon").insertBefore(doc.getElementById("iconred"), doc.getElementById("iconblack"));
+	     }
+	 };
+	 inputCheckLockScale.onchange = (ev) => {
+	     inputRangeScaleRed.disabled = ev.target.checked;
+	     let iconred = doc.getElementById("iconred");
+	     if (ev.target.checked) {
+		 iconred.transform.baseVal[2].matrix.a = Math.pow(10, inputRangeScaleBlack.value);
+		 iconred.transform.baseVal[2].matrix.d = Math.pow(10, inputRangeScaleBlack.value);
+	     } else {
+		 iconred.transform.baseVal[2].matrix.a = Math.pow(10, inputRangeScaleRed.value);
+		 iconred.transform.baseVal[2].matrix.d = Math.pow(10, inputRangeScaleRed.value);		     
+	     }
+	 }
+	 inputRangeBleed.oninput = (ev) => {
+	     let bleed = doc.getElementById("bleed");
+	     let bleedVal = parseInt(inputRangeBleed.value);
+	     if (bleedVal == 0) {
+		 bleed.style.strokeWidth = 0;
+	     } else {
+		 bleed.style.strokeWidth = bleedVal * 2 + 1;
+	     }
+	     doc.width.baseVal.value = 500 + bleedVal * 2;
+	     doc.height.baseVal.value = 500 + bleedVal * 2;
+	     doc.viewBox.baseVal.x = -bleedVal;
+	     doc.viewBox.baseVal.y = -bleedVal;
+	     doc.viewBox.baseVal.width = 500 + bleedVal * 2;
+	     doc.viewBox.baseVal.height = 500 + bleedVal * 2;
+	 };
+	 inputButtonDownload.onclick = (ev) => {
+	     doc.getElementById("bleed").style.stroke = 'black';
+	     let serialized = new XMLSerializer().serializeToString(doc);
+	     doc.getElementById("bleed").style.stroke = '#ff00ff';
+	     let a = document.getElementById('download');
+	     a.setAttribute('href', 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<?xml version="1.0" encoding="utf-8"?>\n' + serialized));
+	     a.click();
+	 };
+	 inputButtonDownloadPng.onclick = (ev) => {
+             let svgSize = doc.width.baseVal.value;
+             let svgOffset = doc.viewBox.baseVal.x;
+             let imgSize = parseInt(prompt("Enter image size (e.g. 2048)", "2048"));
+             let svgRoot = doc.getElementById("svgroot");
+             if (Number.isNaN(imgSize)) {
+                 return;
+             }
+             // Resize SVG to output size, then export as XML, and resize back to default size
+	     doc.getElementById("bleed").style.stroke = 'black';
+             doc.width.baseVal.value = imgSize;
+             doc.height.baseVal.value = imgSize;
+             doc.viewBox.baseVal.width = imgSize;
+             doc.viewBox.baseVal.height = imgSize;
+             doc.viewBox.baseVal.x = svgOffset * imgSize/svgSize;
+             doc.viewBox.baseVal.y = svgOffset * imgSize/svgSize;
+             svgRoot.transform.baseVal[0].matrix.a = imgSize/svgSize;
+             svgRoot.transform.baseVal[0].matrix.d = imgSize/svgSize;
+	     let serialized = new XMLSerializer().serializeToString(doc);
+	     doc.getElementById("bleed").style.stroke = '#ff00ff';
+             svgRoot.transform.baseVal[0].matrix.a = 1;
+             svgRoot.transform.baseVal[0].matrix.d = 1;
+             doc.viewBox.baseVal.width = svgSize;
+             doc.viewBox.baseVal.height = svgSize;
+             doc.viewBox.baseVal.x = svgOffset;
+             doc.viewBox.baseVal.y = svgOffset;
+             doc.width.baseVal.value = svgSize;
+             doc.height.baseVal.value = svgSize;
+             
+             let canvas = document.createElement('canvas');
+             canvas.width = imgSize;
+             canvas.height = imgSize;
+             let ctx = canvas.getContext("2d");
+             let image = new Image();
+             image.onload = () => {
+                 ctx.drawImage(image, 0, 0);
+	         let a = document.getElementById('download-png');
+	         a.setAttribute('href', canvas.toDataURL('image/png'));
+	         a.click();
+             };
+             image.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(serialized);
+	 };
+	 inputFileImportSvg.onchange = (ev) => {
+	     let file = ev.target.files[0];
+	     let reader = new FileReader();
+	     reader.onload = (re) => {
+		 let parser = new DOMParser();
+		 let imp = parser.parseFromString(re.target.result, 'image/svg+xml');
+		 let iconblack = doc.getElementById('iconblack');
+		 let iconred = doc.getElementById('iconred');
+		 // texts
+		 inputTextUpper.value = imp.getElementById('uppertext').textContent;
+		 inputTextLower.value = imp.getElementById('lowertext').textContent;
+		 doc.getElementById('uppertext').textContent = inputTextUpper.value;
+		 doc.getElementById('lowertext').textContent = inputTextLower.value;
+		 // img href
+		 let iconblackHref = imp.getElementById('iconblack').href.baseVal;
+		 let iconredHref = imp.getElementById('iconred').href.baseVal;
+		 iconblack.href.baseVal = iconblackHref;
+		 iconblack.setAttributeNS('http://www.w3.org/1999/xlink', 'href', iconblackHref);
+		 iconred.href.baseVal = iconredHref;
+		 iconred.setAttributeNS('http://www.w3.org/1999/xlink', 'href', iconredHref);
+		 // shift
+		 inputRangeShiftX.value = imp.getElementById('iconblack').transform.baseVal[0].matrix.e;
+		 inputRangeShiftY.value = imp.getElementById('iconblack').transform.baseVal[0].matrix.f;
+		 iconblack.transform.baseVal[0].matrix.e = inputRangeShiftX.value;
+		 iconred.transform.baseVal[0].matrix.e = -inputRangeShiftX.value;
+		 iconblack.transform.baseVal[0].matrix.f = inputRangeShiftY.value;
+		 iconred.transform.baseVal[0].matrix.f = -inputRangeShiftY.value;
+		 // position
+		 inputRangePositionX.value = imp.getElementById('iconblack').transform.baseVal[1].matrix.e;
+		 inputRangePositionY.value = imp.getElementById('iconblack').transform.baseVal[1].matrix.f;
+		 iconblack.transform.baseVal[1].matrix.e = inputRangePositionX.value;
+		 iconred.transform.baseVal[1].matrix.e = inputRangePositionX.value;
+		 iconblack.transform.baseVal[1].matrix.f = inputRangePositionY.value;
+		 iconred.transform.baseVal[1].matrix.f = inputRangePositionY.value;
+		 // scale
+		 let scaleBlack = imp.getElementById('iconblack').transform.baseVal[2].matrix.a;
+		 let scaleRed = imp.getElementById('iconred').transform.baseVal[2].matrix.a;
+		 inputRangeScaleBlack.value = Math.log10(scaleBlack);
+		 inputRangeScaleRed.value = Math.log10(scaleRed);
+		 iconblack.transform.baseVal[2].matrix.a = scaleBlack;
+		 iconblack.transform.baseVal[2].matrix.d = scaleBlack;
+		 iconred.transform.baseVal[2].matrix.a = scaleRed;
+		 iconred.transform.baseVal[2].matrix.d = scaleRed;
+		 // swap
+		 if (imp.getElementById('icon').children[0].id == 'iconblack') {
+		     inputCheckSwap.checked = true;
+		     doc.getElementById('icon').insertBefore(doc.getElementById('iconblack'), doc.getElementById('iconred'));
+		 } else {
+		     inputCheckSwap.checked = false;
+		     doc.getElementById('icon').insertBefore(doc.getElementById('iconred'), doc.getElementById('iconblack'));
+		 }
+		 // bleed
+		 inputRangeBleed.value = Math.max(imp.getElementById('bleed').style.strokeWidth - 1, 0);
+		 let bleed = doc.getElementById("bleed");
+		 let bleedVal = parseInt(inputRangeBleed.value);
+		 if (bleedVal == 0) {
+		     bleed.style.strokeWidth = 0;
+		 } else {
+		     bleed.style.strokeWidth = bleedVal * 2 + 1;
+		 }
+		 doc.width.baseVal.value = 500 + bleedVal * 2;
+		 doc.height.baseVal.value = 500 + bleedVal * 2;
+		 doc.viewBox.baseVal.x = -bleedVal;
+		 doc.viewBox.baseVal.y = -bleedVal;
+		 doc.viewBox.baseVal.width = 500 + bleedVal * 2;
+		 doc.viewBox.baseVal.height = 500 + bleedVal * 2;
+	     };
+	     reader.readAsText(file);		 
+	 };
+	</script>
+    </body>
+</html>
