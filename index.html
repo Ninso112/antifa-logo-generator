@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+	<head>
 	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Antifa Sticker Generator</title>
 	<style>
 	 form {
@@ -13,10 +14,10 @@
 	 }
 	</style>
     </head>
-    <body>
+	<body>
 	<h1>Antifa Sticker Generator</h1>
         <p>
-            A purely client-side sticker generator. <a href="https://github.com/Ninso112/antifa-logo-generator">Source Code.</a>
+            A purely client-side sticker generator. <a href="https://git.kabelsalat.ch/s3lph/antifa-sticker-generator">Source Code.</a>
         </p>
 	<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 500" width="500" height="500" id="svg">
 	    <defs>
@@ -50,14 +51,14 @@
             </g>
 	</svg>
 	<form>
-	    <label for="input-text-upper">Upper text</label>
+		<label for="input-text-upper">Upper text</label>
 	    <input type="text" id="input-text-upper" name="upper" value="ANTIFASCHISTISCHE">
 	    <label for="input-text-lower">Lower text</label>
 	    <input type="text" id="input-text-lower" name="lower" value="AKTION">
-	    <label for="input-range-shift-x">X Position</label>
-	    <input type="range" id="input-range-position-x" name="position-x" value="-9" min="-500" max="500">
-	    <label for="input-range-shift-y">Y Position</label>
-	    <input type="range" id="input-range-position-y" name="position-y" value="-2" min="-500" max="500">
+		<label for="input-range-position-x">X Position</label>
+		<input type="range" id="input-range-position-x" name="position-x" value="-9" min="-500" max="500">
+		<label for="input-range-position-y">Y Position</label>
+		<input type="range" id="input-range-position-y" name="position-y" value="-2" min="-500" max="500">
 	    <label for="input-range-shift-x">X Shift</label>
 	    <input type="range" id="input-range-shift-x" name="distance-x" value="0" min="-250" max="250">
 	    <label for="input-range-shift-y">Y Shift</label>
@@ -112,49 +113,51 @@
 	     doc.getElementById("lowertext").textContent = inputTextLower.value;
 	 };
 	 inputRangePositionX.oninput = (ev) => {
-	     doc.getElementById("iconblack").transform.baseVal[1].matrix.e = inputRangePositionX.value;
-	     doc.getElementById("iconred").transform.baseVal[1].matrix.e = inputRangePositionX.value;
+	     doc.getElementById("iconblack").transform.baseVal[1].matrix.e = Number(inputRangePositionX.value);
+	     doc.getElementById("iconred").transform.baseVal[1].matrix.e = Number(inputRangePositionX.value);
 	 };
 	 inputRangePositionY.oninput = (ev) => {
-	     doc.getElementById("iconblack").transform.baseVal[1].matrix.f = inputRangePositionY.value;
-	     doc.getElementById("iconred").transform.baseVal[1].matrix.f = inputRangePositionY.value;
+	     doc.getElementById("iconblack").transform.baseVal[1].matrix.f = Number(inputRangePositionY.value);
+	     doc.getElementById("iconred").transform.baseVal[1].matrix.f = Number(inputRangePositionY.value);
 	 };
 	 inputRangeShiftX.oninput = (ev) => {
-	     doc.getElementById("iconblack").transform.baseVal[0].matrix.e = inputRangeShiftX.value;
-	     doc.getElementById("iconred").transform.baseVal[0].matrix.e = -inputRangeShiftX.value;
+	     doc.getElementById("iconblack").transform.baseVal[0].matrix.e = Number(inputRangeShiftX.value);
+	     doc.getElementById("iconred").transform.baseVal[0].matrix.e = -Number(inputRangeShiftX.value);
 	 };
 	 inputRangeShiftY.oninput = (ev) => {
-	     doc.getElementById("iconblack").transform.baseVal[0].matrix.f = inputRangeShiftY.value;
-	     doc.getElementById("iconred").transform.baseVal[0].matrix.f = -inputRangeShiftY.value;
+	     doc.getElementById("iconblack").transform.baseVal[0].matrix.f = Number(inputRangeShiftY.value);
+	     doc.getElementById("iconred").transform.baseVal[0].matrix.f = -Number(inputRangeShiftY.value);
 	 };
 	 inputRangeScaleBlack.oninput = (ev) => {
 	     let iconblack = doc.getElementById("iconblack");
-	     iconblack.transform.baseVal[2].matrix.a = Math.pow(10, inputRangeScaleBlack.value);
-	     iconblack.transform.baseVal[2].matrix.d = Math.pow(10, inputRangeScaleBlack.value);
+	     let v = Math.pow(10, Number(inputRangeScaleBlack.value));
+	     iconblack.transform.baseVal[2].matrix.a = v;
+	     iconblack.transform.baseVal[2].matrix.d = v;
 	     if (inputCheckLockScale.checked) {
-		 let iconred = doc.getElementById("iconred");
-		 iconred.transform.baseVal[2].matrix.a = Math.pow(10, inputRangeScaleBlack.value);
-		 iconred.transform.baseVal[2].matrix.d = Math.pow(10, inputRangeScaleBlack.value);
+	 	 let iconred = doc.getElementById("iconred");
+	 	 iconred.transform.baseVal[2].matrix.a = v;
+	 	 iconred.transform.baseVal[2].matrix.d = v;
 	     }
 	 };
 	 inputRangeScaleRed.oninput = (ev) => {
 	     let iconred = doc.getElementById("iconred");
-	     iconred.transform.baseVal[2].matrix.a = Math.pow(10, inputRangeScaleRed.value);
-	     iconred.transform.baseVal[2].matrix.d = Math.pow(10, inputRangeScaleRed.value);
+	     let v = Math.pow(10, Number(inputRangeScaleRed.value));
+	     iconred.transform.baseVal[2].matrix.a = v;
+	     iconred.transform.baseVal[2].matrix.d = v;
 	 };
 	 inputFileIconBlack.onchange = (ev) => {
 	     let file = ev.target.files[0];
 	     let reader = new FileReader();
 	     let iconblack = doc.getElementById("iconblack");
 	     reader.onload = (re) => {
-		 let img = new Image();
-		 img.onload = (i) => {
-		     iconblack.href.baseVal = re.target.result;
-		     iconblack.setAttributeNS('http://www.w3.org/1999/xlink', 'href', re.target.result);
-		     iconblack.width.baseVal.value = i.path[0].width;
-		     iconblack.height.baseVal.value = i.path[0].height;
-		 };
-		 img.src = re.target.result;
+	 	 let img = new Image();
+	 	 img.onload = () => {
+	 	     iconblack.href.baseVal = re.target.result;
+	 	     iconblack.setAttributeNS('http://www.w3.org/1999/xlink', 'href', re.target.result);
+	 	     iconblack.width.baseVal.value = img.width || Number(iconblack.width.baseVal.value) || 512;
+	 	     iconblack.height.baseVal.value = img.height || Number(iconblack.height.baseVal.value) || 512;
+	 	 };
+	 	 img.src = re.target.result;
 	     };
 	     reader.readAsDataURL(file);
 	 };
@@ -163,14 +166,14 @@
 	     let reader = new FileReader();
 	     let iconred = doc.getElementById("iconred");
 	     reader.onload = (re) => {
-		 let img = new Image();
-		 img.onload = (i) => {
-		     iconred.href.baseVal = re.target.result;
-		     iconred.setAttributeNS('http://www.w3.org/1999/xlink', 'href', re.target.result);
-		     iconred.width.baseVal.value = i.path[0].width;
-		     iconred.height.baseVal.value = i.path[0].height;
-		 };
-		 img.src = re.target.result;
+	 	 let img = new Image();
+	 	 img.onload = () => {
+	 	     iconred.href.baseVal = re.target.result;
+	 	     iconred.setAttributeNS('http://www.w3.org/1999/xlink', 'href', re.target.result);
+	 	     iconred.width.baseVal.value = img.width || Number(iconred.width.baseVal.value) || 512;
+	 	     iconred.height.baseVal.value = img.height || Number(iconred.height.baseVal.value) || 512;
+	 	 };
+	 	 img.src = re.target.result;
 	     };
 	     reader.readAsDataURL(file);
 	 };
