@@ -15,11 +15,13 @@
 	</style>
     </head>
 	<body>
-	<h1>Antifa Sticker Generator V0.81</h1>
+	<h1>Antifa Sticker Generator V0.83</h1>
         <p>
-            A purely client-side sticker generator. <a href="https://git.kabelsalat.ch/s3lph/antifa-sticker-generator">Source Code.</a>
+            A purely client-side sticker generator. <a href="https://github.com/Ninso112/antifa-logo-generator">Source Code.</a>
         </p>
-	<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 500" width="500" height="500" id="svg">
+	<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 500" width="500" height="500" id="svg" role="img" aria-labelledby="svgTitle svgDesc">
+		<title id="svgTitle">Antifa Sticker</title>
+		<desc id="svgDesc">Generiertes Aufkleber-Design — anpassbar und als SVG/PNG exportierbar.</desc>
 	    <defs>
 		<filter id="black">
         	    <feColorMatrix in="SourceGraphic" type="matrix"
@@ -151,6 +153,7 @@
 	     let iconblack = doc.getElementById("iconblack");
 	     reader.onload = (re) => {
 	 	 let img = new Image();
+	 	 img.crossOrigin = 'anonymous';
 	 	 img.onload = () => {
 	 	     iconblack.href.baseVal = re.target.result;
 	 	     iconblack.setAttributeNS('http://www.w3.org/1999/xlink', 'href', re.target.result);
@@ -165,16 +168,17 @@
 	     let file = ev.target.files[0];
 	     let reader = new FileReader();
 	     let iconred = doc.getElementById("iconred");
-	     reader.onload = (re) => {
-	 	 let img = new Image();
-	 	 img.onload = () => {
-	 	     iconred.href.baseVal = re.target.result;
-	 	     iconred.setAttributeNS('http://www.w3.org/1999/xlink', 'href', re.target.result);
-	 	     iconred.width.baseVal.value = img.width || Number(iconred.width.baseVal.value) || 512;
-	 	     iconred.height.baseVal.value = img.height || Number(iconred.height.baseVal.value) || 512;
-	 	 };
-	 	 img.src = re.target.result;
-	     };
+ 	     reader.onload = (re) => {
+ 	 	 let img = new Image();
+ 	 	 img.crossOrigin = 'anonymous';
+ 	 	 img.onload = () => {
+ 	 	     iconred.href.baseVal = re.target.result;
+ 	 	     iconred.setAttributeNS('http://www.w3.org/1999/xlink', 'href', re.target.result);
+ 	 	     iconred.width.baseVal.value = img.width || Number(iconred.width.baseVal.value) || 512;
+ 	 	     iconred.height.baseVal.value = img.height || Number(iconred.height.baseVal.value) || 512;
+ 	 	 };
+ 	 	 img.src = re.target.result;
+ 	     };
 	     reader.readAsDataURL(file);
 	 };
 	 inputCheckSwap.onchange = (ev) => {
@@ -218,47 +222,92 @@
 	     a.setAttribute('href', 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<?xml version="1.0" encoding="utf-8"?>\n' + serialized));
 	     a.click();
 	 };
-	 inputButtonDownloadPng.onclick = (ev) => {
-             let svgSize = doc.width.baseVal.value;
-             let svgOffset = doc.viewBox.baseVal.x;
-             let imgSize = parseInt(prompt("Enter image size (e.g. 2048)", "2048"));
-             let svgRoot = doc.getElementById("svgroot");
-             if (Number.isNaN(imgSize)) {
-                 return;
-             }
-             // Resize SVG to output size, then export as XML, and resize back to default size
+	 inputButtonDownloadPng.onclick = async (ev) => {
+			let svgSize = Number(doc.width.baseVal.value);
+			let svgOffset = Number(doc.viewBox.baseVal.x);
+			let imgSize = parseInt(prompt("Enter image size (e.g. 2048)", "2048"), 10);
+	             let svgRoot = doc.getElementById("svgroot");
+	             if (Number.isNaN(imgSize)) {
+	                 return;
+	             }
+	             // Resize SVG to output size, then export as XML, and resize back to default size
 	     doc.getElementById("bleed").style.stroke = 'black';
-             doc.width.baseVal.value = imgSize;
-             doc.height.baseVal.value = imgSize;
-             doc.viewBox.baseVal.width = imgSize;
-             doc.viewBox.baseVal.height = imgSize;
-             doc.viewBox.baseVal.x = svgOffset * imgSize/svgSize;
-             doc.viewBox.baseVal.y = svgOffset * imgSize/svgSize;
-             svgRoot.transform.baseVal[0].matrix.a = imgSize/svgSize;
-             svgRoot.transform.baseVal[0].matrix.d = imgSize/svgSize;
-	     let serialized = new XMLSerializer().serializeToString(doc);
-	     doc.getElementById("bleed").style.stroke = '#ff00ff';
-             svgRoot.transform.baseVal[0].matrix.a = 1;
-             svgRoot.transform.baseVal[0].matrix.d = 1;
-             doc.viewBox.baseVal.width = svgSize;
-             doc.viewBox.baseVal.height = svgSize;
-             doc.viewBox.baseVal.x = svgOffset;
-             doc.viewBox.baseVal.y = svgOffset;
-             doc.width.baseVal.value = svgSize;
-             doc.height.baseVal.value = svgSize;
-             
-             let canvas = document.createElement('canvas');
-             canvas.width = imgSize;
-             canvas.height = imgSize;
-             let ctx = canvas.getContext("2d");
-             let image = new Image();
-             image.onload = () => {
-                 ctx.drawImage(image, 0, 0);
-	         let a = document.getElementById('download-png');
-	         a.setAttribute('href', canvas.toDataURL('image/png'));
-	         a.click();
-             };
-             image.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(serialized);
+	             doc.width.baseVal.value = imgSize;
+	             doc.height.baseVal.value = imgSize;
+	             doc.viewBox.baseVal.width = imgSize;
+	             doc.viewBox.baseVal.height = imgSize;
+	             doc.viewBox.baseVal.x = svgOffset * imgSize/svgSize;
+	             doc.viewBox.baseVal.y = svgOffset * imgSize/svgSize;
+	             svgRoot.transform.baseVal[0].matrix.a = imgSize/svgSize;
+	             svgRoot.transform.baseVal[0].matrix.d = imgSize/svgSize;
+
+		    // Clone and try to inline external images (fetch -> dataURL). If any fail due to CORS, abort PNG export and open SVG.
+		    let clone = doc.cloneNode(true);
+		    let failures = 0;
+		    let images = clone.querySelectorAll('image');
+		    for (let imgEl of images) {
+			    try {
+				    let href = imgEl.getAttributeNS('http://www.w3.org/1999/xlink', 'href') || imgEl.getAttribute('href') || imgEl.href && imgEl.href.baseVal;
+				    if (!href || href.startsWith('data:')) continue;
+				    // try fetch; will fail if remote server disallows CORS
+				    let resp = await fetch(href, {mode: 'cors'});
+				    if (!resp.ok) throw new Error('fetch failed');
+				    let blob = await resp.blob();
+				    let dataUrl = await new Promise((res) => { let fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); });
+				    imgEl.setAttributeNS('http://www.w3.org/1999/xlink', 'href', dataUrl);
+			    } catch (e) {
+				    failures++;
+			    }
+		    }
+		    let serialized;
+		    if (failures > 0) {
+			    // revert sizing
+			    doc.getElementById("bleed").style.stroke = '#ff00ff';
+			    svgRoot.transform.baseVal[0].matrix.a = 1;
+			    svgRoot.transform.baseVal[0].matrix.d = 1;
+			    doc.viewBox.baseVal.width = svgSize;
+			    doc.viewBox.baseVal.height = svgSize;
+			    doc.viewBox.baseVal.x = svgOffset;
+			    doc.viewBox.baseVal.y = svgOffset;
+			    doc.width.baseVal.value = svgSize;
+			    doc.height.baseVal.value = svgSize;
+			    alert('Could not inline ' + failures + ' external image(s) due to CORS. PNG export aborted. The SVG will open in a new tab; use "Download SVG" or host images with CORS enabled to export PNG.');
+			    serialized = new XMLSerializer().serializeToString(clone);
+			    window.open('data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<?xml version="1.0" encoding="utf-8"?>\n' + serialized), '_blank');
+			    return;
+		    } else {
+			    serialized = new XMLSerializer().serializeToString(clone);
+		    }
+
+		    // revert original SVG to previous size
+		    doc.getElementById("bleed").style.stroke = '#ff00ff';
+	             svgRoot.transform.baseVal[0].matrix.a = 1;
+	             svgRoot.transform.baseVal[0].matrix.d = 1;
+	             doc.viewBox.baseVal.width = svgSize;
+	             doc.viewBox.baseVal.height = svgSize;
+	             doc.viewBox.baseVal.x = svgOffset;
+	             doc.viewBox.baseVal.y = svgOffset;
+	             doc.width.baseVal.value = svgSize;
+	             doc.height.baseVal.value = svgSize;
+
+		    let canvas = document.createElement('canvas');
+	            canvas.width = imgSize;
+	            canvas.height = imgSize;
+	            let ctx = canvas.getContext("2d");
+	            let image = new Image();
+	            image.crossOrigin = 'anonymous';
+	            image.onload = () => {
+	                ctx.drawImage(image, 0, 0);
+		        try {
+		            let a = document.getElementById('download-png');
+		            a.setAttribute('href', canvas.toDataURL('image/png'));
+		            a.click();
+		        } catch (e) {
+		            alert('Export to PNG failed during finalization: canvas may be tainted. Opened SVG in new tab as fallback.');
+		            window.open('data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<?xml version="1.0" encoding="utf-8"?>\n' + serialized), '_blank');
+		        }
+	            };
+	            image.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<?xml version="1.0" encoding="utf-8"?>\n' + serialized);
 	 };
 	 inputFileImportSvg.onchange = (ev) => {
 	     let file = ev.target.files[0];
