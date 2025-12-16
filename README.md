@@ -13,6 +13,7 @@ A client-side sticker generator for creating custom antifascist stickers. Adjust
 - Adjustable bleed for printing
 - Download as SVG or PNG
 - SVG import to restore previous designs
+- Dark mode toggle with persistent preference storage
 
 ## Usage
 
