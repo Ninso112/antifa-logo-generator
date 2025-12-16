@@ -7,6 +7,22 @@
 		<meta name="description" content="A client-side generator for creating custom antifascist stickers. Adjustable texts, positions and icons.">
 		<meta name="keywords" content="antifa, sticker, generator, svg, png, designer">
 		<meta name="author" content="Ninso112">
+		
+		<!-- PWA Meta Tags -->
+		<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+		<meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="default">
+		<meta name="apple-mobile-web-app-title" content="Sticker Generator">
+		<meta name="mobile-web-app-capable" content="yes">
+		
+		<!-- Manifest -->
+		<link rel="manifest" href="manifest.json">
+		
+		<!-- Icons -->
+		<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='225' stroke='black' fill='white' stroke-width='50'/%3E%3Ctext x='256' y='256' font-family='sans-serif' font-size='120' font-weight='bold' text-anchor='middle' dominant-baseline='middle' fill='black'%3EA%3C/text%3E%3C/svg%3E">
+		<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='225' stroke='black' fill='white' stroke-width='50'/%3E%3Ctext x='256' y='256' font-family='sans-serif' font-size='120' font-weight='bold' text-anchor='middle' dominant-baseline='middle' fill='black'%3EA%3C/text%3E%3C/svg%3E">
+		
 		<script>
 			// Version
 			const VERSION = 'V0.89';
@@ -466,6 +482,32 @@
 					setDarkMode(e.matches);
 				}
 			});
+
+			// Service Worker Registration for PWA
+			if ('serviceWorker' in navigator) {
+				window.addEventListener('load', () => {
+					navigator.serviceWorker.register('./sw.js')
+						.then((registration) => {
+							console.log('Service Worker registered:', registration.scope);
+							
+							// Check for updates
+							registration.addEventListener('updatefound', () => {
+								const newWorker = registration.installing;
+								newWorker.addEventListener('statechange', () => {
+									if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+										// New service worker available, prompt user to reload
+										if (confirm('New version available. Reload to update?')) {
+											window.location.reload();
+										}
+									}
+								});
+							});
+						})
+						.catch((error) => {
+							console.log('Service Worker registration failed:', error);
+						});
+				});
+			}
 
 			// Input elements - safely get all inputs with null checks
 			const getElementById = (id) => document.getElementById(id);
