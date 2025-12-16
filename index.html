@@ -4,22 +4,43 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Antifa Sticker Generator</title>
+		<meta name="description" content="A client-side generator for creating custom antifascist stickers. Adjustable texts, positions and icons.">
+		<meta name="keywords" content="antifa, sticker, generator, svg, png, designer">
+		<meta name="author" content="Ninso112">
 		<style>
 			* {
 				box-sizing: border-box;
 			}
 			
+			:root {
+				--primary-bg: #f0f0f0;
+				--primary-bg-hover: #e0e0e0;
+				--border-color: #333;
+				--text-color: #000;
+				--link-color: #0066cc;
+			}
+			
 			body {
-				margin: 0;
-				padding: 1rem;
-				font-family: sans-serif;
-				max-width: 1200px;
 				margin: 0 auto;
+				padding: 1rem;
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+				max-width: 1200px;
+				color: var(--text-color);
+				line-height: 1.5;
 			}
 			
 			h1 {
 				margin-top: 0;
 				font-size: 1.8rem;
+			}
+			
+			a {
+				color: var(--link-color);
+				text-decoration: none;
+			}
+			
+			a:hover {
+				text-decoration: underline;
 			}
 			
 			#svg-container {
@@ -33,12 +54,13 @@
 				max-width: 100%;
 				height: auto;
 				display: block;
+				border-radius: 4px;
 			}
 			
 			form {
 				display: grid;
-				grid-template-columns: 30% 50%;
-				gap: 0.5rem 1rem;
+				grid-template-columns: 30% 1fr;
+				gap: 0.75rem 1.5rem;
 				align-items: center;
 			}
 			
@@ -52,6 +74,7 @@
 			
 			label {
 				font-size: 0.9rem;
+				font-weight: 500;
 			}
 			
 			input[type="text"],
@@ -62,23 +85,59 @@
 				padding: 0.5rem;
 			}
 			
+			input[type="text"] {
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				font-size: 1rem;
+			}
+			
+			input[type="text"]:focus {
+				outline: 2px solid var(--link-color);
+				outline-offset: 2px;
+				border-color: var(--link-color);
+			}
+			
+			input[type="range"] {
+				cursor: pointer;
+			}
+			
 			input[type="button"] {
 				cursor: pointer;
 				font-size: 1rem;
-				border: 2px solid #333;
-				background: #f0f0f0;
+				border: 2px solid var(--border-color);
+				background: var(--primary-bg);
 				border-radius: 4px;
-				transition: background 0.2s;
+				transition: background-color 0.2s, transform 0.1s;
+				font-weight: 500;
+				max-width: 200px;
 			}
 			
-			input[type="button"]:hover,
+			input[type="button"]:hover {
+				background: var(--primary-bg-hover);
+			}
+			
 			input[type="button"]:active {
-				background: #e0e0e0;
+				transform: translateY(1px);
+			}
+			
+			input[type="button"]:focus {
+				outline: 2px solid var(--link-color);
+				outline-offset: 2px;
 			}
 			
 			input[type="checkbox"] {
 				width: auto;
 				margin-right: 0.5rem;
+				cursor: pointer;
+			}
+			
+			input[type="file"] {
+				cursor: pointer;
+			}
+			
+			input:disabled {
+				opacity: 0.6;
+				cursor: not-allowed;
 			}
 			
 			/* Mobile Styles */
@@ -104,7 +163,6 @@
 				svg {
 					width: 100%;
 					max-width: 100vw;
-					height: auto;
 				}
 				
 				form {
@@ -129,48 +187,25 @@
 				input[type="button"] {
 					padding: 0.75rem;
 					font-size: 1rem;
-					min-height: 44px; /* Touch-friendly size */
+					min-height: 44px;
 				}
 				
-				input[type="range"] {
-					width: 100%;
+				input[type="button"] {
+					max-width: none;
+					margin-top: 0.5rem;
 				}
 				
 				input[type="checkbox"] + label {
 					display: inline;
 					width: auto;
 				}
-				
-				input[type="button"] {
-					margin-top: 0.5rem;
-				}
-			}
-			
-			/* Desktop Styles */
-			@media (min-width: 768px) {
-				body {
-					padding: 2rem;
-				}
-				
-				#svg-container {
-					margin: 2rem 0;
-				}
-				
-				form {
-					grid-template-columns: 30% 1fr;
-					gap: 0.75rem 1.5rem;
-				}
-				
-				input[type="button"] {
-					max-width: 200px;
-				}
 			}
 		</style>
 	</head>
 	<body>
-		<h1>Antifa Sticker Generator V0.85</h1>
+		<h1>Antifa Sticker Generator V0.86</h1>
 		<p>
-			A purely client-side sticker generator. <a href="https://github.com/Ninso112/antifa-logo-generator">Source Code.</a>
+			A purely client-side sticker generator. <a href="https://github.com/Ninso112/antifa-logo-generator" rel="noopener noreferrer" target="_blank">Source Code</a>.
 		</p>
 		<div id="svg-container">
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 500" width="500" height="500" id="svg" role="img" aria-labelledby="svgTitle svgDesc">
@@ -208,47 +243,50 @@
 		</div>
 		<form>
 			<label for="input-text-upper">Upper text</label>
-			<input type="text" id="input-text-upper" name="upper" value="ANTIFASCHISTISCHE">
+			<input type="text" id="input-text-upper" name="upper" value="ANTIFASCHISTISCHE" aria-label="Upper text of the sticker">
 			<label for="input-text-lower">Lower text</label>
-			<input type="text" id="input-text-lower" name="lower" value="AKTION">
+			<input type="text" id="input-text-lower" name="lower" value="AKTION" aria-label="Lower text of the sticker">
 			<label for="input-range-position-x">X Position</label>
-			<input type="range" id="input-range-position-x" name="position-x" value="-9" min="-500" max="500">
+			<input type="range" id="input-range-position-x" name="position-x" value="-9" min="-500" max="500" aria-label="X position of the icon">
 			<label for="input-range-position-y">Y Position</label>
-			<input type="range" id="input-range-position-y" name="position-y" value="-2" min="-500" max="500">
+			<input type="range" id="input-range-position-y" name="position-y" value="-2" min="-500" max="500" aria-label="Y position of the icon">
 			<label for="input-range-shift-x">X Shift</label>
-			<input type="range" id="input-range-shift-x" name="distance-x" value="0" min="-250" max="250">
+			<input type="range" id="input-range-shift-x" name="distance-x" value="0" min="-250" max="250" aria-label="X offset between red and black icon">
 			<label for="input-range-shift-y">Y Shift</label>
-			<input type="range" id="input-range-shift-y" name="distance-y" value="0" min="-250" max="250">
+			<input type="range" id="input-range-shift-y" name="distance-y" value="0" min="-250" max="250" aria-label="Y offset between red and black icon">
 			<label for="input-range-scale-black">Black Scale</label>
-			<input type="range" id="input-range-scale-black" name="scale-black" value="0" min="-3" max="3" step="0.01">
+			<input type="range" id="input-range-scale-black" name="scale-black" value="0" min="-3" max="3" step="0.01" aria-label="Scale factor for black icon">
 			<label for="input-range-scale-red">Red Scale</label>
-			<input type="range" id="input-range-scale-red" name="scale-red" value="0" min="-3" max="3" step="0.01">
+			<input type="range" id="input-range-scale-red" name="scale-red" value="0" min="-3" max="3" step="0.01" aria-label="Scale factor for red icon">
 			<label for="input-file-icon-black">Black Icon (black+white+alpha only)</label>
-			<input type="file" id="input-file-icon-black" name="icon-black" accept="image/*">
+			<input type="file" id="input-file-icon-black" name="icon-black" accept="image/*" aria-label="Upload black icon">
 			<label for="input-file-icon-red">Red Icon (black+white+alpha only)</label>
-			<input type="file" id="input-file-icon-red" name="icon-red" accept="image/*">
+			<input type="file" id="input-file-icon-red" name="icon-red" accept="image/*" aria-label="Upload red icon">
 			<label for="input-range-bleed">Bleed (black in download)</label>
-			<input type="range" id="input-range-bleed" name="bleed" value="0" min="0" max="50">
+			<input type="range" id="input-range-bleed" name="bleed" value="0" min="0" max="50" aria-label="Bleed for printing">
 			<div>
-				<input type="checkbox" id="input-check-swap-red-black" name="swap-red-black">
+				<input type="checkbox" id="input-check-swap-red-black" name="swap-red-black" aria-label="Red on top of black">
 				<label for="input-check-swap-red-black">Red on top of black</label>
-				<input type="checkbox" id="input-check-lock-scale" name="lock-scale">
+				<input type="checkbox" id="input-check-lock-scale" name="lock-scale" aria-label="Same scale for red and black">
 				<label for="input-check-lock-scale">Same scale for red and black</label>
 			</div>
 			<div>
-				<input type="button" id="input-button-download" value="Download SVG">
-				<input type="button" id="input-button-download-png" value="Download PNG">
+				<input type="button" id="input-button-download" value="Download SVG" aria-label="Download sticker as SVG">
+				<input type="button" id="input-button-download-png" value="Download PNG" aria-label="Download sticker as PNG">
 			</div>
 			<label for="input-file-import-svg">Import downloaded SVG</label>
-			<input type="file" id="input-file-import-svg" name="import-svg" accept="image/svg+xml">
+			<input type="file" id="input-file-import-svg" name="import-svg" accept="image/svg+xml" aria-label="Import previously downloaded SVG">
 		</form>
 		<a id="download" download="antifa.svg" href="#"></a>
 		<a id="download-png" download="antifa.png" href="#"></a>
 		<script>
+			'use strict';
+			
 			// Constants
 			const XLINK_NS = 'http://www.w3.org/1999/xlink';
 			const DEFAULT_SIZE = 500;
 			const DEFAULT_ICON_SIZE = 512;
+			const DEBOUNCE_DELAY = 16; // ~60fps
 
 			// DOM elements
 			const doc = document.getElementById('svg');
@@ -259,6 +297,19 @@
 			const upperText = doc.getElementById("uppertext");
 			const lowerText = doc.getElementById("lowertext");
 			const bleedCircle = doc.getElementById("bleed");
+			
+			// Debounce helper
+			function debounce(func, wait) {
+				let timeout;
+				return function executedFunction(...args) {
+					const later = () => {
+						clearTimeout(timeout);
+						func(...args);
+					};
+					clearTimeout(timeout);
+					timeout = setTimeout(later, wait);
+				};
+			}
 
 			// Input elements
 			const inputs = {
@@ -324,9 +375,15 @@
 			function loadImageFile(file, targetElement) {
 				if (!file) return;
 				const reader = new FileReader();
+				reader.onerror = () => {
+					alert('Error loading image.');
+				};
 				reader.onload = (e) => {
 					const img = new Image();
 					img.crossOrigin = 'anonymous';
+					img.onerror = () => {
+						alert('Error loading image. Please ensure it is a valid image format.');
+					};
 					img.onload = () => {
 						const width = img.width || Number(targetElement.width.baseVal.value) || DEFAULT_ICON_SIZE;
 						const height = img.height || Number(targetElement.height.baseVal.value) || DEFAULT_ICON_SIZE;
@@ -345,7 +402,7 @@
 				return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<?xml version="1.0" encoding="utf-8"?>\n' + svgString);
 			}
 
-			// Event handlers
+			// Event handlers with debouncing for range inputs
 			inputs.textUpper.oninput = () => {
 				upperText.textContent = inputs.textUpper.value;
 			};
@@ -354,31 +411,35 @@
 				lowerText.textContent = inputs.textLower.value;
 			};
 
-			inputs.positionX.oninput = () => {
+			const updatePositionX = () => {
 				const value = Number(inputs.positionX.value);
 				iconBlack.transform.baseVal[1].matrix.e = value;
 				iconRed.transform.baseVal[1].matrix.e = value;
 			};
+			inputs.positionX.oninput = debounce(updatePositionX, DEBOUNCE_DELAY);
 
-			inputs.positionY.oninput = () => {
+			const updatePositionY = () => {
 				const value = Number(inputs.positionY.value);
 				iconBlack.transform.baseVal[1].matrix.f = value;
 				iconRed.transform.baseVal[1].matrix.f = value;
 			};
+			inputs.positionY.oninput = debounce(updatePositionY, DEBOUNCE_DELAY);
 
-			inputs.shiftX.oninput = () => {
+			const updateShiftX = () => {
 				const value = Number(inputs.shiftX.value);
 				iconBlack.transform.baseVal[0].matrix.e = value;
 				iconRed.transform.baseVal[0].matrix.e = -value;
 			};
+			inputs.shiftX.oninput = debounce(updateShiftX, DEBOUNCE_DELAY);
 
-			inputs.shiftY.oninput = () => {
+			const updateShiftY = () => {
 				const value = Number(inputs.shiftY.value);
 				iconBlack.transform.baseVal[0].matrix.f = value;
 				iconRed.transform.baseVal[0].matrix.f = -value;
 			};
+			inputs.shiftY.oninput = debounce(updateShiftY, DEBOUNCE_DELAY);
 
-			inputs.scaleBlack.oninput = () => {
+			const updateScaleBlack = () => {
 				const scale = Math.pow(10, Number(inputs.scaleBlack.value));
 				const matrix = iconBlack.transform.baseVal[2].matrix;
 				matrix.a = scale;
@@ -389,13 +450,15 @@
 					redMatrix.d = scale;
 				}
 			};
+			inputs.scaleBlack.oninput = debounce(updateScaleBlack, DEBOUNCE_DELAY);
 
-			inputs.scaleRed.oninput = () => {
+			const updateScaleRed = () => {
 				const scale = Math.pow(10, Number(inputs.scaleRed.value));
 				const matrix = iconRed.transform.baseVal[2].matrix;
 				matrix.a = scale;
 				matrix.d = scale;
 			};
+			inputs.scaleRed.oninput = debounce(updateScaleRed, DEBOUNCE_DELAY);
 
 			inputs.fileIconBlack.onchange = (e) => {
 				loadImageFile(e.target.files[0], iconBlack);
@@ -425,9 +488,10 @@
 				}
 			};
 
-			inputs.bleed.oninput = () => {
+			const updateBleedHandler = () => {
 				updateBleed(parseInt(inputs.bleed.value, 10));
 			};
+			inputs.bleed.oninput = debounce(updateBleedHandler, DEBOUNCE_DELAY);
 
 			inputs.buttonDownload.onclick = () => {
 				bleedCircle.style.stroke = 'black';
@@ -441,9 +505,16 @@
 			inputs.buttonDownloadPng.onclick = async () => {
 				const originalSize = Number(doc.width.baseVal.value);
 				const originalOffset = Number(doc.viewBox.baseVal.x);
-				const imgSize = parseInt(prompt("Enter image size (e.g. 2048)", "2048"), 10);
+				const defaultSize = 2048;
+				const imgSizeInput = prompt("Enter image size (e.g. 2048)", String(defaultSize));
 				
-				if (Number.isNaN(imgSize)) return;
+				if (!imgSizeInput) return;
+				
+				const imgSize = parseInt(imgSizeInput, 10);
+				if (Number.isNaN(imgSize) || imgSize <= 0 || imgSize > 8192) {
+					alert(`Invalid image size. Please enter a number between 1 and 8192.`);
+					return;
+				}
 
 				// Resize SVG for export
 				bleedCircle.style.stroke = 'black';
@@ -495,13 +566,20 @@
 				const ctx = canvas.getContext("2d");
 				const image = new Image();
 				image.crossOrigin = 'anonymous';
+				image.onerror = () => {
+					console.error('Error loading image for PNG export');
+					alert('Error loading SVG image. SVG opened in new tab as fallback.');
+					window.open(createSvgDataUrl(serialized), '_blank');
+					restoreSvgSize(originalSize, originalOffset);
+				};
 				image.onload = () => {
-					ctx.drawImage(image, 0, 0);
 					try {
+						ctx.drawImage(image, 0, 0);
 						const link = document.getElementById('download-png');
 						link.setAttribute('href', canvas.toDataURL('image/png'));
 						link.click();
 					} catch (e) {
+						console.error('PNG Export Error:', e);
 						alert('Export to PNG failed during finalization: canvas may be tainted. Opened SVG in new tab as fallback.');
 						window.open(createSvgDataUrl(serialized), '_blank');
 					}
@@ -514,9 +592,20 @@
 				if (!file) return;
 				
 				const reader = new FileReader();
+				reader.onerror = () => {
+					alert('Error reading file.');
+				};
 				reader.onload = (e) => {
-					const parser = new DOMParser();
-					const imported = parser.parseFromString(e.target.result, 'image/svg+xml');
+					try {
+						const parser = new DOMParser();
+						const imported = parser.parseFromString(e.target.result, 'image/svg+xml');
+						
+						// Check for parsing errors
+						const parserError = imported.querySelector('parsererror');
+						if (parserError) {
+							alert('Error parsing SVG. Please ensure it is a valid SVG file.');
+							return;
+						}
 					
 					// Import text
 					const impUpperText = imported.getElementById('uppertext');
@@ -588,6 +677,10 @@
 						const bleedVal = Math.max(parseInt(impBleed.style.strokeWidth, 10) - 1, 0);
 						inputs.bleed.value = bleedVal;
 						updateBleed(bleedVal);
+					}
+					} catch (error) {
+						console.error('Import Error:', error);
+						alert('Error importing SVG: ' + error.message);
 					}
 				};
 				reader.readAsText(file);
