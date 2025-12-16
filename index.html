@@ -486,13 +486,13 @@
 			// Service Worker Registration for PWA
 			if ('serviceWorker' in navigator) {
 				window.addEventListener('load', () => {
-					navigator.serviceWorker.register('./sw.js')
+					navigator.serviceWorker.register('./sw.js', { scope: './' })
 						.then((registration) => {
-							console.log('Service Worker registered:', registration.scope);
-							
 							// Check for updates
 							registration.addEventListener('updatefound', () => {
 								const newWorker = registration.installing;
+								if (!newWorker) return;
+								
 								newWorker.addEventListener('statechange', () => {
 									if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
 										// New service worker available, prompt user to reload
@@ -502,9 +502,14 @@
 									}
 								});
 							});
+							
+							// Check for updates periodically
+							setInterval(() => {
+								registration.update();
+							}, 60000); // Check every minute
 						})
-						.catch((error) => {
-							console.log('Service Worker registration failed:', error);
+						.catch(() => {
+							// Silent fail - app works without service worker
 						});
 				});
 			}
@@ -620,21 +625,36 @@
 			}
 
 			function loadImageFile(file, targetElement) {
-				if (!file) return;
+				if (!file || !targetElement) return;
+				
+				// Validate file type
+				if (!file.type.startsWith('image/')) {
+					alert('Please select a valid image file.');
+					return;
+				}
+				
 				const reader = new FileReader();
 				reader.onerror = () => {
-					alert('Error loading image.');
+					alert('Error reading image file. Please try again.');
+				};
+				reader.onabort = () => {
+					// File read was cancelled, silently handle
 				};
 				reader.onload = (e) => {
+					if (!e.target?.result) return;
+					
 					const img = new Image();
 					img.crossOrigin = 'anonymous';
 					img.onerror = () => {
 						alert('Error loading image. Please ensure it is a valid image format.');
 					};
 					img.onload = () => {
-						const width = img.width || Number(targetElement.width.baseVal.value) || DEFAULT_ICON_SIZE;
-						const height = img.height || Number(targetElement.height.baseVal.value) || DEFAULT_ICON_SIZE;
+						const width = img.width || Number(targetElement.width?.baseVal?.value) || DEFAULT_ICON_SIZE;
+						const height = img.height || Number(targetElement.height?.baseVal?.value) || DEFAULT_ICON_SIZE;
 						setImageHref(targetElement, e.target.result, width, height);
+					};
+					img.onabort = () => {
+						// Image load was cancelled
 					};
 					img.src = e.target.result;
 				};
@@ -646,22 +666,30 @@
 			}
 
 			function createSvgDataUrl(svgString) {
-				return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<?xml version="1.0" encoding="utf-8"?>\n' + svgString);
+				const xmlDeclaration = '<?xml version="1.0" encoding="utf-8"?>';
+				const fullSvg = xmlDeclaration + '\n' + svgString;
+				return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(fullSvg);
+			}
+			
+			// Validate numeric input
+			function isValidNumber(value, min = -Infinity, max = Infinity) {
+				const num = Number(value);
+				return !Number.isNaN(num) && num >= min && num <= max;
 			}
 
 			// Text input handlers
 			if (inputs.textUpper) {
 				inputs.textUpper.oninput = () => {
-					if (upperText) {
-						upperText.textContent = inputs.textUpper.value;
+					if (upperText && inputs.textUpper) {
+						upperText.textContent = inputs.textUpper.value || '';
 					}
 				};
 			}
 
 			if (inputs.textLower) {
 				inputs.textLower.oninput = () => {
-					if (lowerText) {
-						lowerText.textContent = inputs.textLower.value;
+					if (lowerText && inputs.textLower) {
+						lowerText.textContent = inputs.textLower.value || '';
 					}
 				};
 			}
@@ -670,6 +698,7 @@
 			const updatePositionX = () => {
 				if (!inputs.positionX) return;
 				const value = Number(inputs.positionX.value);
+				if (!isValidNumber(value)) return;
 				const blackPos = getIconPosition(iconBlack);
 				const redPos = getIconPosition(iconRed);
 				updateIconPosition(iconBlack, value, blackPos.y);
@@ -682,6 +711,7 @@
 			const updatePositionY = () => {
 				if (!inputs.positionY) return;
 				const value = Number(inputs.positionY.value);
+				if (!isValidNumber(value)) return;
 				const blackPos = getIconPosition(iconBlack);
 				const redPos = getIconPosition(iconRed);
 				updateIconPosition(iconBlack, blackPos.x, value);
@@ -695,6 +725,7 @@
 			const updateShiftX = () => {
 				if (!inputs.shiftX) return;
 				const value = Number(inputs.shiftX.value);
+				if (!isValidNumber(value)) return;
 				const blackShift = getIconShift(iconBlack);
 				const redShift = getIconShift(iconRed);
 				updateIconShift(iconBlack, value, blackShift.y, false);
@@ -707,6 +738,7 @@
 			const updateShiftY = () => {
 				if (!inputs.shiftY) return;
 				const value = Number(inputs.shiftY.value);
+				if (!isValidNumber(value)) return;
 				const blackShift = getIconShift(iconBlack);
 				const redShift = getIconShift(iconRed);
 				updateIconShift(iconBlack, blackShift.x, value, false);
@@ -872,7 +904,7 @@
 				if (!imgSizeInput) return;
 				
 				const imgSize = parseInt(imgSizeInput, 10);
-				if (Number.isNaN(imgSize) || imgSize <= 0 || imgSize > DEFAULTS.pngMaxSize) {
+				if (!isValidNumber(imgSize, 1, DEFAULTS.pngMaxSize)) {
 					alert(`Invalid image size. Please enter a number between 1 and ${DEFAULTS.pngMaxSize}.`);
 					return;
 				}
@@ -894,12 +926,18 @@
 						              imgEl.href?.baseVal;
 						if (!href || href.startsWith('data:')) continue;
 						
-						const resp = await fetch(href, { mode: 'cors' });
+						// Create abort controller for timeout
+						const controller = new AbortController();
+						const timeoutId = setTimeout(() => controller.abort(), 5000);
+						const resp = await fetch(href, { mode: 'cors', signal: controller.signal });
+						clearTimeout(timeoutId);
 						if (!resp.ok) throw new Error('fetch failed');
 						const blob = await resp.blob();
-						const dataUrl = await new Promise((resolve) => {
+						const dataUrl = await new Promise((resolve, reject) => {
 							const fr = new FileReader();
 							fr.onload = () => resolve(fr.result);
+							fr.onerror = reject;
+							fr.onabort = reject;
 							fr.readAsDataURL(blob);
 						});
 						imgEl.setAttributeNS(XLINK_NS, 'href', dataUrl);
@@ -928,7 +966,6 @@
 				const image = new Image();
 				image.crossOrigin = 'anonymous';
 				image.onerror = () => {
-					console.error('Error loading image for PNG export');
 					alert('Error loading SVG image. SVG opened in new tab as fallback.');
 					window.open(createSvgDataUrl(serialized), '_blank');
 					restoreSvgSize(originalSize, originalOffset);
@@ -938,10 +975,12 @@
 						ctx.drawImage(image, 0, 0);
 						downloadFile(canvas.toDataURL('image/png'), 'antifa.png');
 					} catch (e) {
-						console.error('PNG Export Error:', e);
 						alert('Export to PNG failed during finalization: canvas may be tainted. Opened SVG in new tab as fallback.');
 						window.open(createSvgDataUrl(serialized), '_blank');
 					}
+				};
+				image.onabort = () => {
+					restoreSvgSize(originalSize, originalOffset);
 				};
 				image.src = createSvgDataUrl(serialized);
 				};
@@ -1046,8 +1085,7 @@
 						updateBleed(bleedVal);
 					}
 					} catch (error) {
-						console.error('Import Error:', error);
-						alert('Error importing SVG: ' + error.message);
+						alert('Error importing SVG: ' + (error.message || 'Unknown error occurred'));
 					}
 				};
 				reader.readAsText(file);
