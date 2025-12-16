@@ -1,383 +1,597 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Antifa Sticker Generator</title>
-	<style>
-	 form {
-	     display: grid;
-	     grid-template-columns: 30% 50%;
-	 }
-	 svg {
-	     background: repeating-conic-gradient(#dddddd 0% 25%, #999999 0% 50%) 50% / 20px 20px;
-	 }
-	</style>
-    </head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Antifa Sticker Generator</title>
+		<style>
+			* {
+				box-sizing: border-box;
+			}
+			
+			body {
+				margin: 0;
+				padding: 1rem;
+				font-family: sans-serif;
+				max-width: 1200px;
+				margin: 0 auto;
+			}
+			
+			h1 {
+				margin-top: 0;
+				font-size: 1.8rem;
+			}
+			
+			#svg-container {
+				display: flex;
+				justify-content: center;
+				margin: 1rem 0;
+			}
+			
+			svg {
+				background: repeating-conic-gradient(#dddddd 0% 25%, #999999 0% 50%) 50% / 20px 20px;
+				max-width: 100%;
+				height: auto;
+				display: block;
+			}
+			
+			form {
+				display: grid;
+				grid-template-columns: 30% 50%;
+				gap: 0.5rem 1rem;
+				align-items: center;
+			}
+			
+			form > div {
+				grid-column: 1 / -1;
+				display: flex;
+				flex-wrap: wrap;
+				gap: 1rem;
+				align-items: center;
+			}
+			
+			label {
+				font-size: 0.9rem;
+			}
+			
+			input[type="text"],
+			input[type="range"],
+			input[type="file"],
+			input[type="button"] {
+				width: 100%;
+				padding: 0.5rem;
+			}
+			
+			input[type="button"] {
+				cursor: pointer;
+				font-size: 1rem;
+				border: 2px solid #333;
+				background: #f0f0f0;
+				border-radius: 4px;
+				transition: background 0.2s;
+			}
+			
+			input[type="button"]:hover,
+			input[type="button"]:active {
+				background: #e0e0e0;
+			}
+			
+			input[type="checkbox"] {
+				width: auto;
+				margin-right: 0.5rem;
+			}
+			
+			/* Mobile Styles */
+			@media (max-width: 767px) {
+				body {
+					padding: 0.5rem;
+				}
+				
+				h1 {
+					font-size: 1.5rem;
+					text-align: center;
+				}
+				
+				p {
+					text-align: center;
+					font-size: 0.9rem;
+				}
+				
+				#svg-container {
+					margin: 0.5rem 0;
+				}
+				
+				svg {
+					width: 100%;
+					max-width: 100vw;
+					height: auto;
+				}
+				
+				form {
+					grid-template-columns: 1fr;
+					gap: 0.75rem;
+				}
+				
+				form > div {
+					flex-direction: column;
+					align-items: flex-start;
+					gap: 0.75rem;
+				}
+				
+				label {
+					font-size: 0.95rem;
+					width: 100%;
+				}
+				
+				input[type="text"],
+				input[type="range"],
+				input[type="file"],
+				input[type="button"] {
+					padding: 0.75rem;
+					font-size: 1rem;
+					min-height: 44px; /* Touch-friendly size */
+				}
+				
+				input[type="range"] {
+					width: 100%;
+				}
+				
+				input[type="checkbox"] + label {
+					display: inline;
+					width: auto;
+				}
+				
+				input[type="button"] {
+					margin-top: 0.5rem;
+				}
+			}
+			
+			/* Desktop Styles */
+			@media (min-width: 768px) {
+				body {
+					padding: 2rem;
+				}
+				
+				#svg-container {
+					margin: 2rem 0;
+				}
+				
+				form {
+					grid-template-columns: 30% 1fr;
+					gap: 0.75rem 1.5rem;
+				}
+				
+				input[type="button"] {
+					max-width: 200px;
+				}
+			}
+		</style>
+	</head>
 	<body>
-	<h1>Antifa Sticker Generator V0.83</h1>
-        <p>
-            A purely client-side sticker generator. <a href="https://github.com/Ninso112/antifa-logo-generator">Source Code.</a>
-        </p>
-	<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 500" width="500" height="500" id="svg" role="img" aria-labelledby="svgTitle svgDesc">
-		<title id="svgTitle">Antifa Sticker</title>
-		<desc id="svgDesc">Generiertes Aufkleber-Design — anpassbar und als SVG/PNG exportierbar.</desc>
-	    <defs>
-		<filter id="black">
-        	    <feColorMatrix in="SourceGraphic" type="matrix"
-        			   values="1 0 0 0 0
-				       
-        			       0 1 0 0 0
-        			       0 0 1 0 0
-        			       0 0 0 1 0" />
-		</filter>
-		<filter id="red">
-        	    <feColorMatrix in="SourceGraphic" type="matrix"
-        			       values="1 1 1 1 0
-        			       0 0 0 0 0
-        			       0 0 0 0 0
-        			       0 0 0 1 0" />
-		</filter>
-	    </defs>
-            <g id="svgroot" transform="scale(1, 1)">
-	        <circle id="bleed" cx="250" cy="250" r="249" stroke="#ff00ff" fill="none" stroke-width="0" />
-	        <circle cx="250" cy="250" r="225" stroke="black" fill="white" stroke-width="50" />
-	        <g id="icon">
-		    <image transform="translate(0 0) translate(-9 -2) scale(1, 1)" id="iconred" xlink:href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2ZXJzaW9uPSIxLjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iNTEycHgiCiAgICAgaGVpZ2h0PSI1MTJweCIgdmlld0JveD0iMCAwIDUxMiA1MTIiPgogIDxwYXRoIGZpbGw9IiMwMDAwMDAiIGQ9Ik0xMjUuNjY3LDEyMi45MTdjMCwwLDI4LDMzLjA4Myw4OS4yNSwzNC4zMzNjNjEuMjUxLDEuMjUsOTUuOTE3LTM3LjkxNywxMzAuOTE3LTMzLjMzM3M2Myw0My4zMzMsNzcuNzUsNTAuMTY3TDMzMyw0MjUuNzUKICAgICAgICBjMCwwLTEuODMzLDEuMzM0LTExLDQuNjY3cy0xMS4zMzMsNC4zMzMtMTEuMzMzLDQuMzMzbDQwLjI1LTEyMi45MTdjMCwwLTM4Ljc1LTMyLjY4Ny03My43NS0zNQogICAgICAgIGMtMzUuMDAxLTIuMzEzLTUwLjkxNywyMy43NS0xMTAuMDgzLDEzLjc1QzEwNy45MTcsMjgwLjU4Myw2OS41LDI0My41LDY5LjUsMjQzLjVzLTEuNDE1LTIxLjA2NywxNC41LTU5LjgzMwogICAgICAgIEM5OS45MTQsMTQ0LjkwMiwxMjUuNjY3LDEyMi45MTcsMTI1LjY2NywxMjIuOTE3eiIvPgo8L3N2Zz4K" width="512" height="512" filter="url(#red)" />
-		    <image transform="translate(0 0) translate(-9 -2) scale(1, 1)" id="iconblack" xlink:href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2ZXJzaW9uPSIxLjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iNTEycHgiCiAgICAgaGVpZ2h0PSI1MTJweCIgdmlld0JveD0iMCAwIDUxMiA1MTIiPgogIDxwYXRoIGZpbGw9IiMwMDAwMDAiIGQ9Ik02OS45MTcsMjUxLjI1YzAsMCw0MS4wODQsMzguNDE2LDEwMi40MTcsNDYuMDgzYzYxLjMzMiw3LjY2Nyw2Ny4wMzktMTQuNDkxLDEwMC45MTYtMTQuMjUKICAgICAgICBjMjEuNTQ4LDAuMTUzLDI5LjMzNCw5LjU4NCwyOS4zMzQsOS41ODRsLTUzLjUwNiwxNDkuNjdjMCwwLTQuMTgtMC4wNDQtMTAuMDkyLTAuNjkyYy01LjkxMS0wLjY0OC05LjU0MS0xLjI5NC05LjU0MS0xLjI5NAogICAgICAgIEwyNTcsMzU3LjVjMCwwLTEzLjU4NC04LjcwNy0yNy4yNS0xMC41Yy0xMy42NjgtMS43OTMtMjEuMDQyLDMtNDYuNSwyLjVjLTI0LjA3My0wLjQ3My03MS4yNS0xMi43NS05My4zMzMtNDUuNzUKICAgICAgICBTNjkuOTE3LDI1MS4yNSw2OS45MTcsMjUxLjI1eiIvPgo8L3N2Zz4K" width="512" height="512" filter="url(#black)" />
-	        </g>
-		<path id="upper" stroke="none" fill="none" d="M 250 460 A 210 210 0 0 1 250 40 A 210 210 0 1 1 250 460"/>
-		<path id="lower" stroke="none" fill="none" d="M 250 10 A 240 240 0 1 0 250 490 A 210 210 0 0 0 250 10"/>
-	        <text style="fill: white; font-family: sans-serif; font-weight: bold; font-size: 40px; text-align: center; text-anchor: middle;"><textPath id="uppertext" startOffset="50%" xlink:href="#upper">ANTIFASCHISTISCHE</textPath></text>
-	        <text style="fill: white; font-family: sans-serif; font-weight: bold; font-size: 40px; text-align: center; text-anchor: middle;"><textPath id="lowertext" startOffset="50%" xlink:href="#lower">AKTION</textPath></text>
-            </g>
-	</svg>
-	<form>
-		<label for="input-text-upper">Upper text</label>
-	    <input type="text" id="input-text-upper" name="upper" value="ANTIFASCHISTISCHE">
-	    <label for="input-text-lower">Lower text</label>
-	    <input type="text" id="input-text-lower" name="lower" value="AKTION">
-		<label for="input-range-position-x">X Position</label>
-		<input type="range" id="input-range-position-x" name="position-x" value="-9" min="-500" max="500">
-		<label for="input-range-position-y">Y Position</label>
-		<input type="range" id="input-range-position-y" name="position-y" value="-2" min="-500" max="500">
-	    <label for="input-range-shift-x">X Shift</label>
-	    <input type="range" id="input-range-shift-x" name="distance-x" value="0" min="-250" max="250">
-	    <label for="input-range-shift-y">Y Shift</label>
-	    <input type="range" id="input-range-shift-y" name="distance-y" value="0" min="-250" max="250">
-	    <label for="input-range-scale-black">Black Scale</label>
-	    <input type="range" id="input-range-scale-black" name="scale-black" value="0" min="-3" max="3" step="0.01">
-	    <label for="input-range-scale-red">Red Scale</label>
-	    <input type="range" id="input-range-scale-red" name="scale-red" value="0" min="-3" max="3" step="0.01">
-	    <label for="input-file-icon-black">Black Icon (black+white+alpha only)</label>
-	    <input type="file" id="input-file-icon-black" name="icon-black" accept="image/*">
-	    <label for="input-file-icon-red">Red Icon (black+white+alpha only)</label>
-	    <input type="file" id="input-file-icon-red" name="icon-red" accept="image/*">
-	    <label for="input-range-bleed">Bleed (black in download)</label>
-	    <input type="range" id="input-range-bleed" name="bleed" value="0" min="0" max="50">
-	    <div>
-		<input type="checkbox" id="input-check-swap-red-black" name="swap-red-black">
-		<label for="input-check-swap-red-black">Red on top of black</label>
-		<input type="checkbox" id="input-check-lock-scale" name="lock-scale">
-		<label for="input-check-lock-scale">Same scale for red and black</label>
-	    </div>
-            <div>
-	        <input type="button" id="input-button-download" value="Download SVG">
-	        <input type="button" id="input-button-download-png" value="Download PNG">
-            </div>
-	    <label for="input-file-import-svg">Import downloaded SVG</label>
-	    <input type="file" id="input-file-import-svg" name="import-svg" accept="image/svg+xml">
-	</form>
-	<a id="download" download="antifa.svg" href="#"></a>
-	<a id="download-png" download="antifa.png" href="#"></a>
-	<script>
-	 let doc = document.getElementById('svg');
-	 let inputTextUpper = document.getElementById("input-text-upper");
-	 let inputTextLower = document.getElementById("input-text-lower");
-	 let inputRangePositionX = document.getElementById("input-range-position-x");
-	 let inputRangePositionY = document.getElementById("input-range-position-y");
-	 let inputRangeShiftX = document.getElementById("input-range-shift-x");
-	 let inputRangeShiftY = document.getElementById("input-range-shift-y");
-	 let inputRangeScaleBlack = document.getElementById("input-range-scale-black");
-	 let inputRangeScaleRed = document.getElementById("input-range-scale-red");
-	 let inputFileIconBlack = document.getElementById("input-file-icon-black");
-	 let inputFileIconRed = document.getElementById("input-file-icon-red");
-	 let inputCheckSwap = document.getElementById("input-check-swap-red-black");
-	 let inputCheckLockScale = document.getElementById("input-check-lock-scale");
-	 let inputRangeBleed = document.getElementById("input-range-bleed");
-	 let inputButtonDownload = document.getElementById("input-button-download");
-	 let inputButtonDownloadPng = document.getElementById("input-button-download-png");
-	 let inputFileImportSvg = document.getElementById("input-file-import-svg");
-	 inputTextUpper.oninput = (ev) => {
-	     doc.getElementById("uppertext").textContent = inputTextUpper.value;
-	 };
-	 inputTextLower.oninput = (ev) => {
-	     doc.getElementById("lowertext").textContent = inputTextLower.value;
-	 };
-	 inputRangePositionX.oninput = (ev) => {
-	     doc.getElementById("iconblack").transform.baseVal[1].matrix.e = Number(inputRangePositionX.value);
-	     doc.getElementById("iconred").transform.baseVal[1].matrix.e = Number(inputRangePositionX.value);
-	 };
-	 inputRangePositionY.oninput = (ev) => {
-	     doc.getElementById("iconblack").transform.baseVal[1].matrix.f = Number(inputRangePositionY.value);
-	     doc.getElementById("iconred").transform.baseVal[1].matrix.f = Number(inputRangePositionY.value);
-	 };
-	 inputRangeShiftX.oninput = (ev) => {
-	     doc.getElementById("iconblack").transform.baseVal[0].matrix.e = Number(inputRangeShiftX.value);
-	     doc.getElementById("iconred").transform.baseVal[0].matrix.e = -Number(inputRangeShiftX.value);
-	 };
-	 inputRangeShiftY.oninput = (ev) => {
-	     doc.getElementById("iconblack").transform.baseVal[0].matrix.f = Number(inputRangeShiftY.value);
-	     doc.getElementById("iconred").transform.baseVal[0].matrix.f = -Number(inputRangeShiftY.value);
-	 };
-	 inputRangeScaleBlack.oninput = (ev) => {
-	     let iconblack = doc.getElementById("iconblack");
-	     let v = Math.pow(10, Number(inputRangeScaleBlack.value));
-	     iconblack.transform.baseVal[2].matrix.a = v;
-	     iconblack.transform.baseVal[2].matrix.d = v;
-	     if (inputCheckLockScale.checked) {
-	 	 let iconred = doc.getElementById("iconred");
-	 	 iconred.transform.baseVal[2].matrix.a = v;
-	 	 iconred.transform.baseVal[2].matrix.d = v;
-	     }
-	 };
-	 inputRangeScaleRed.oninput = (ev) => {
-	     let iconred = doc.getElementById("iconred");
-	     let v = Math.pow(10, Number(inputRangeScaleRed.value));
-	     iconred.transform.baseVal[2].matrix.a = v;
-	     iconred.transform.baseVal[2].matrix.d = v;
-	 };
-	 inputFileIconBlack.onchange = (ev) => {
-	     let file = ev.target.files[0];
-	     let reader = new FileReader();
-	     let iconblack = doc.getElementById("iconblack");
-	     reader.onload = (re) => {
-	 	 let img = new Image();
-	 	 img.crossOrigin = 'anonymous';
-	 	 img.onload = () => {
-	 	     iconblack.href.baseVal = re.target.result;
-	 	     iconblack.setAttributeNS('http://www.w3.org/1999/xlink', 'href', re.target.result);
-	 	     iconblack.width.baseVal.value = img.width || Number(iconblack.width.baseVal.value) || 512;
-	 	     iconblack.height.baseVal.value = img.height || Number(iconblack.height.baseVal.value) || 512;
-	 	 };
-	 	 img.src = re.target.result;
-	     };
-	     reader.readAsDataURL(file);
-	 };
-	 inputFileIconRed.onchange = (ev) => {
-	     let file = ev.target.files[0];
-	     let reader = new FileReader();
-	     let iconred = doc.getElementById("iconred");
- 	     reader.onload = (re) => {
- 	 	 let img = new Image();
- 	 	 img.crossOrigin = 'anonymous';
- 	 	 img.onload = () => {
- 	 	     iconred.href.baseVal = re.target.result;
- 	 	     iconred.setAttributeNS('http://www.w3.org/1999/xlink', 'href', re.target.result);
- 	 	     iconred.width.baseVal.value = img.width || Number(iconred.width.baseVal.value) || 512;
- 	 	     iconred.height.baseVal.value = img.height || Number(iconred.height.baseVal.value) || 512;
- 	 	 };
- 	 	 img.src = re.target.result;
- 	     };
-	     reader.readAsDataURL(file);
-	 };
-	 inputCheckSwap.onchange = (ev) => {
-	     if (ev.target.checked) {
-		 doc.getElementById("icon").insertBefore(doc.getElementById("iconblack"), doc.getElementById("iconred"));
-	     } else {
-		 doc.getElementById("icon").insertBefore(doc.getElementById("iconred"), doc.getElementById("iconblack"));
-	     }
-	 };
-	 inputCheckLockScale.onchange = (ev) => {
-	     inputRangeScaleRed.disabled = ev.target.checked;
-	     let iconred = doc.getElementById("iconred");
-	     if (ev.target.checked) {
-		 iconred.transform.baseVal[2].matrix.a = Math.pow(10, inputRangeScaleBlack.value);
-		 iconred.transform.baseVal[2].matrix.d = Math.pow(10, inputRangeScaleBlack.value);
-	     } else {
-		 iconred.transform.baseVal[2].matrix.a = Math.pow(10, inputRangeScaleRed.value);
-		 iconred.transform.baseVal[2].matrix.d = Math.pow(10, inputRangeScaleRed.value);		     
-	     }
-	 }
-	 inputRangeBleed.oninput = (ev) => {
-	     let bleed = doc.getElementById("bleed");
-	     let bleedVal = parseInt(inputRangeBleed.value);
-	     if (bleedVal == 0) {
-		 bleed.style.strokeWidth = 0;
-	     } else {
-		 bleed.style.strokeWidth = bleedVal * 2 + 1;
-	     }
-	     doc.width.baseVal.value = 500 + bleedVal * 2;
-	     doc.height.baseVal.value = 500 + bleedVal * 2;
-	     doc.viewBox.baseVal.x = -bleedVal;
-	     doc.viewBox.baseVal.y = -bleedVal;
-	     doc.viewBox.baseVal.width = 500 + bleedVal * 2;
-	     doc.viewBox.baseVal.height = 500 + bleedVal * 2;
-	 };
-	 inputButtonDownload.onclick = (ev) => {
-	     doc.getElementById("bleed").style.stroke = 'black';
-	     let serialized = new XMLSerializer().serializeToString(doc);
-	     doc.getElementById("bleed").style.stroke = '#ff00ff';
-	     let a = document.getElementById('download');
-	     a.setAttribute('href', 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<?xml version="1.0" encoding="utf-8"?>\n' + serialized));
-	     a.click();
-	 };
-	 inputButtonDownloadPng.onclick = async (ev) => {
-			let svgSize = Number(doc.width.baseVal.value);
-			let svgOffset = Number(doc.viewBox.baseVal.x);
-			let imgSize = parseInt(prompt("Enter image size (e.g. 2048)", "2048"), 10);
-	             let svgRoot = doc.getElementById("svgroot");
-	             if (Number.isNaN(imgSize)) {
-	                 return;
-	             }
-	             // Resize SVG to output size, then export as XML, and resize back to default size
-	     doc.getElementById("bleed").style.stroke = 'black';
-	             doc.width.baseVal.value = imgSize;
-	             doc.height.baseVal.value = imgSize;
-	             doc.viewBox.baseVal.width = imgSize;
-	             doc.viewBox.baseVal.height = imgSize;
-	             doc.viewBox.baseVal.x = svgOffset * imgSize/svgSize;
-	             doc.viewBox.baseVal.y = svgOffset * imgSize/svgSize;
-	             svgRoot.transform.baseVal[0].matrix.a = imgSize/svgSize;
-	             svgRoot.transform.baseVal[0].matrix.d = imgSize/svgSize;
+		<h1>Antifa Sticker Generator V0.85</h1>
+		<p>
+			A purely client-side sticker generator. <a href="https://github.com/Ninso112/antifa-logo-generator">Source Code.</a>
+		</p>
+		<div id="svg-container">
+			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 500" width="500" height="500" id="svg" role="img" aria-labelledby="svgTitle svgDesc">
+			<title id="svgTitle">Antifa Sticker</title>
+			<desc id="svgDesc">Generiertes Aufkleber-Design — anpassbar und als SVG/PNG exportierbar.</desc>
+			<defs>
+				<filter id="black">
+					<feColorMatrix in="SourceGraphic" type="matrix"
+						values="1 0 0 0 0
+						0 1 0 0 0
+						0 0 1 0 0
+						0 0 0 1 0" />
+				</filter>
+				<filter id="red">
+					<feColorMatrix in="SourceGraphic" type="matrix"
+						values="1 1 1 1 0
+						0 0 0 0 0
+						0 0 0 0 0
+						0 0 0 1 0" />
+				</filter>
+			</defs>
+			<g id="svgroot" transform="scale(1, 1)">
+				<circle id="bleed" cx="250" cy="250" r="249" stroke="#ff00ff" fill="none" stroke-width="0" />
+				<circle cx="250" cy="250" r="225" stroke="black" fill="white" stroke-width="50" />
+				<g id="icon">
+					<image transform="translate(0 0) translate(-9 -2) scale(1, 1)" id="iconred" xlink:href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2ZXJzaW9uPSIxLjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iNTEycHgiCiAgICAgaGVpZ2h0PSI1MTJweCIgdmlld0JveD0iMCAwIDUxMiA1MTIiPgogIDxwYXRoIGZpbGw9IiMwMDAwMDAiIGQ9Ik0xMjUuNjY3LDEyMi45MTdjMCwwLDI4LDMzLjA4Myw4OS4yNSwzNC4zMzNjNjEuMjUxLDEuMjUsOTUuOTE3LTM3LjkxNywxMzAuOTE3LTMzLjMzM3M2Myw0My4zMzMsNzcuNzUsNTAuMTY3TDMzMyw0MjUuNzUKICAgICAgICBjMCwwLTEuODMzLDEuMzM0LTExLDQuNjY3cy0xMS4zMzMsNC4zMzMtMTEuMzMzLDQuMzMzbDQwLjI1LTEyMi45MTdjMCwwLTM4Ljc1LTMyLjY4Ny03My43NS0zNQogICAgICAgIGMtMzUuMDAxLTIuMzEzLTUwLjkxNywyMy43NS0xMTAuMDgzLDEzLjc1QzEwNy45MTcsMjgwLjU4Myw2OS41LDI0My41LDY5LjUsMjQzLjVzLTEuNDE1LTIxLjA2NywxNC41LTU5LjgzMwogICAgICAgIEM5OS45MTQsMTQ0LjkwMiwxMjUuNjY3LDEyMi45MTcsMTI1LjY2NywxMjIuOTE3eiIvPgo8L3N2Zz4K" width="512" height="512" filter="url(#red)" />
+					<image transform="translate(0 0) translate(-9 -2) scale(1, 1)" id="iconblack" xlink:href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2ZXJzaW9uPSIxLjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iNTEycHgiCiAgICAgaGVpZ2h0PSI1MTJweCIgdmlld0JveD0iMCAwIDUxMiA1MTIiPgogIDxwYXRoIGZpbGw9IiMwMDAwMDAiIGQ9Ik02OS45MTcsMjUxLjI1YzAsMCw0MS4wODQsMzguNDE2LDEwMi40MTcsNDYuMDgzYzYxLjMzMiw3LjY2Nyw2Ny4wMzktMTQuNDkxLDEwMC45MTYtMTQuMjUKICAgICAgICBjMjEuNTQ4LDAuMTUzLDI5LjMzNCw5LjU4NCwyOS4zMzQsOS41ODRsLTUzLjUwNiwxNDkuNjdjMCwwLTQuMTgtMC4wNDQtMTAuMDkyLTAuNjkyYy01LjkxMS0wLjY0OC05LjU0MS0xLjI5NC05LjU0MS0xLjI5NAogICAgICAgIEwyNTcsMzU3LjVjMCwwLTEzLjU4NC04LjcwNy0yNy4yNS0xMC41Yy0xMy42NjgtMS43OTMtMjEuMDQyLDMtNDYuNSwyLjVjLTI0LjA3My0wLjQ3My03MS4yNS0xMi43NS05My4zMzMtNDUuNzUKICAgICAgICBTNjkuOTE3LDI1MS4yNSw2OS45MTcsMjUxLjI1eiIvPgo8L3N2Zz4K" width="512" height="512" filter="url(#black)" />
+				</g>
+				<path id="upper" stroke="none" fill="none" d="M 250 460 A 210 210 0 0 1 250 40 A 210 210 0 1 1 250 460"/>
+				<path id="lower" stroke="none" fill="none" d="M 250 10 A 240 240 0 1 0 250 490 A 210 210 0 0 0 250 10"/>
+				<text style="fill: white; font-family: sans-serif; font-weight: bold; font-size: 40px; text-align: center; text-anchor: middle;"><textPath id="uppertext" startOffset="50%" xlink:href="#upper">ANTIFASCHISTISCHE</textPath></text>
+				<text style="fill: white; font-family: sans-serif; font-weight: bold; font-size: 40px; text-align: center; text-anchor: middle;"><textPath id="lowertext" startOffset="50%" xlink:href="#lower">AKTION</textPath></text>
+			</g>
+		</svg>
+		</div>
+		<form>
+			<label for="input-text-upper">Upper text</label>
+			<input type="text" id="input-text-upper" name="upper" value="ANTIFASCHISTISCHE">
+			<label for="input-text-lower">Lower text</label>
+			<input type="text" id="input-text-lower" name="lower" value="AKTION">
+			<label for="input-range-position-x">X Position</label>
+			<input type="range" id="input-range-position-x" name="position-x" value="-9" min="-500" max="500">
+			<label for="input-range-position-y">Y Position</label>
+			<input type="range" id="input-range-position-y" name="position-y" value="-2" min="-500" max="500">
+			<label for="input-range-shift-x">X Shift</label>
+			<input type="range" id="input-range-shift-x" name="distance-x" value="0" min="-250" max="250">
+			<label for="input-range-shift-y">Y Shift</label>
+			<input type="range" id="input-range-shift-y" name="distance-y" value="0" min="-250" max="250">
+			<label for="input-range-scale-black">Black Scale</label>
+			<input type="range" id="input-range-scale-black" name="scale-black" value="0" min="-3" max="3" step="0.01">
+			<label for="input-range-scale-red">Red Scale</label>
+			<input type="range" id="input-range-scale-red" name="scale-red" value="0" min="-3" max="3" step="0.01">
+			<label for="input-file-icon-black">Black Icon (black+white+alpha only)</label>
+			<input type="file" id="input-file-icon-black" name="icon-black" accept="image/*">
+			<label for="input-file-icon-red">Red Icon (black+white+alpha only)</label>
+			<input type="file" id="input-file-icon-red" name="icon-red" accept="image/*">
+			<label for="input-range-bleed">Bleed (black in download)</label>
+			<input type="range" id="input-range-bleed" name="bleed" value="0" min="0" max="50">
+			<div>
+				<input type="checkbox" id="input-check-swap-red-black" name="swap-red-black">
+				<label for="input-check-swap-red-black">Red on top of black</label>
+				<input type="checkbox" id="input-check-lock-scale" name="lock-scale">
+				<label for="input-check-lock-scale">Same scale for red and black</label>
+			</div>
+			<div>
+				<input type="button" id="input-button-download" value="Download SVG">
+				<input type="button" id="input-button-download-png" value="Download PNG">
+			</div>
+			<label for="input-file-import-svg">Import downloaded SVG</label>
+			<input type="file" id="input-file-import-svg" name="import-svg" accept="image/svg+xml">
+		</form>
+		<a id="download" download="antifa.svg" href="#"></a>
+		<a id="download-png" download="antifa.png" href="#"></a>
+		<script>
+			// Constants
+			const XLINK_NS = 'http://www.w3.org/1999/xlink';
+			const DEFAULT_SIZE = 500;
+			const DEFAULT_ICON_SIZE = 512;
 
-		    // Clone and try to inline external images (fetch -> dataURL). If any fail due to CORS, abort PNG export and open SVG.
-		    let clone = doc.cloneNode(true);
-		    let failures = 0;
-		    let images = clone.querySelectorAll('image');
-		    for (let imgEl of images) {
-			    try {
-				    let href = imgEl.getAttributeNS('http://www.w3.org/1999/xlink', 'href') || imgEl.getAttribute('href') || imgEl.href && imgEl.href.baseVal;
-				    if (!href || href.startsWith('data:')) continue;
-				    // try fetch; will fail if remote server disallows CORS
-				    let resp = await fetch(href, {mode: 'cors'});
-				    if (!resp.ok) throw new Error('fetch failed');
-				    let blob = await resp.blob();
-				    let dataUrl = await new Promise((res) => { let fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); });
-				    imgEl.setAttributeNS('http://www.w3.org/1999/xlink', 'href', dataUrl);
-			    } catch (e) {
-				    failures++;
-			    }
-		    }
-		    let serialized;
-		    if (failures > 0) {
-			    // revert sizing
-			    doc.getElementById("bleed").style.stroke = '#ff00ff';
-			    svgRoot.transform.baseVal[0].matrix.a = 1;
-			    svgRoot.transform.baseVal[0].matrix.d = 1;
-			    doc.viewBox.baseVal.width = svgSize;
-			    doc.viewBox.baseVal.height = svgSize;
-			    doc.viewBox.baseVal.x = svgOffset;
-			    doc.viewBox.baseVal.y = svgOffset;
-			    doc.width.baseVal.value = svgSize;
-			    doc.height.baseVal.value = svgSize;
-			    alert('Could not inline ' + failures + ' external image(s) due to CORS. PNG export aborted. The SVG will open in a new tab; use "Download SVG" or host images with CORS enabled to export PNG.');
-			    serialized = new XMLSerializer().serializeToString(clone);
-			    window.open('data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<?xml version="1.0" encoding="utf-8"?>\n' + serialized), '_blank');
-			    return;
-		    } else {
-			    serialized = new XMLSerializer().serializeToString(clone);
-		    }
+			// DOM elements
+			const doc = document.getElementById('svg');
+			const svgRoot = doc.getElementById("svgroot");
+			const iconContainer = doc.getElementById("icon");
+			const iconBlack = doc.getElementById("iconblack");
+			const iconRed = doc.getElementById("iconred");
+			const upperText = doc.getElementById("uppertext");
+			const lowerText = doc.getElementById("lowertext");
+			const bleedCircle = doc.getElementById("bleed");
 
-		    // revert original SVG to previous size
-		    doc.getElementById("bleed").style.stroke = '#ff00ff';
-	             svgRoot.transform.baseVal[0].matrix.a = 1;
-	             svgRoot.transform.baseVal[0].matrix.d = 1;
-	             doc.viewBox.baseVal.width = svgSize;
-	             doc.viewBox.baseVal.height = svgSize;
-	             doc.viewBox.baseVal.x = svgOffset;
-	             doc.viewBox.baseVal.y = svgOffset;
-	             doc.width.baseVal.value = svgSize;
-	             doc.height.baseVal.value = svgSize;
+			// Input elements
+			const inputs = {
+				textUpper: document.getElementById("input-text-upper"),
+				textLower: document.getElementById("input-text-lower"),
+				positionX: document.getElementById("input-range-position-x"),
+				positionY: document.getElementById("input-range-position-y"),
+				shiftX: document.getElementById("input-range-shift-x"),
+				shiftY: document.getElementById("input-range-shift-y"),
+				scaleBlack: document.getElementById("input-range-scale-black"),
+				scaleRed: document.getElementById("input-range-scale-red"),
+				fileIconBlack: document.getElementById("input-file-icon-black"),
+				fileIconRed: document.getElementById("input-file-icon-red"),
+				checkSwap: document.getElementById("input-check-swap-red-black"),
+				checkLockScale: document.getElementById("input-check-lock-scale"),
+				bleed: document.getElementById("input-range-bleed"),
+				buttonDownload: document.getElementById("input-button-download"),
+				buttonDownloadPng: document.getElementById("input-button-download-png"),
+				fileImportSvg: document.getElementById("input-file-import-svg")
+			};
 
-		    let canvas = document.createElement('canvas');
-	            canvas.width = imgSize;
-	            canvas.height = imgSize;
-	            let ctx = canvas.getContext("2d");
-	            let image = new Image();
-	            image.crossOrigin = 'anonymous';
-	            image.onload = () => {
-	                ctx.drawImage(image, 0, 0);
-		        try {
-		            let a = document.getElementById('download-png');
-		            a.setAttribute('href', canvas.toDataURL('image/png'));
-		            a.click();
-		        } catch (e) {
-		            alert('Export to PNG failed during finalization: canvas may be tainted. Opened SVG in new tab as fallback.');
-		            window.open('data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<?xml version="1.0" encoding="utf-8"?>\n' + serialized), '_blank');
-		        }
-	            };
-	            image.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<?xml version="1.0" encoding="utf-8"?>\n' + serialized);
-	 };
-	 inputFileImportSvg.onchange = (ev) => {
-	     let file = ev.target.files[0];
-	     let reader = new FileReader();
-	     reader.onload = (re) => {
-		 let parser = new DOMParser();
-		 let imp = parser.parseFromString(re.target.result, 'image/svg+xml');
-		 let iconblack = doc.getElementById('iconblack');
-		 let iconred = doc.getElementById('iconred');
-		 // texts
-		 inputTextUpper.value = imp.getElementById('uppertext').textContent;
-		 inputTextLower.value = imp.getElementById('lowertext').textContent;
-		 doc.getElementById('uppertext').textContent = inputTextUpper.value;
-		 doc.getElementById('lowertext').textContent = inputTextLower.value;
-		 // img href
-		 let iconblackHref = imp.getElementById('iconblack').href.baseVal;
-		 let iconredHref = imp.getElementById('iconred').href.baseVal;
-		 iconblack.href.baseVal = iconblackHref;
-		 iconblack.setAttributeNS('http://www.w3.org/1999/xlink', 'href', iconblackHref);
-		 iconred.href.baseVal = iconredHref;
-		 iconred.setAttributeNS('http://www.w3.org/1999/xlink', 'href', iconredHref);
-		 // shift
-		 inputRangeShiftX.value = imp.getElementById('iconblack').transform.baseVal[0].matrix.e;
-		 inputRangeShiftY.value = imp.getElementById('iconblack').transform.baseVal[0].matrix.f;
-		 iconblack.transform.baseVal[0].matrix.e = inputRangeShiftX.value;
-		 iconred.transform.baseVal[0].matrix.e = -inputRangeShiftX.value;
-		 iconblack.transform.baseVal[0].matrix.f = inputRangeShiftY.value;
-		 iconred.transform.baseVal[0].matrix.f = -inputRangeShiftY.value;
-		 // position
-		 inputRangePositionX.value = imp.getElementById('iconblack').transform.baseVal[1].matrix.e;
-		 inputRangePositionY.value = imp.getElementById('iconblack').transform.baseVal[1].matrix.f;
-		 iconblack.transform.baseVal[1].matrix.e = inputRangePositionX.value;
-		 iconred.transform.baseVal[1].matrix.e = inputRangePositionX.value;
-		 iconblack.transform.baseVal[1].matrix.f = inputRangePositionY.value;
-		 iconred.transform.baseVal[1].matrix.f = inputRangePositionY.value;
-		 // scale
-		 let scaleBlack = imp.getElementById('iconblack').transform.baseVal[2].matrix.a;
-		 let scaleRed = imp.getElementById('iconred').transform.baseVal[2].matrix.a;
-		 inputRangeScaleBlack.value = Math.log10(scaleBlack);
-		 inputRangeScaleRed.value = Math.log10(scaleRed);
-		 iconblack.transform.baseVal[2].matrix.a = scaleBlack;
-		 iconblack.transform.baseVal[2].matrix.d = scaleBlack;
-		 iconred.transform.baseVal[2].matrix.a = scaleRed;
-		 iconred.transform.baseVal[2].matrix.d = scaleRed;
-		 // swap
-		 if (imp.getElementById('icon').children[0].id == 'iconblack') {
-		     inputCheckSwap.checked = true;
-		     doc.getElementById('icon').insertBefore(doc.getElementById('iconblack'), doc.getElementById('iconred'));
-		 } else {
-		     inputCheckSwap.checked = false;
-		     doc.getElementById('icon').insertBefore(doc.getElementById('iconred'), doc.getElementById('iconblack'));
-		 }
-		 // bleed
-		 inputRangeBleed.value = Math.max(imp.getElementById('bleed').style.strokeWidth - 1, 0);
-		 let bleed = doc.getElementById("bleed");
-		 let bleedVal = parseInt(inputRangeBleed.value);
-		 if (bleedVal == 0) {
-		     bleed.style.strokeWidth = 0;
-		 } else {
-		     bleed.style.strokeWidth = bleedVal * 2 + 1;
-		 }
-		 doc.width.baseVal.value = 500 + bleedVal * 2;
-		 doc.height.baseVal.value = 500 + bleedVal * 2;
-		 doc.viewBox.baseVal.x = -bleedVal;
-		 doc.viewBox.baseVal.y = -bleedVal;
-		 doc.viewBox.baseVal.width = 500 + bleedVal * 2;
-		 doc.viewBox.baseVal.height = 500 + bleedVal * 2;
-	     };
-	     reader.readAsText(file);		 
-	 };
-	</script>
-    </body>
+			// Helper functions
+			function setImageHref(imgElement, dataUrl, width, height) {
+				imgElement.href.baseVal = dataUrl;
+				imgElement.setAttributeNS(XLINK_NS, 'href', dataUrl);
+				if (width) imgElement.width.baseVal.value = width;
+				if (height) imgElement.height.baseVal.value = height;
+			}
+
+			function updateBleed(bleedVal) {
+				bleedCircle.style.strokeWidth = bleedVal === 0 ? 0 : bleedVal * 2 + 1;
+				const size = DEFAULT_SIZE + bleedVal * 2;
+				doc.width.baseVal.value = size;
+				doc.height.baseVal.value = size;
+				doc.viewBox.baseVal.x = -bleedVal;
+				doc.viewBox.baseVal.y = -bleedVal;
+				doc.viewBox.baseVal.width = size;
+				doc.viewBox.baseVal.height = size;
+			}
+
+			function resizeSvg(size, offset) {
+				doc.width.baseVal.value = size;
+				doc.height.baseVal.value = size;
+				doc.viewBox.baseVal.width = size;
+				doc.viewBox.baseVal.height = size;
+				doc.viewBox.baseVal.x = offset;
+				doc.viewBox.baseVal.y = offset;
+				svgRoot.transform.baseVal[0].matrix.a = size / DEFAULT_SIZE;
+				svgRoot.transform.baseVal[0].matrix.d = size / DEFAULT_SIZE;
+			}
+
+			function restoreSvgSize(originalSize, originalOffset) {
+				doc.width.baseVal.value = originalSize;
+				doc.height.baseVal.value = originalSize;
+				doc.viewBox.baseVal.width = originalSize;
+				doc.viewBox.baseVal.height = originalSize;
+				doc.viewBox.baseVal.x = originalOffset;
+				doc.viewBox.baseVal.y = originalOffset;
+				svgRoot.transform.baseVal[0].matrix.a = 1;
+				svgRoot.transform.baseVal[0].matrix.d = 1;
+			}
+
+			function loadImageFile(file, targetElement) {
+				if (!file) return;
+				const reader = new FileReader();
+				reader.onload = (e) => {
+					const img = new Image();
+					img.crossOrigin = 'anonymous';
+					img.onload = () => {
+						const width = img.width || Number(targetElement.width.baseVal.value) || DEFAULT_ICON_SIZE;
+						const height = img.height || Number(targetElement.height.baseVal.value) || DEFAULT_ICON_SIZE;
+						setImageHref(targetElement, e.target.result, width, height);
+					};
+					img.src = e.target.result;
+				};
+				reader.readAsDataURL(file);
+			}
+
+			function serializeSvg() {
+				return new XMLSerializer().serializeToString(doc);
+			}
+
+			function createSvgDataUrl(svgString) {
+				return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<?xml version="1.0" encoding="utf-8"?>\n' + svgString);
+			}
+
+			// Event handlers
+			inputs.textUpper.oninput = () => {
+				upperText.textContent = inputs.textUpper.value;
+			};
+
+			inputs.textLower.oninput = () => {
+				lowerText.textContent = inputs.textLower.value;
+			};
+
+			inputs.positionX.oninput = () => {
+				const value = Number(inputs.positionX.value);
+				iconBlack.transform.baseVal[1].matrix.e = value;
+				iconRed.transform.baseVal[1].matrix.e = value;
+			};
+
+			inputs.positionY.oninput = () => {
+				const value = Number(inputs.positionY.value);
+				iconBlack.transform.baseVal[1].matrix.f = value;
+				iconRed.transform.baseVal[1].matrix.f = value;
+			};
+
+			inputs.shiftX.oninput = () => {
+				const value = Number(inputs.shiftX.value);
+				iconBlack.transform.baseVal[0].matrix.e = value;
+				iconRed.transform.baseVal[0].matrix.e = -value;
+			};
+
+			inputs.shiftY.oninput = () => {
+				const value = Number(inputs.shiftY.value);
+				iconBlack.transform.baseVal[0].matrix.f = value;
+				iconRed.transform.baseVal[0].matrix.f = -value;
+			};
+
+			inputs.scaleBlack.oninput = () => {
+				const scale = Math.pow(10, Number(inputs.scaleBlack.value));
+				const matrix = iconBlack.transform.baseVal[2].matrix;
+				matrix.a = scale;
+				matrix.d = scale;
+				if (inputs.checkLockScale.checked) {
+					const redMatrix = iconRed.transform.baseVal[2].matrix;
+					redMatrix.a = scale;
+					redMatrix.d = scale;
+				}
+			};
+
+			inputs.scaleRed.oninput = () => {
+				const scale = Math.pow(10, Number(inputs.scaleRed.value));
+				const matrix = iconRed.transform.baseVal[2].matrix;
+				matrix.a = scale;
+				matrix.d = scale;
+			};
+
+			inputs.fileIconBlack.onchange = (e) => {
+				loadImageFile(e.target.files[0], iconBlack);
+			};
+
+			inputs.fileIconRed.onchange = (e) => {
+				loadImageFile(e.target.files[0], iconRed);
+			};
+
+			inputs.checkSwap.onchange = () => {
+				const first = inputs.checkSwap.checked ? iconBlack : iconRed;
+				const second = inputs.checkSwap.checked ? iconRed : iconBlack;
+				iconContainer.insertBefore(first, second);
+			};
+
+			inputs.checkLockScale.onchange = () => {
+				inputs.scaleRed.disabled = inputs.checkLockScale.checked;
+				const scale = Math.pow(10, Number(inputs.scaleBlack.value));
+				const matrix = iconRed.transform.baseVal[2].matrix;
+				if (inputs.checkLockScale.checked) {
+					matrix.a = scale;
+					matrix.d = scale;
+				} else {
+					const redScale = Math.pow(10, Number(inputs.scaleRed.value));
+					matrix.a = redScale;
+					matrix.d = redScale;
+				}
+			};
+
+			inputs.bleed.oninput = () => {
+				updateBleed(parseInt(inputs.bleed.value, 10));
+			};
+
+			inputs.buttonDownload.onclick = () => {
+				bleedCircle.style.stroke = 'black';
+				const serialized = serializeSvg();
+				bleedCircle.style.stroke = '#ff00ff';
+				const link = document.getElementById('download');
+				link.setAttribute('href', createSvgDataUrl(serialized));
+				link.click();
+			};
+
+			inputs.buttonDownloadPng.onclick = async () => {
+				const originalSize = Number(doc.width.baseVal.value);
+				const originalOffset = Number(doc.viewBox.baseVal.x);
+				const imgSize = parseInt(prompt("Enter image size (e.g. 2048)", "2048"), 10);
+				
+				if (Number.isNaN(imgSize)) return;
+
+				// Resize SVG for export
+				bleedCircle.style.stroke = 'black';
+				const offset = originalOffset * imgSize / originalSize;
+				resizeSvg(imgSize, offset);
+
+				// Clone and inline external images
+				const clone = doc.cloneNode(true);
+				let failures = 0;
+				const images = clone.querySelectorAll('image');
+				
+				for (const imgEl of images) {
+					try {
+						const href = imgEl.getAttributeNS(XLINK_NS, 'href') || 
+						              imgEl.getAttribute('href') || 
+						              imgEl.href?.baseVal;
+						if (!href || href.startsWith('data:')) continue;
+						
+						const resp = await fetch(href, { mode: 'cors' });
+						if (!resp.ok) throw new Error('fetch failed');
+						const blob = await resp.blob();
+						const dataUrl = await new Promise((resolve) => {
+							const fr = new FileReader();
+							fr.onload = () => resolve(fr.result);
+							fr.readAsDataURL(blob);
+						});
+						imgEl.setAttributeNS(XLINK_NS, 'href', dataUrl);
+					} catch (e) {
+						failures++;
+					}
+				}
+
+				// Restore original size
+				bleedCircle.style.stroke = '#ff00ff';
+				restoreSvgSize(originalSize, originalOffset);
+
+				const serialized = new XMLSerializer().serializeToString(clone);
+				
+				if (failures > 0) {
+					alert(`Could not inline ${failures} external image(s) due to CORS. PNG export aborted. The SVG will open in a new tab; use "Download SVG" or host images with CORS enabled to export PNG.`);
+					window.open(createSvgDataUrl(serialized), '_blank');
+					return;
+				}
+
+				// Render to canvas
+				const canvas = document.createElement('canvas');
+				canvas.width = imgSize;
+				canvas.height = imgSize;
+				const ctx = canvas.getContext("2d");
+				const image = new Image();
+				image.crossOrigin = 'anonymous';
+				image.onload = () => {
+					ctx.drawImage(image, 0, 0);
+					try {
+						const link = document.getElementById('download-png');
+						link.setAttribute('href', canvas.toDataURL('image/png'));
+						link.click();
+					} catch (e) {
+						alert('Export to PNG failed during finalization: canvas may be tainted. Opened SVG in new tab as fallback.');
+						window.open(createSvgDataUrl(serialized), '_blank');
+					}
+				};
+				image.src = createSvgDataUrl(serialized);
+			};
+
+			inputs.fileImportSvg.onchange = (e) => {
+				const file = e.target.files[0];
+				if (!file) return;
+				
+				const reader = new FileReader();
+				reader.onload = (e) => {
+					const parser = new DOMParser();
+					const imported = parser.parseFromString(e.target.result, 'image/svg+xml');
+					
+					// Import text
+					const impUpperText = imported.getElementById('uppertext');
+					const impLowerText = imported.getElementById('lowertext');
+					if (impUpperText) {
+						inputs.textUpper.value = impUpperText.textContent;
+						upperText.textContent = impUpperText.textContent;
+					}
+					if (impLowerText) {
+						inputs.textLower.value = impLowerText.textContent;
+						lowerText.textContent = impLowerText.textContent;
+					}
+
+					// Import icons
+					const impIconBlack = imported.getElementById('iconblack');
+					const impIconRed = imported.getElementById('iconred');
+					if (impIconBlack) {
+						const href = impIconBlack.href.baseVal;
+						setImageHref(iconBlack, href);
+					}
+					if (impIconRed) {
+						const href = impIconRed.href.baseVal;
+						setImageHref(iconRed, href);
+					}
+
+					// Import transforms
+					if (impIconBlack) {
+						const transforms = impIconBlack.transform.baseVal;
+						// Shift
+						inputs.shiftX.value = transforms[0].matrix.e;
+						inputs.shiftY.value = transforms[0].matrix.f;
+						iconBlack.transform.baseVal[0].matrix.e = transforms[0].matrix.e;
+						iconBlack.transform.baseVal[0].matrix.f = transforms[0].matrix.f;
+						iconRed.transform.baseVal[0].matrix.e = -transforms[0].matrix.e;
+						iconRed.transform.baseVal[0].matrix.f = -transforms[0].matrix.f;
+						// Position
+						inputs.positionX.value = transforms[1].matrix.e;
+						inputs.positionY.value = transforms[1].matrix.f;
+						iconBlack.transform.baseVal[1].matrix.e = transforms[1].matrix.e;
+						iconBlack.transform.baseVal[1].matrix.f = transforms[1].matrix.f;
+						iconRed.transform.baseVal[1].matrix.e = transforms[1].matrix.e;
+						iconRed.transform.baseVal[1].matrix.f = transforms[1].matrix.f;
+						// Scale
+						const scaleBlack = transforms[2].matrix.a;
+						inputs.scaleBlack.value = Math.log10(scaleBlack);
+						iconBlack.transform.baseVal[2].matrix.a = scaleBlack;
+						iconBlack.transform.baseVal[2].matrix.d = scaleBlack;
+					}
+					if (impIconRed) {
+						const scaleRed = impIconRed.transform.baseVal[2].matrix.a;
+						inputs.scaleRed.value = Math.log10(scaleRed);
+						iconRed.transform.baseVal[2].matrix.a = scaleRed;
+						iconRed.transform.baseVal[2].matrix.d = scaleRed;
+					}
+
+					// Import swap order
+					const impIconContainer = imported.getElementById('icon');
+					if (impIconContainer && impIconContainer.children[0]?.id === 'iconblack') {
+						inputs.checkSwap.checked = true;
+						iconContainer.insertBefore(iconBlack, iconRed);
+					} else {
+						inputs.checkSwap.checked = false;
+						iconContainer.insertBefore(iconRed, iconBlack);
+					}
+
+					// Import bleed
+					const impBleed = imported.getElementById('bleed');
+					if (impBleed) {
+						const bleedVal = Math.max(parseInt(impBleed.style.strokeWidth, 10) - 1, 0);
+						inputs.bleed.value = bleedVal;
+						updateBleed(bleedVal);
+					}
+				};
+				reader.readAsText(file);
+			};
+		</script>
+	</body>
 </html>
