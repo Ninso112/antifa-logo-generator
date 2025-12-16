@@ -7,6 +7,10 @@
 		<meta name="description" content="A client-side generator for creating custom antifascist stickers. Adjustable texts, positions and icons.">
 		<meta name="keywords" content="antifa, sticker, generator, svg, png, designer">
 		<meta name="author" content="Ninso112">
+		<script>
+			// Version
+			const VERSION = 'V0.89';
+		</script>
 		<style>
 			* {
 				box-sizing: border-box;
@@ -18,6 +22,20 @@
 				--border-color: #333;
 				--text-color: #000;
 				--link-color: #0066cc;
+				--body-bg: #fff;
+				--input-bg: #fff;
+				--input-border: #ccc;
+			}
+			
+			[data-theme="dark"] {
+				--primary-bg: #2d2d2d;
+				--primary-bg-hover: #3d3d3d;
+				--border-color: #ccc;
+				--text-color: #e0e0e0;
+				--link-color: #4da6ff;
+				--body-bg: #1a1a1a;
+				--input-bg: #2d2d2d;
+				--input-border: #555;
 			}
 			
 			body {
@@ -27,6 +45,8 @@
 				max-width: 1200px;
 				color: var(--text-color);
 				line-height: 1.5;
+				background-color: var(--body-bg);
+				transition: background-color 0.3s ease, color 0.3s ease;
 			}
 			
 			h1 {
@@ -55,6 +75,49 @@
 				height: auto;
 				display: block;
 				border-radius: 4px;
+				transition: filter 0.3s ease;
+			}
+			
+			[data-theme="dark"] svg {
+				filter: brightness(0.9);
+			}
+			
+			.dark-mode-toggle {
+				position: fixed;
+				top: 1rem;
+				right: 1rem;
+				background: var(--primary-bg);
+				border: 2px solid var(--border-color);
+				border-radius: 50%;
+				width: 48px;
+				height: 48px;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 1.5rem;
+				transition: background-color 0.3s ease, transform 0.2s ease;
+				z-index: 1000;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+			}
+			
+			.dark-mode-toggle:hover {
+				background: var(--primary-bg-hover);
+				transform: scale(1.1);
+			}
+			
+			.dark-mode-toggle:active {
+				transform: scale(0.95);
+			}
+			
+			@media (max-width: 767px) {
+				.dark-mode-toggle {
+					top: 0.5rem;
+					right: 0.5rem;
+					width: 40px;
+					height: 40px;
+					font-size: 1.2rem;
+				}
 			}
 			
 			form {
@@ -86,9 +149,12 @@
 			}
 			
 			input[type="text"] {
-				border: 1px solid #ccc;
+				border: 1px solid var(--input-border);
 				border-radius: 4px;
 				font-size: 1rem;
+				background-color: var(--input-bg);
+				color: var(--text-color);
+				transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
 			}
 			
 			input[type="text"]:focus {
@@ -106,8 +172,9 @@
 				font-size: 1rem;
 				border: 2px solid var(--border-color);
 				background: var(--primary-bg);
+				color: var(--text-color);
 				border-radius: 4px;
-				transition: background-color 0.2s, transform 0.1s;
+				transition: background-color 0.3s ease, transform 0.1s, border-color 0.3s ease, color 0.3s ease;
 				font-weight: 500;
 				max-width: 200px;
 			}
@@ -138,6 +205,14 @@
 			input:disabled {
 				opacity: 0.6;
 				cursor: not-allowed;
+			}
+			
+			input[type="range"] {
+				accent-color: var(--link-color);
+			}
+			
+			[data-theme="dark"] form {
+				background-color: transparent;
 			}
 			
 			/* Mobile Styles */
@@ -203,14 +278,17 @@
 		</style>
 	</head>
 	<body>
-		<h1>Antifa Sticker Generator V0.86</h1>
+		<button class="dark-mode-toggle" id="dark-mode-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+			🌙
+		</button>
+		<h1 id="version-header">Antifa Sticker Generator</h1>
 		<p>
 			A purely client-side sticker generator. <a href="https://github.com/Ninso112/antifa-logo-generator" rel="noopener noreferrer" target="_blank">Source Code</a>.
 		</p>
 		<div id="svg-container">
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 500" width="500" height="500" id="svg" role="img" aria-labelledby="svgTitle svgDesc">
 			<title id="svgTitle">Antifa Sticker</title>
-			<desc id="svgDesc">Generiertes Aufkleber-Design — anpassbar und als SVG/PNG exportierbar.</desc>
+			<desc id="svgDesc">Generated sticker design — customizable and exportable as SVG/PNG.</desc>
 			<defs>
 				<filter id="black">
 					<feColorMatrix in="SourceGraphic" type="matrix"
@@ -273,12 +351,11 @@
 			<div>
 				<input type="button" id="input-button-download" value="Download SVG" aria-label="Download sticker as SVG">
 				<input type="button" id="input-button-download-png" value="Download PNG" aria-label="Download sticker as PNG">
+				<input type="button" id="input-button-reset" value="Reset Positions" aria-label="Reset all positions and scales to default values">
 			</div>
 			<label for="input-file-import-svg">Import downloaded SVG</label>
 			<input type="file" id="input-file-import-svg" name="import-svg" accept="image/svg+xml" aria-label="Import previously downloaded SVG">
 		</form>
-		<a id="download" download="antifa.svg" href="#"></a>
-		<a id="download-png" download="antifa.png" href="#"></a>
 		<script>
 			'use strict';
 			
@@ -287,9 +364,34 @@
 			const DEFAULT_SIZE = 500;
 			const DEFAULT_ICON_SIZE = 512;
 			const DEBOUNCE_DELAY = 16; // ~60fps
+			
+			// Default values
+			const DEFAULTS = {
+				textUpper: 'ANTIFASCHISTISCHE',
+				textLower: 'AKTION',
+				positionX: -9,
+				positionY: -2,
+				shiftX: 0,
+				shiftY: 0,
+				scaleBlack: 0,
+				scaleRed: 0,
+				bleed: 0,
+				scaleFactor: 1, // scale value 0 = 10^0 = 1
+				pngDefaultSize: 2048,
+				pngMaxSize: 8192
+			};
+			
+			// Helper: Convert scale input to actual scale value
+			const scaleValueToNumber = (scaleInput) => Math.pow(10, Number(scaleInput));
+			
+			// Stroke colors for bleed circle
+			const BLEED_STROKE_DEFAULT = '#ff00ff';
+			const BLEED_STROKE_EXPORT = 'black';
 
 			// DOM elements
 			const doc = document.getElementById('svg');
+			if (!doc) throw new Error('SVG element not found');
+			
 			const svgRoot = doc.getElementById("svgroot");
 			const iconContainer = doc.getElementById("icon");
 			const iconBlack = doc.getElementById("iconblack");
@@ -297,6 +399,10 @@
 			const upperText = doc.getElementById("uppertext");
 			const lowerText = doc.getElementById("lowertext");
 			const bleedCircle = doc.getElementById("bleed");
+			
+			if (!svgRoot || !iconContainer || !iconBlack || !iconRed || !upperText || !lowerText || !bleedCircle) {
+				throw new Error('Required SVG elements not found');
+			}
 			
 			// Debounce helper
 			function debounce(func, wait) {
@@ -311,35 +417,126 @@
 				};
 			}
 
-			// Input elements
+			// Set version in header
+			const versionHeader = document.getElementById('version-header');
+			if (versionHeader) {
+				versionHeader.textContent = `Antifa Sticker Generator ${VERSION}`;
+			}
+
+			// Dark mode functionality
+			const darkModeToggle = document.getElementById('dark-mode-toggle');
+			const STORAGE_KEY = 'darkMode';
+			const THEME_ATTRIBUTE = 'data-theme';
+			
+			function initDarkMode() {
+				const savedTheme = localStorage.getItem(STORAGE_KEY);
+				const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+				const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+				setDarkMode(isDark);
+			}
+			
+			function setDarkMode(isDark) {
+				if (isDark) {
+					document.documentElement.setAttribute(THEME_ATTRIBUTE, 'dark');
+					if (darkModeToggle) darkModeToggle.textContent = '☀️';
+					localStorage.setItem(STORAGE_KEY, 'dark');
+				} else {
+					document.documentElement.removeAttribute(THEME_ATTRIBUTE);
+					if (darkModeToggle) darkModeToggle.textContent = '🌙';
+					localStorage.setItem(STORAGE_KEY, 'light');
+				}
+			}
+			
+			function toggleDarkMode() {
+				const isDark = document.documentElement.getAttribute(THEME_ATTRIBUTE) === 'dark';
+				setDarkMode(!isDark);
+			}
+			
+			// Initialize dark mode on page load
+			initDarkMode();
+			
+			// Add click handler
+			if (darkModeToggle) {
+				darkModeToggle.addEventListener('click', toggleDarkMode);
+			}
+			
+			// Listen for system theme changes
+			window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+				if (!localStorage.getItem(STORAGE_KEY)) {
+					setDarkMode(e.matches);
+				}
+			});
+
+			// Input elements - safely get all inputs with null checks
+			const getElementById = (id) => document.getElementById(id);
 			const inputs = {
-				textUpper: document.getElementById("input-text-upper"),
-				textLower: document.getElementById("input-text-lower"),
-				positionX: document.getElementById("input-range-position-x"),
-				positionY: document.getElementById("input-range-position-y"),
-				shiftX: document.getElementById("input-range-shift-x"),
-				shiftY: document.getElementById("input-range-shift-y"),
-				scaleBlack: document.getElementById("input-range-scale-black"),
-				scaleRed: document.getElementById("input-range-scale-red"),
-				fileIconBlack: document.getElementById("input-file-icon-black"),
-				fileIconRed: document.getElementById("input-file-icon-red"),
-				checkSwap: document.getElementById("input-check-swap-red-black"),
-				checkLockScale: document.getElementById("input-check-lock-scale"),
-				bleed: document.getElementById("input-range-bleed"),
-				buttonDownload: document.getElementById("input-button-download"),
-				buttonDownloadPng: document.getElementById("input-button-download-png"),
-				fileImportSvg: document.getElementById("input-file-import-svg")
+				textUpper: getElementById("input-text-upper"),
+				textLower: getElementById("input-text-lower"),
+				positionX: getElementById("input-range-position-x"),
+				positionY: getElementById("input-range-position-y"),
+				shiftX: getElementById("input-range-shift-x"),
+				shiftY: getElementById("input-range-shift-y"),
+				scaleBlack: getElementById("input-range-scale-black"),
+				scaleRed: getElementById("input-range-scale-red"),
+				fileIconBlack: getElementById("input-file-icon-black"),
+				fileIconRed: getElementById("input-file-icon-red"),
+				checkSwap: getElementById("input-check-swap-red-black"),
+				checkLockScale: getElementById("input-check-lock-scale"),
+				bleed: getElementById("input-range-bleed"),
+				buttonDownload: getElementById("input-button-download"),
+				buttonDownloadPng: getElementById("input-button-download-png"),
+				fileImportSvg: getElementById("input-file-import-svg"),
+				buttonReset: getElementById("input-button-reset")
 			};
 
 			// Helper functions
 			function setImageHref(imgElement, dataUrl, width, height) {
+				if (!imgElement) return;
 				imgElement.href.baseVal = dataUrl;
 				imgElement.setAttributeNS(XLINK_NS, 'href', dataUrl);
 				if (width) imgElement.width.baseVal.value = width;
 				if (height) imgElement.height.baseVal.value = height;
 			}
 
+			// Transform update helpers
+			function getIconTransform(iconElement, index) {
+				if (!iconElement || iconElement.transform.baseVal.numberOfItems <= index) return null;
+				return iconElement.transform.baseVal[index].matrix;
+			}
+
+			function updateIconPosition(iconElement, x, y) {
+				const matrix = getIconTransform(iconElement, 1);
+				if (!matrix) return;
+				matrix.e = x;
+				matrix.f = y;
+			}
+
+			function updateIconShift(iconElement, x, y, invert = false) {
+				const matrix = getIconTransform(iconElement, 0);
+				if (!matrix) return;
+				matrix.e = invert ? -x : x;
+				matrix.f = invert ? -y : y;
+			}
+
+			function updateIconScale(iconElement, scale) {
+				const matrix = getIconTransform(iconElement, 2);
+				if (!matrix) return;
+				matrix.a = scale;
+				matrix.d = scale;
+			}
+
+			function getIconPosition(iconElement) {
+				const matrix = getIconTransform(iconElement, 1);
+				return matrix ? { x: matrix.e, y: matrix.f } : { x: 0, y: 0 };
+			}
+
+			function getIconShift(iconElement) {
+				const matrix = getIconTransform(iconElement, 0);
+				return matrix ? { x: matrix.e, y: matrix.f } : { x: 0, y: 0 };
+			}
+
 			function updateBleed(bleedVal) {
+				if (!bleedCircle || !doc) return;
 				bleedCircle.style.strokeWidth = bleedVal === 0 ? 0 : bleedVal * 2 + 1;
 				const size = DEFAULT_SIZE + bleedVal * 2;
 				doc.width.baseVal.value = size;
@@ -351,25 +548,33 @@
 			}
 
 			function resizeSvg(size, offset) {
+				if (!doc || !svgRoot) return;
+				const scale = size / DEFAULT_SIZE;
 				doc.width.baseVal.value = size;
 				doc.height.baseVal.value = size;
 				doc.viewBox.baseVal.width = size;
 				doc.viewBox.baseVal.height = size;
 				doc.viewBox.baseVal.x = offset;
 				doc.viewBox.baseVal.y = offset;
-				svgRoot.transform.baseVal[0].matrix.a = size / DEFAULT_SIZE;
-				svgRoot.transform.baseVal[0].matrix.d = size / DEFAULT_SIZE;
+				if (svgRoot.transform.baseVal.numberOfItems > 0) {
+					const matrix = svgRoot.transform.baseVal[0].matrix;
+					matrix.a = scale;
+					matrix.d = scale;
+				}
 			}
 
 			function restoreSvgSize(originalSize, originalOffset) {
+				if (!doc || !svgRoot) return;
 				doc.width.baseVal.value = originalSize;
 				doc.height.baseVal.value = originalSize;
 				doc.viewBox.baseVal.width = originalSize;
 				doc.viewBox.baseVal.height = originalSize;
 				doc.viewBox.baseVal.x = originalOffset;
 				doc.viewBox.baseVal.y = originalOffset;
-				svgRoot.transform.baseVal[0].matrix.a = 1;
-				svgRoot.transform.baseVal[0].matrix.d = 1;
+				if (svgRoot.transform.baseVal.numberOfItems > 0) {
+					svgRoot.transform.baseVal[0].matrix.a = 1;
+					svgRoot.transform.baseVal[0].matrix.d = 1;
+				}
 			}
 
 			function loadImageFile(file, targetElement) {
@@ -402,122 +607,236 @@
 				return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<?xml version="1.0" encoding="utf-8"?>\n' + svgString);
 			}
 
-			// Event handlers with debouncing for range inputs
-			inputs.textUpper.oninput = () => {
-				upperText.textContent = inputs.textUpper.value;
-			};
+			// Text input handlers
+			if (inputs.textUpper) {
+				inputs.textUpper.oninput = () => {
+					if (upperText) {
+						upperText.textContent = inputs.textUpper.value;
+					}
+				};
+			}
 
-			inputs.textLower.oninput = () => {
-				lowerText.textContent = inputs.textLower.value;
-			};
+			if (inputs.textLower) {
+				inputs.textLower.oninput = () => {
+					if (lowerText) {
+						lowerText.textContent = inputs.textLower.value;
+					}
+				};
+			}
 
+			// Position updates
 			const updatePositionX = () => {
+				if (!inputs.positionX) return;
 				const value = Number(inputs.positionX.value);
-				iconBlack.transform.baseVal[1].matrix.e = value;
-				iconRed.transform.baseVal[1].matrix.e = value;
+				const blackPos = getIconPosition(iconBlack);
+				const redPos = getIconPosition(iconRed);
+				updateIconPosition(iconBlack, value, blackPos.y);
+				updateIconPosition(iconRed, value, redPos.y);
 			};
-			inputs.positionX.oninput = debounce(updatePositionX, DEBOUNCE_DELAY);
+			if (inputs.positionX) {
+				inputs.positionX.oninput = debounce(updatePositionX, DEBOUNCE_DELAY);
+			}
 
 			const updatePositionY = () => {
+				if (!inputs.positionY) return;
 				const value = Number(inputs.positionY.value);
-				iconBlack.transform.baseVal[1].matrix.f = value;
-				iconRed.transform.baseVal[1].matrix.f = value;
+				const blackPos = getIconPosition(iconBlack);
+				const redPos = getIconPosition(iconRed);
+				updateIconPosition(iconBlack, blackPos.x, value);
+				updateIconPosition(iconRed, redPos.x, value);
 			};
-			inputs.positionY.oninput = debounce(updatePositionY, DEBOUNCE_DELAY);
+			if (inputs.positionY) {
+				inputs.positionY.oninput = debounce(updatePositionY, DEBOUNCE_DELAY);
+			}
 
+			// Shift updates
 			const updateShiftX = () => {
+				if (!inputs.shiftX) return;
 				const value = Number(inputs.shiftX.value);
-				iconBlack.transform.baseVal[0].matrix.e = value;
-				iconRed.transform.baseVal[0].matrix.e = -value;
+				const blackShift = getIconShift(iconBlack);
+				const redShift = getIconShift(iconRed);
+				updateIconShift(iconBlack, value, blackShift.y, false);
+				updateIconShift(iconRed, value, redShift.y, true);
 			};
-			inputs.shiftX.oninput = debounce(updateShiftX, DEBOUNCE_DELAY);
+			if (inputs.shiftX) {
+				inputs.shiftX.oninput = debounce(updateShiftX, DEBOUNCE_DELAY);
+			}
 
 			const updateShiftY = () => {
+				if (!inputs.shiftY) return;
 				const value = Number(inputs.shiftY.value);
-				iconBlack.transform.baseVal[0].matrix.f = value;
-				iconRed.transform.baseVal[0].matrix.f = -value;
+				const blackShift = getIconShift(iconBlack);
+				const redShift = getIconShift(iconRed);
+				updateIconShift(iconBlack, blackShift.x, value, false);
+				updateIconShift(iconRed, redShift.x, value, true);
 			};
-			inputs.shiftY.oninput = debounce(updateShiftY, DEBOUNCE_DELAY);
+			if (inputs.shiftY) {
+				inputs.shiftY.oninput = debounce(updateShiftY, DEBOUNCE_DELAY);
+			}
 
+			// Scale updates
 			const updateScaleBlack = () => {
-				const scale = Math.pow(10, Number(inputs.scaleBlack.value));
-				const matrix = iconBlack.transform.baseVal[2].matrix;
-				matrix.a = scale;
-				matrix.d = scale;
-				if (inputs.checkLockScale.checked) {
-					const redMatrix = iconRed.transform.baseVal[2].matrix;
-					redMatrix.a = scale;
-					redMatrix.d = scale;
+				if (!inputs.scaleBlack) return;
+				const scale = scaleValueToNumber(inputs.scaleBlack.value);
+				updateIconScale(iconBlack, scale);
+				if (inputs.checkLockScale?.checked) {
+					updateIconScale(iconRed, scale);
 				}
 			};
-			inputs.scaleBlack.oninput = debounce(updateScaleBlack, DEBOUNCE_DELAY);
+			if (inputs.scaleBlack) {
+				inputs.scaleBlack.oninput = debounce(updateScaleBlack, DEBOUNCE_DELAY);
+			}
 
 			const updateScaleRed = () => {
-				const scale = Math.pow(10, Number(inputs.scaleRed.value));
-				const matrix = iconRed.transform.baseVal[2].matrix;
-				matrix.a = scale;
-				matrix.d = scale;
+				if (!inputs.scaleRed || inputs.checkLockScale?.checked) return;
+				const scale = scaleValueToNumber(inputs.scaleRed.value);
+				updateIconScale(iconRed, scale);
 			};
-			inputs.scaleRed.oninput = debounce(updateScaleRed, DEBOUNCE_DELAY);
+			if (inputs.scaleRed) {
+				inputs.scaleRed.oninput = debounce(updateScaleRed, DEBOUNCE_DELAY);
+			}
 
-			inputs.fileIconBlack.onchange = (e) => {
-				loadImageFile(e.target.files[0], iconBlack);
-			};
+			// File input handlers
+			if (inputs.fileIconBlack) {
+				inputs.fileIconBlack.onchange = (e) => {
+					loadImageFile(e.target.files?.[0], iconBlack);
+				};
+			}
 
-			inputs.fileIconRed.onchange = (e) => {
-				loadImageFile(e.target.files[0], iconRed);
-			};
+			if (inputs.fileIconRed) {
+				inputs.fileIconRed.onchange = (e) => {
+					loadImageFile(e.target.files?.[0], iconRed);
+				};
+			}
 
-			inputs.checkSwap.onchange = () => {
-				const first = inputs.checkSwap.checked ? iconBlack : iconRed;
-				const second = inputs.checkSwap.checked ? iconRed : iconBlack;
-				iconContainer.insertBefore(first, second);
-			};
+			// Checkbox handlers
+			if (inputs.checkSwap) {
+				inputs.checkSwap.onchange = () => {
+					const first = inputs.checkSwap.checked ? iconBlack : iconRed;
+					const second = inputs.checkSwap.checked ? iconRed : iconBlack;
+					iconContainer.insertBefore(first, second);
+				};
+			}
 
-			inputs.checkLockScale.onchange = () => {
-				inputs.scaleRed.disabled = inputs.checkLockScale.checked;
-				const scale = Math.pow(10, Number(inputs.scaleBlack.value));
-				const matrix = iconRed.transform.baseVal[2].matrix;
-				if (inputs.checkLockScale.checked) {
-					matrix.a = scale;
-					matrix.d = scale;
-				} else {
-					const redScale = Math.pow(10, Number(inputs.scaleRed.value));
-					matrix.a = redScale;
-					matrix.d = redScale;
+			if (inputs.checkLockScale) {
+				inputs.checkLockScale.onchange = () => {
+					if (inputs.scaleRed) {
+						inputs.scaleRed.disabled = inputs.checkLockScale.checked;
+					}
+					if (inputs.checkLockScale.checked && inputs.scaleBlack) {
+						const scale = scaleValueToNumber(inputs.scaleBlack.value);
+						updateIconScale(iconRed, scale);
+					} else if (inputs.scaleRed) {
+						const redScale = scaleValueToNumber(inputs.scaleRed.value);
+						updateIconScale(iconRed, redScale);
+					}
+				};
+			}
+
+			// Bleed handler
+			const updateBleedHandler = () => {
+				if (inputs.bleed) {
+					updateBleed(parseInt(inputs.bleed.value, 10));
 				}
 			};
+			if (inputs.bleed) {
+				inputs.bleed.oninput = debounce(updateBleedHandler, DEBOUNCE_DELAY);
+			}
 
-			const updateBleedHandler = () => {
-				updateBleed(parseInt(inputs.bleed.value, 10));
-			};
-			inputs.bleed.oninput = debounce(updateBleedHandler, DEBOUNCE_DELAY);
+			// Reset function
+			function resetPositions() {
+				// Reset text values
+				if (inputs.textUpper) {
+					inputs.textUpper.value = DEFAULTS.textUpper;
+					if (upperText) upperText.textContent = DEFAULTS.textUpper;
+				}
+				if (inputs.textLower) {
+					inputs.textLower.value = DEFAULTS.textLower;
+					if (lowerText) lowerText.textContent = DEFAULTS.textLower;
+				}
 
-			inputs.buttonDownload.onclick = () => {
-				bleedCircle.style.stroke = 'black';
-				const serialized = serializeSvg();
-				bleedCircle.style.stroke = '#ff00ff';
-				const link = document.getElementById('download');
-				link.setAttribute('href', createSvgDataUrl(serialized));
+				// Reset positions
+				if (inputs.positionX) inputs.positionX.value = DEFAULTS.positionX;
+				if (inputs.positionY) inputs.positionY.value = DEFAULTS.positionY;
+				updateIconPosition(iconBlack, DEFAULTS.positionX, DEFAULTS.positionY);
+				updateIconPosition(iconRed, DEFAULTS.positionX, DEFAULTS.positionY);
+
+				// Reset shifts
+				if (inputs.shiftX) inputs.shiftX.value = DEFAULTS.shiftX;
+				if (inputs.shiftY) inputs.shiftY.value = DEFAULTS.shiftY;
+				updateIconShift(iconBlack, DEFAULTS.shiftX, DEFAULTS.shiftY, false);
+				updateIconShift(iconRed, DEFAULTS.shiftX, DEFAULTS.shiftY, true);
+
+				// Reset scales
+				if (inputs.scaleBlack) {
+					inputs.scaleBlack.value = DEFAULTS.scaleBlack;
+					updateIconScale(iconBlack, DEFAULTS.scaleFactor);
+				}
+				if (inputs.scaleRed) {
+					inputs.scaleRed.value = DEFAULTS.scaleRed;
+					updateIconScale(iconRed, DEFAULTS.scaleFactor);
+				}
+
+				// Reset bleed
+				if (inputs.bleed) {
+					inputs.bleed.value = DEFAULTS.bleed;
+					updateBleed(DEFAULTS.bleed);
+				}
+
+				// Reset checkboxes
+				if (inputs.checkSwap) {
+					inputs.checkSwap.checked = false;
+					iconContainer.insertBefore(iconRed, iconBlack);
+				}
+				if (inputs.checkLockScale) {
+					inputs.checkLockScale.checked = false;
+					if (inputs.scaleRed) inputs.scaleRed.disabled = false;
+				}
+			}
+
+			// Download helpers
+			function downloadFile(dataUrl, filename) {
+				const link = document.createElement('a');
+				link.href = dataUrl;
+				link.download = filename;
+				document.body.appendChild(link);
 				link.click();
-			};
+				document.body.removeChild(link);
+			}
 
-			inputs.buttonDownloadPng.onclick = async () => {
+			// Download handlers
+			if (inputs.buttonDownload) {
+				inputs.buttonDownload.onclick = () => {
+					bleedCircle.style.stroke = BLEED_STROKE_EXPORT;
+					const serialized = serializeSvg();
+					bleedCircle.style.stroke = BLEED_STROKE_DEFAULT;
+					downloadFile(createSvgDataUrl(serialized), 'antifa.svg');
+				};
+			}
+
+			// Reset handler
+			if (inputs.buttonReset) {
+				inputs.buttonReset.onclick = () => {
+					resetPositions();
+				};
+			}
+
+			if (inputs.buttonDownloadPng) {
+				inputs.buttonDownloadPng.onclick = async () => {
 				const originalSize = Number(doc.width.baseVal.value);
 				const originalOffset = Number(doc.viewBox.baseVal.x);
-				const defaultSize = 2048;
-				const imgSizeInput = prompt("Enter image size (e.g. 2048)", String(defaultSize));
+				const imgSizeInput = prompt(`Enter image size (e.g. ${DEFAULTS.pngDefaultSize})`, String(DEFAULTS.pngDefaultSize));
 				
 				if (!imgSizeInput) return;
 				
 				const imgSize = parseInt(imgSizeInput, 10);
-				if (Number.isNaN(imgSize) || imgSize <= 0 || imgSize > 8192) {
-					alert(`Invalid image size. Please enter a number between 1 and 8192.`);
+				if (Number.isNaN(imgSize) || imgSize <= 0 || imgSize > DEFAULTS.pngMaxSize) {
+					alert(`Invalid image size. Please enter a number between 1 and ${DEFAULTS.pngMaxSize}.`);
 					return;
 				}
 
 				// Resize SVG for export
-				bleedCircle.style.stroke = 'black';
+				bleedCircle.style.stroke = BLEED_STROKE_EXPORT;
 				const offset = originalOffset * imgSize / originalSize;
 				resizeSvg(imgSize, offset);
 
@@ -548,7 +867,7 @@
 				}
 
 				// Restore original size
-				bleedCircle.style.stroke = '#ff00ff';
+				bleedCircle.style.stroke = BLEED_STROKE_DEFAULT;
 				restoreSvgSize(originalSize, originalOffset);
 
 				const serialized = new XMLSerializer().serializeToString(clone);
@@ -575,9 +894,7 @@
 				image.onload = () => {
 					try {
 						ctx.drawImage(image, 0, 0);
-						const link = document.getElementById('download-png');
-						link.setAttribute('href', canvas.toDataURL('image/png'));
-						link.click();
+						downloadFile(canvas.toDataURL('image/png'), 'antifa.png');
 					} catch (e) {
 						console.error('PNG Export Error:', e);
 						alert('Export to PNG failed during finalization: canvas may be tainted. Opened SVG in new tab as fallback.');
@@ -585,9 +902,11 @@
 					}
 				};
 				image.src = createSvgDataUrl(serialized);
-			};
+				};
+			}
 
-			inputs.fileImportSvg.onchange = (e) => {
+			if (inputs.fileImportSvg) {
+				inputs.fileImportSvg.onchange = (e) => {
 				const file = e.target.files[0];
 				if (!file) return;
 				
@@ -632,33 +951,39 @@
 					}
 
 					// Import transforms
-					if (impIconBlack) {
+					if (impIconBlack && impIconBlack.transform.baseVal.numberOfItems >= 3) {
 						const transforms = impIconBlack.transform.baseVal;
 						// Shift
-						inputs.shiftX.value = transforms[0].matrix.e;
-						inputs.shiftY.value = transforms[0].matrix.f;
-						iconBlack.transform.baseVal[0].matrix.e = transforms[0].matrix.e;
-						iconBlack.transform.baseVal[0].matrix.f = transforms[0].matrix.f;
-						iconRed.transform.baseVal[0].matrix.e = -transforms[0].matrix.e;
-						iconRed.transform.baseVal[0].matrix.f = -transforms[0].matrix.f;
+						const shiftMatrix = transforms[0].matrix;
+						const shiftX = shiftMatrix.e;
+						const shiftY = shiftMatrix.f;
+						if (inputs.shiftX) inputs.shiftX.value = shiftX;
+						if (inputs.shiftY) inputs.shiftY.value = shiftY;
+						updateIconShift(iconBlack, shiftX, shiftY, false);
+						updateIconShift(iconRed, shiftX, shiftY, true);
 						// Position
-						inputs.positionX.value = transforms[1].matrix.e;
-						inputs.positionY.value = transforms[1].matrix.f;
-						iconBlack.transform.baseVal[1].matrix.e = transforms[1].matrix.e;
-						iconBlack.transform.baseVal[1].matrix.f = transforms[1].matrix.f;
-						iconRed.transform.baseVal[1].matrix.e = transforms[1].matrix.e;
-						iconRed.transform.baseVal[1].matrix.f = transforms[1].matrix.f;
+						const posMatrix = transforms[1].matrix;
+						const posX = posMatrix.e;
+						const posY = posMatrix.f;
+						if (inputs.positionX) inputs.positionX.value = posX;
+						if (inputs.positionY) inputs.positionY.value = posY;
+						updateIconPosition(iconBlack, posX, posY);
+						updateIconPosition(iconRed, posX, posY);
 						// Scale
-						const scaleBlack = transforms[2].matrix.a;
-						inputs.scaleBlack.value = Math.log10(scaleBlack);
-						iconBlack.transform.baseVal[2].matrix.a = scaleBlack;
-						iconBlack.transform.baseVal[2].matrix.d = scaleBlack;
+						const scaleMatrix = transforms[2].matrix;
+						const scaleBlack = scaleMatrix.a;
+						if (inputs.scaleBlack) {
+							inputs.scaleBlack.value = Math.log10(scaleBlack);
+						}
+						updateIconScale(iconBlack, scaleBlack);
 					}
-					if (impIconRed) {
-						const scaleRed = impIconRed.transform.baseVal[2].matrix.a;
-						inputs.scaleRed.value = Math.log10(scaleRed);
-						iconRed.transform.baseVal[2].matrix.a = scaleRed;
-						iconRed.transform.baseVal[2].matrix.d = scaleRed;
+					if (impIconRed && impIconRed.transform.baseVal.numberOfItems >= 3) {
+						const scaleMatrix = impIconRed.transform.baseVal[2].matrix;
+						const scaleRed = scaleMatrix.a;
+						if (inputs.scaleRed) {
+							inputs.scaleRed.value = Math.log10(scaleRed);
+						}
+						updateIconScale(iconRed, scaleRed);
 					}
 
 					// Import swap order
@@ -684,7 +1009,8 @@
 					}
 				};
 				reader.readAsText(file);
-			};
+				};
+			}
 		</script>
 	</body>
 </html>
