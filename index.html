@@ -33,56 +33,93 @@
 			}
 			
 			:root {
-				--primary-bg: #f0f0f0;
-				--primary-bg-hover: #e0e0e0;
-				--border-color: #333;
-				--text-color: #000;
-				--link-color: #0066cc;
-				--body-bg: #fff;
-				--input-bg: #fff;
-				--input-border: #ccc;
+				--primary-bg: #f5f5f5;
+				--primary-bg-hover: #e8e8e8;
+				--secondary-bg: #ffffff;
+				--border-color: #d0d0d0;
+				--border-color-hover: #a0a0a0;
+				--text-color: #1a1a1a;
+				--text-secondary: #666;
+				--link-color: #2563eb;
+				--link-hover: #1d4ed8;
+				--body-bg: #fafafa;
+				--input-bg: #ffffff;
+				--input-border: #d1d5db;
+				--input-focus: #2563eb;
+				--shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+				--shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+				--shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+				--radius: 8px;
+				--radius-sm: 6px;
 			}
 			
 			[data-theme="dark"] {
-				--primary-bg: #2d2d2d;
-				--primary-bg-hover: #3d3d3d;
-				--border-color: #ccc;
-				--text-color: #e0e0e0;
-				--link-color: #4da6ff;
-				--body-bg: #1a1a1a;
-				--input-bg: #2d2d2d;
-				--input-border: #555;
+				--primary-bg: #1f2937;
+				--primary-bg-hover: #374151;
+				--secondary-bg: #111827;
+				--border-color: #374151;
+				--border-color-hover: #4b5563;
+				--text-color: #f9fafb;
+				--text-secondary: #d1d5db;
+				--link-color: #60a5fa;
+				--link-hover: #93c5fd;
+				--body-bg: #0f172a;
+				--input-bg: #1f2937;
+				--input-border: #374151;
+				--input-focus: #60a5fa;
+				--shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+				--shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+				--shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
 			}
 			
 			body {
 				margin: 0 auto;
-				padding: 1rem;
+				padding: 1.5rem;
 				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 				max-width: 1200px;
 				color: var(--text-color);
-				line-height: 1.5;
+				line-height: 1.6;
 				background-color: var(--body-bg);
 				transition: background-color 0.3s ease, color 0.3s ease;
+				min-height: 100vh;
+			}
+			
+			header {
+				margin-bottom: 2rem;
+				text-align: center;
 			}
 			
 			h1 {
-				margin-top: 0;
-				font-size: 1.8rem;
+				margin: 0 0 0.5rem 0;
+				font-size: 2rem;
+				font-weight: 700;
+				letter-spacing: -0.02em;
+			}
+			
+			header p {
+				margin: 0;
+				color: var(--text-secondary);
 			}
 			
 			a {
 				color: var(--link-color);
 				text-decoration: none;
+				transition: color 0.2s ease;
 			}
 			
 			a:hover {
+				color: var(--link-hover);
 				text-decoration: underline;
 			}
 			
 			#svg-container {
 				display: flex;
 				justify-content: center;
-				margin: 1rem 0;
+				margin: 2rem 0;
+				padding: 1.5rem;
+				background: var(--secondary-bg);
+				border-radius: var(--radius);
+				box-shadow: var(--shadow-md);
 			}
 			
 			svg {
@@ -90,10 +127,16 @@
 				max-width: 100%;
 				height: auto;
 				display: block;
-				border-radius: 4px;
-				transition: filter 0.3s ease;
+				border-radius: var(--radius-sm);
+				transition: filter 0.3s ease, transform 0.2s ease;
 				touch-action: none;
 				user-select: none;
+				box-shadow: var(--shadow-sm);
+			}
+			
+			svg:hover {
+				transform: translateY(-2px);
+				box-shadow: var(--shadow-md);
 			}
 			
 			#icon image {
@@ -111,9 +154,9 @@
 			
 			.dark-mode-toggle {
 				position: fixed;
-				top: 1rem;
-				right: 1rem;
-				background: var(--primary-bg);
+				top: 1.5rem;
+				right: 1.5rem;
+				background: var(--secondary-bg);
 				border: 2px solid var(--border-color);
 				border-radius: 50%;
 				width: 48px;
@@ -123,14 +166,16 @@
 				align-items: center;
 				justify-content: center;
 				font-size: 1.5rem;
-				transition: background-color 0.3s ease, transform 0.2s ease;
+				transition: all 0.3s ease;
 				z-index: 1000;
-				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+				box-shadow: var(--shadow-lg);
 			}
 			
 			.dark-mode-toggle:hover {
 				background: var(--primary-bg-hover);
-				transform: scale(1.1);
+				border-color: var(--border-color-hover);
+				transform: scale(1.1) rotate(15deg);
+				box-shadow: var(--shadow-lg);
 			}
 			
 			.dark-mode-toggle:active {
@@ -149,9 +194,13 @@
 			
 			form {
 				display: grid;
-				grid-template-columns: 30% 1fr;
-				gap: 0.75rem 1.5rem;
+				grid-template-columns: 200px 1fr;
+				gap: 1rem 1.5rem;
 				align-items: center;
+				background: var(--secondary-bg);
+				padding: 2rem;
+				border-radius: var(--radius);
+				box-shadow: var(--shadow-md);
 			}
 			
 			form > div {
@@ -160,11 +209,56 @@
 				flex-wrap: wrap;
 				gap: 1rem;
 				align-items: center;
+				padding-top: 1rem;
+				border-top: 1px solid var(--border-color);
+			}
+			
+			form > div:first-of-type {
+				border-top: none;
+				padding-top: 0;
+			}
+			
+			.checkbox-group {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 1.5rem;
+			}
+			
+			.checkbox-item {
+				display: flex;
+				align-items: center;
+				padding: 0.5rem;
+				border-radius: var(--radius-sm);
+				transition: background 0.2s ease;
+			}
+			
+			.checkbox-item:hover {
+				background: var(--primary-bg);
+			}
+			
+			.button-group {
+				display: flex;
+				flex-direction: column;
+				gap: 1rem;
+				width: 100%;
+			}
+			
+			.button-row {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 1rem;
+			}
+			
+			.button-row:first-child input[type="button"] {
+				flex: 1;
+				min-width: 150px;
 			}
 			
 			label {
 				font-size: 0.9rem;
-				font-weight: 500;
+				font-weight: 600;
+				color: var(--text-color);
+				letter-spacing: 0.01em;
 			}
 			
 			input[type="text"],
@@ -176,57 +270,177 @@
 			}
 			
 			input[type="text"] {
-				border: 1px solid var(--input-border);
-				border-radius: 4px;
+				border: 2px solid var(--input-border);
+				border-radius: var(--radius-sm);
 				font-size: 1rem;
 				background-color: var(--input-bg);
 				color: var(--text-color);
-				transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+				padding: 0.75rem;
+				transition: all 0.2s ease;
+			}
+			
+			input[type="text"]:hover {
+				border-color: var(--border-color-hover);
 			}
 			
 			input[type="text"]:focus {
-				outline: 2px solid var(--link-color);
-				outline-offset: 2px;
-				border-color: var(--link-color);
+				outline: none;
+				border-color: var(--input-focus);
+				box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+			}
+			
+			[data-theme="dark"] input[type="text"]:focus {
+				box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
 			}
 			
 			input[type="range"] {
 				cursor: pointer;
+				height: 8px;
+				background: var(--primary-bg);
+				border-radius: 4px;
+			}
+			
+			input[type="range"]::-webkit-slider-thumb {
+				appearance: none;
+				width: 20px;
+				height: 20px;
+				border-radius: 50%;
+				background: var(--link-color);
+				cursor: pointer;
+				box-shadow: var(--shadow-sm);
+				transition: all 0.2s ease;
+			}
+			
+			input[type="range"]::-webkit-slider-thumb:hover {
+				transform: scale(1.2);
+				box-shadow: var(--shadow-md);
+			}
+			
+			input[type="range"]::-moz-range-thumb {
+				width: 20px;
+				height: 20px;
+				border-radius: 50%;
+				background: var(--link-color);
+				cursor: pointer;
+				border: none;
+				box-shadow: var(--shadow-sm);
+				transition: all 0.2s ease;
+			}
+			
+			input[type="range"]::-moz-range-thumb:hover {
+				transform: scale(1.2);
+				box-shadow: var(--shadow-md);
 			}
 			
 			input[type="button"] {
 				cursor: pointer;
-				font-size: 1rem;
-				border: 2px solid var(--border-color);
-				background: var(--primary-bg);
-				color: var(--text-color);
-				border-radius: 4px;
-				transition: background-color 0.3s ease, transform 0.1s, border-color 0.3s ease, color 0.3s ease;
-				font-weight: 500;
+				font-size: 0.95rem;
+				border: 2px solid var(--link-color);
+				background: var(--link-color);
+				color: white;
+				border-radius: var(--radius-sm);
+				transition: all 0.2s ease;
+				font-weight: 600;
+				padding: 0.75rem 1.5rem;
 				max-width: 200px;
+				box-shadow: var(--shadow-sm);
 			}
 			
 			input[type="button"]:hover {
-				background: var(--primary-bg-hover);
+				background: var(--link-hover);
+				border-color: var(--link-hover);
+				transform: translateY(-2px);
+				box-shadow: var(--shadow-md);
 			}
 			
 			input[type="button"]:active {
-				transform: translateY(1px);
+				transform: translateY(0);
+				box-shadow: var(--shadow-sm);
 			}
 			
 			input[type="button"]:focus {
-				outline: 2px solid var(--link-color);
-				outline-offset: 2px;
+				outline: none;
+				box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3), var(--shadow-md);
+			}
+			
+			[data-theme="dark"] input[type="button"]:focus {
+				box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3), var(--shadow-md);
+			}
+			
+			input[type="button"]#input-button-reset {
+				background: var(--secondary-bg);
+				color: var(--text-color);
+				border-color: var(--border-color);
+			}
+			
+			input[type="button"]#input-button-reset:hover {
+				background: var(--primary-bg-hover);
+				border-color: var(--border-color-hover);
+				color: var(--text-color);
+			}
+			
+			input[type="button"]#input-button-save {
+				background: #10b981;
+				border-color: #10b981;
+			}
+			
+			input[type="button"]#input-button-save:hover {
+				background: #059669;
+				border-color: #059669;
+			}
+			
+			input[type="button"]#input-button-load {
+				background: #f59e0b;
+				border-color: #f59e0b;
+			}
+			
+			input[type="button"]#input-button-load:hover {
+				background: #d97706;
+				border-color: #d97706;
 			}
 			
 			input[type="checkbox"] {
-				width: auto;
-				margin-right: 0.5rem;
+				width: 20px;
+				height: 20px;
+				margin-right: 0.75rem;
 				cursor: pointer;
+				accent-color: var(--link-color);
+				transform: scale(1.1);
+			}
+			
+			input[type="checkbox"] + label {
+				cursor: pointer;
+				user-select: none;
 			}
 			
 			input[type="file"] {
 				cursor: pointer;
+				padding: 0.5rem;
+				border: 2px dashed var(--border-color);
+				border-radius: var(--radius-sm);
+				background: var(--input-bg);
+				transition: all 0.2s ease;
+			}
+			
+			input[type="file"]:hover {
+				border-color: var(--link-color);
+				background: var(--primary-bg);
+			}
+			
+			input[type="file"]::file-selector-button {
+				padding: 0.5rem 1rem;
+				margin-right: 1rem;
+				border: none;
+				border-radius: var(--radius-sm);
+				background: var(--link-color);
+				color: white;
+				cursor: pointer;
+				font-weight: 600;
+				transition: background 0.2s ease;
+			}
+			
+			input[type="file"]::file-selector-button:hover {
+				background: var(--link-hover);
 			}
 			
 			input:disabled {
@@ -239,27 +453,30 @@
 			}
 			
 			[data-theme="dark"] form {
-				background-color: transparent;
+				background-color: var(--secondary-bg);
 			}
 			
 			/* Mobile Styles */
 			@media (max-width: 767px) {
 				body {
-					padding: 0.5rem;
+					padding: 1rem;
 				}
 				
 				h1 {
-					font-size: 1.5rem;
+					font-size: 1.75rem;
 					text-align: center;
+					margin-bottom: 0.75rem;
 				}
 				
 				p {
 					text-align: center;
 					font-size: 0.9rem;
+					margin-bottom: 1.5rem;
 				}
 				
 				#svg-container {
-					margin: 0.5rem 0;
+					margin: 1rem 0;
+					padding: 1rem;
 				}
 				
 				svg {
@@ -268,60 +485,106 @@
 					touch-action: pan-x pan-y;
 				}
 				
+				svg:hover {
+					transform: none;
+				}
+				
 				form {
 					grid-template-columns: 1fr;
-					gap: 0.75rem;
+					gap: 1.25rem;
+					padding: 1.5rem;
 				}
 				
 				form > div {
 					flex-direction: column;
 					align-items: stretch;
-					gap: 0.75rem;
+					gap: 1rem;
+					padding-top: 1.25rem;
 				}
 				
 				label {
 					font-size: 0.95rem;
 					width: 100%;
+					margin-bottom: 0.5rem;
 				}
 				
 				input[type="text"],
 				input[type="range"],
 				input[type="file"],
 				input[type="button"] {
-					padding: 0.75rem;
+					padding: 0.875rem;
 					font-size: 1rem;
-					min-height: 44px;
+					min-height: 48px;
 				}
 				
 				input[type="button"] {
 					max-width: none;
 					width: 100%;
-					margin-top: 0.25rem;
+					margin-top: 0.5rem;
 				}
 				
-				input[type="checkbox"] + label {
-					display: inline;
-					width: auto;
+				.checkbox-group {
+					flex-direction: column;
+					gap: 1rem;
+				}
+				
+				.button-row {
+					flex-direction: column;
+				}
+				
+				input[type="button"] {
+					width: 100%;
 				}
 				
 				.dark-mode-toggle {
-					top: 0.25rem;
-					right: 0.25rem;
+					top: 0.75rem;
+					right: 0.75rem;
+					width: 44px;
+					height: 44px;
+					font-size: 1.3rem;
 				}
 			}
 			
+			/* Tablet Styles */
 			@media (min-width: 768px) and (max-width: 1024px) {
 				body {
 					padding: 1.5rem;
 				}
 				
+				header {
+					text-align: left;
+				}
+				
 				form {
-					grid-template-columns: 25% 1fr;
-					gap: 0.75rem 1.25rem;
+					grid-template-columns: 180px 1fr;
+					gap: 1rem 1.25rem;
+					padding: 1.75rem;
+				}
+				
+				.button-row:first-child input[type="button"] {
+					min-width: 140px;
 				}
 				
 				input[type="button"] {
-					max-width: 180px;
+					font-size: 0.9rem;
+					padding: 0.7rem 1.25rem;
+				}
+			}
+			
+			/* Large Desktop */
+			@media (min-width: 1025px) {
+				header {
+					text-align: left;
+				}
+			}
+			
+			@media (min-width: 1400px) {
+				body {
+					max-width: 1400px;
+				}
+				
+				form {
+					padding: 2.5rem;
 				}
 			}
 		</style>
@@ -330,10 +593,12 @@
 		<button class="dark-mode-toggle" id="dark-mode-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
 			🌙
 		</button>
-		<h1 id="version-header">Antifa Sticker Generator</h1>
-		<p>
-			A purely client-side sticker generator. <a href="https://github.com/Ninso112/antifa-logo-generator" rel="noopener noreferrer" target="_blank" aria-label="View source code on GitHub">Source Code</a>.
-		</p>
+		<header>
+			<h1 id="version-header">Antifa Sticker Generator</h1>
+			<p>
+				A purely client-side sticker generator. <a href="https://github.com/Ninso112/antifa-logo-generator" rel="noopener noreferrer" target="_blank" aria-label="View source code on GitHub">Source Code</a>.
+			</p>
+		</header>
 		<div id="svg-container">
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 500" width="500" height="500" id="svg" role="img" aria-labelledby="svgTitle svgDesc">
 			<title id="svgTitle">Antifa Sticker</title>
@@ -391,18 +656,26 @@
 			<input type="file" id="input-file-icon-red" name="icon-red" accept="image/*" aria-label="Upload red icon">
 			<label for="input-range-bleed">Bleed (black in download)</label>
 			<input type="range" id="input-range-bleed" name="bleed" value="0" min="0" max="50" aria-label="Bleed for printing" title="Add bleed area for printing (extra border that gets cut off, appears as black border in download)">
-			<div>
-				<input type="checkbox" id="input-check-swap-red-black" name="swap-red-black" aria-label="Red on top of black">
-				<label for="input-check-swap-red-black">Red on top of black</label>
-				<input type="checkbox" id="input-check-lock-scale" name="lock-scale" aria-label="Same scale for red and black">
-				<label for="input-check-lock-scale">Same scale for red and black</label>
+			<div class="checkbox-group">
+				<div class="checkbox-item">
+					<input type="checkbox" id="input-check-swap-red-black" name="swap-red-black" aria-label="Red on top of black">
+					<label for="input-check-swap-red-black">Red on top of black</label>
+				</div>
+				<div class="checkbox-item">
+					<input type="checkbox" id="input-check-lock-scale" name="lock-scale" aria-label="Same scale for red and black">
+					<label for="input-check-lock-scale">Same scale for red and black</label>
+				</div>
 			</div>
-			<div>
-				<input type="button" id="input-button-download" value="Download SVG" aria-label="Download sticker as SVG">
-				<input type="button" id="input-button-download-png" value="Download PNG" aria-label="Download sticker as PNG">
-				<input type="button" id="input-button-reset" value="Reset Positions" aria-label="Reset all positions and scales to default values">
-				<input type="button" id="input-button-save" value="Save Design" aria-label="Save current design to browser storage">
-				<input type="button" id="input-button-load" value="Load Design" aria-label="Load saved design from browser storage">
+			<div class="button-group">
+				<div class="button-row">
+					<input type="button" id="input-button-download" value="Download SVG" aria-label="Download sticker as SVG">
+					<input type="button" id="input-button-download-png" value="Download PNG" aria-label="Download sticker as PNG">
+				</div>
+				<div class="button-row">
+					<input type="button" id="input-button-reset" value="Reset Positions" aria-label="Reset all positions and scales to default values">
+					<input type="button" id="input-button-save" value="Save Design" aria-label="Save current design to browser storage">
+					<input type="button" id="input-button-load" value="Load Design" aria-label="Load saved design from browser storage">
+				</div>
 			</div>
 			<label for="input-file-import-svg">Import downloaded SVG</label>
 			<input type="file" id="input-file-import-svg" name="import-svg" accept="image/svg+xml" aria-label="Import previously downloaded SVG">
