@@ -92,6 +92,17 @@
 				display: block;
 				border-radius: 4px;
 				transition: filter 0.3s ease;
+				touch-action: none;
+				user-select: none;
+			}
+			
+			#icon image {
+				cursor: move;
+				cursor: grab;
+			}
+			
+			#icon image:active {
+				cursor: grabbing;
 			}
 			
 			[data-theme="dark"] svg {
@@ -254,6 +265,7 @@
 				svg {
 					width: 100%;
 					max-width: 100vw;
+					touch-action: pan-x pan-y;
 				}
 				
 				form {
@@ -263,7 +275,7 @@
 				
 				form > div {
 					flex-direction: column;
-					align-items: flex-start;
+					align-items: stretch;
 					gap: 0.75rem;
 				}
 				
@@ -283,12 +295,33 @@
 				
 				input[type="button"] {
 					max-width: none;
-					margin-top: 0.5rem;
+					width: 100%;
+					margin-top: 0.25rem;
 				}
 				
 				input[type="checkbox"] + label {
 					display: inline;
 					width: auto;
+				}
+				
+				.dark-mode-toggle {
+					top: 0.25rem;
+					right: 0.25rem;
+				}
+			}
+			
+			@media (min-width: 768px) and (max-width: 1024px) {
+				body {
+					padding: 1.5rem;
+				}
+				
+				form {
+					grid-template-columns: 25% 1fr;
+					gap: 0.75rem 1.25rem;
+				}
+				
+				input[type="button"] {
+					max-width: 180px;
 				}
 			}
 		</style>
@@ -341,23 +374,23 @@
 			<label for="input-text-lower">Lower text</label>
 			<input type="text" id="input-text-lower" name="lower" value="AKTION" aria-label="Lower text of the sticker">
 			<label for="input-range-position-x">X Position</label>
-			<input type="range" id="input-range-position-x" name="position-x" value="-9" min="-500" max="500" aria-label="X position of the icon">
+			<input type="range" id="input-range-position-x" name="position-x" value="-9" min="-500" max="500" aria-label="X position of the icon" title="Horizontal position of both icons (drag icons or use slider)">
 			<label for="input-range-position-y">Y Position</label>
-			<input type="range" id="input-range-position-y" name="position-y" value="-2" min="-500" max="500" aria-label="Y position of the icon">
+			<input type="range" id="input-range-position-y" name="position-y" value="-2" min="-500" max="500" aria-label="Y position of the icon" title="Vertical position of both icons (drag icons or use slider)">
 			<label for="input-range-shift-x">X Shift</label>
-			<input type="range" id="input-range-shift-x" name="distance-x" value="0" min="-250" max="250" aria-label="X offset between red and black icon">
+			<input type="range" id="input-range-shift-x" name="distance-x" value="0" min="-250" max="250" aria-label="X offset between red and black icon" title="Horizontal offset between red and black icons (positive = black right, red left)">
 			<label for="input-range-shift-y">Y Shift</label>
-			<input type="range" id="input-range-shift-y" name="distance-y" value="0" min="-250" max="250" aria-label="Y offset between red and black icon">
+			<input type="range" id="input-range-shift-y" name="distance-y" value="0" min="-250" max="250" aria-label="Y offset between red and black icon" title="Vertical offset between red and black icons (positive = black down, red up)">
 			<label for="input-range-scale-black">Black Scale</label>
-			<input type="range" id="input-range-scale-black" name="scale-black" value="0" min="-3" max="3" step="0.01" aria-label="Scale factor for black icon">
+			<input type="range" id="input-range-scale-black" name="scale-black" value="0" min="-3" max="3" step="0.01" aria-label="Scale factor for black icon" title="Scale factor for black icon (0 = 100%, negative = smaller, positive = larger)">
 			<label for="input-range-scale-red">Red Scale</label>
-			<input type="range" id="input-range-scale-red" name="scale-red" value="0" min="-3" max="3" step="0.01" aria-label="Scale factor for red icon">
+			<input type="range" id="input-range-scale-red" name="scale-red" value="0" min="-3" max="3" step="0.01" aria-label="Scale factor for red icon" title="Scale factor for red icon (0 = 100%, negative = smaller, positive = larger)">
 			<label for="input-file-icon-black">Black Icon (black+white+alpha only)</label>
 			<input type="file" id="input-file-icon-black" name="icon-black" accept="image/*" aria-label="Upload black icon">
 			<label for="input-file-icon-red">Red Icon (black+white+alpha only)</label>
 			<input type="file" id="input-file-icon-red" name="icon-red" accept="image/*" aria-label="Upload red icon">
 			<label for="input-range-bleed">Bleed (black in download)</label>
-			<input type="range" id="input-range-bleed" name="bleed" value="0" min="0" max="50" aria-label="Bleed for printing">
+			<input type="range" id="input-range-bleed" name="bleed" value="0" min="0" max="50" aria-label="Bleed for printing" title="Add bleed area for printing (extra border that gets cut off, appears as black border in download)">
 			<div>
 				<input type="checkbox" id="input-check-swap-red-black" name="swap-red-black" aria-label="Red on top of black">
 				<label for="input-check-swap-red-black">Red on top of black</label>
@@ -368,6 +401,8 @@
 				<input type="button" id="input-button-download" value="Download SVG" aria-label="Download sticker as SVG">
 				<input type="button" id="input-button-download-png" value="Download PNG" aria-label="Download sticker as PNG">
 				<input type="button" id="input-button-reset" value="Reset Positions" aria-label="Reset all positions and scales to default values">
+				<input type="button" id="input-button-save" value="Save Design" aria-label="Save current design to browser storage">
+				<input type="button" id="input-button-load" value="Load Design" aria-label="Load saved design from browser storage">
 			</div>
 			<label for="input-file-import-svg">Import downloaded SVG</label>
 			<input type="file" id="input-file-import-svg" name="import-svg" accept="image/svg+xml" aria-label="Import previously downloaded SVG">
@@ -443,6 +478,7 @@
 			const darkModeToggle = document.getElementById('dark-mode-toggle');
 			const STORAGE_KEY = 'darkMode';
 			const THEME_ATTRIBUTE = 'data-theme';
+			const DESIGN_STORAGE_KEY = 'antifaStickerDesign';
 			
 			function initDarkMode() {
 				const savedTheme = localStorage.getItem(STORAGE_KEY);
@@ -533,7 +569,9 @@
 				buttonDownload: getElementById("input-button-download"),
 				buttonDownloadPng: getElementById("input-button-download-png"),
 				fileImportSvg: getElementById("input-file-import-svg"),
-				buttonReset: getElementById("input-button-reset")
+				buttonReset: getElementById("input-button-reset"),
+				buttonSave: getElementById("input-button-save"),
+				buttonLoad: getElementById("input-button-load")
 			};
 
 			// Helper functions
@@ -893,6 +931,198 @@
 				inputs.buttonReset.onclick = () => {
 					resetPositions();
 				};
+			}
+
+			// Drag and drop functionality for icons
+			let isDragging = false;
+			let dragTarget = null;
+			let dragStartX = 0;
+			let dragStartY = 0;
+			let initialX = 0;
+			let initialY = 0;
+
+			function getSVGPoint(event) {
+				const svgRect = doc.getBoundingClientRect();
+				const point = doc.createSVGPoint();
+				point.x = event.clientX - svgRect.left;
+				point.y = event.clientY - svgRect.top;
+				return point.matrixTransform(doc.getScreenCTM().inverse());
+			}
+
+			function startDrag(event, targetIcon) {
+				if (event.button !== 0 && event.type !== 'touchstart') return; // Only left mouse button
+				event.preventDefault();
+				isDragging = true;
+				dragTarget = targetIcon;
+				const point = getSVGPoint(event);
+				dragStartX = point.x;
+				dragStartY = point.y;
+				const pos = getIconPosition(targetIcon);
+				initialX = pos.x;
+				initialY = pos.y;
+				doc.style.cursor = 'grabbing';
+			}
+
+			function onDrag(event) {
+				if (!isDragging || !dragTarget) return;
+				event.preventDefault();
+				const point = getSVGPoint(event);
+				const deltaX = point.x - dragStartX;
+				const deltaY = point.y - dragStartY;
+				
+				const newX = initialX + deltaX;
+				const newY = initialY + deltaY;
+				
+				// Update both icons position (they share position)
+				updateIconPosition(iconBlack, newX, newY);
+				updateIconPosition(iconRed, newX, newY);
+				
+				// Update input sliders
+				if (inputs.positionX) inputs.positionX.value = Math.round(newX);
+				if (inputs.positionY) inputs.positionY.value = Math.round(newY);
+			}
+
+			function endDrag(event) {
+				if (!isDragging) return;
+				event.preventDefault();
+				isDragging = false;
+				dragTarget = null;
+				doc.style.cursor = '';
+			}
+
+			// Add drag handlers to icons
+			[iconBlack, iconRed].forEach(icon => {
+				if (icon) {
+					icon.addEventListener('mousedown', (e) => startDrag(e, icon));
+					icon.addEventListener('touchstart', (e) => startDrag(e.touches[0], icon), { passive: false });
+				}
+			});
+
+			doc.addEventListener('mousemove', onDrag);
+			doc.addEventListener('touchmove', (e) => {
+				if (e.touches.length === 1) onDrag(e.touches[0]);
+			}, { passive: false });
+			doc.addEventListener('mouseup', endDrag);
+			doc.addEventListener('mouseleave', endDrag);
+			doc.addEventListener('touchend', endDrag);
+			doc.addEventListener('touchcancel', endDrag);
+
+			// LocalStorage save/load functionality
+			function saveDesign() {
+				try {
+					const design = {
+						textUpper: inputs.textUpper?.value || DEFAULTS.textUpper,
+						textLower: inputs.textLower?.value || DEFAULTS.textLower,
+						positionX: Number(inputs.positionX?.value) || DEFAULTS.positionX,
+						positionY: Number(inputs.positionY?.value) || DEFAULTS.positionY,
+						shiftX: Number(inputs.shiftX?.value) || DEFAULTS.shiftX,
+						shiftY: Number(inputs.shiftY?.value) || DEFAULTS.shiftY,
+						scaleBlack: Number(inputs.scaleBlack?.value) || DEFAULTS.scaleBlack,
+						scaleRed: Number(inputs.scaleRed?.value) || DEFAULTS.scaleRed,
+						bleed: Number(inputs.bleed?.value) || DEFAULTS.bleed,
+						swapOrder: inputs.checkSwap?.checked || false,
+						lockScale: inputs.checkLockScale?.checked || false,
+						iconBlack: iconBlack?.href?.baseVal || '',
+						iconRed: iconRed?.href?.baseVal || ''
+					};
+					localStorage.setItem(DESIGN_STORAGE_KEY, JSON.stringify(design));
+					alert('Design saved successfully!');
+				} catch (e) {
+					alert('Error saving design: ' + (e.message || 'Unknown error'));
+				}
+			}
+
+			function loadDesign() {
+				try {
+					const saved = localStorage.getItem(DESIGN_STORAGE_KEY);
+					if (!saved) {
+						alert('No saved design found.');
+						return;
+					}
+					const design = JSON.parse(saved);
+					
+					// Load text
+					if (inputs.textUpper && design.textUpper) {
+						inputs.textUpper.value = design.textUpper;
+						if (upperText) upperText.textContent = design.textUpper;
+					}
+					if (inputs.textLower && design.textLower) {
+						inputs.textLower.value = design.textLower;
+						if (lowerText) lowerText.textContent = design.textLower;
+					}
+					
+					// Load positions
+					if (inputs.positionX && design.positionX !== undefined) {
+						inputs.positionX.value = design.positionX;
+					}
+					if (inputs.positionY && design.positionY !== undefined) {
+						inputs.positionY.value = design.positionY;
+					}
+					updateIconPosition(iconBlack, design.positionX || DEFAULTS.positionX, design.positionY || DEFAULTS.positionY);
+					updateIconPosition(iconRed, design.positionX || DEFAULTS.positionX, design.positionY || DEFAULTS.positionY);
+					
+					// Load shifts
+					if (inputs.shiftX && design.shiftX !== undefined) {
+						inputs.shiftX.value = design.shiftX;
+					}
+					if (inputs.shiftY && design.shiftY !== undefined) {
+						inputs.shiftY.value = design.shiftY;
+					}
+					updateIconShift(iconBlack, design.shiftX || DEFAULTS.shiftX, design.shiftY || DEFAULTS.shiftY, false);
+					updateIconShift(iconRed, design.shiftX || DEFAULTS.shiftX, design.shiftY || DEFAULTS.shiftY, true);
+					
+					// Load scales
+					if (inputs.scaleBlack && design.scaleBlack !== undefined) {
+						inputs.scaleBlack.value = design.scaleBlack;
+						const scale = scaleValueToNumber(design.scaleBlack);
+						updateIconScale(iconBlack, scale);
+					}
+					if (inputs.scaleRed && design.scaleRed !== undefined) {
+						inputs.scaleRed.value = design.scaleRed;
+						const scale = scaleValueToNumber(design.scaleRed);
+						updateIconScale(iconRed, scale);
+					}
+					
+					// Load bleed
+					if (inputs.bleed && design.bleed !== undefined) {
+						inputs.bleed.value = design.bleed;
+						updateBleed(design.bleed);
+					}
+					
+					// Load checkboxes
+					if (inputs.checkSwap && design.swapOrder !== undefined) {
+						inputs.checkSwap.checked = design.swapOrder;
+						const first = design.swapOrder ? iconBlack : iconRed;
+						const second = design.swapOrder ? iconRed : iconBlack;
+						iconContainer.insertBefore(first, second);
+					}
+					if (inputs.checkLockScale && design.lockScale !== undefined) {
+						inputs.checkLockScale.checked = design.lockScale;
+						if (inputs.scaleRed) {
+							inputs.scaleRed.disabled = design.lockScale;
+						}
+					}
+					
+					// Load icons (if saved)
+					if (design.iconBlack && iconBlack) {
+						setImageHref(iconBlack, design.iconBlack);
+					}
+					if (design.iconRed && iconRed) {
+						setImageHref(iconRed, design.iconRed);
+					}
+					
+					alert('Design loaded successfully!');
+				} catch (e) {
+					alert('Error loading design: ' + (e.message || 'Unknown error'));
+				}
+			}
+
+			// Save/Load handlers
+			if (inputs.buttonSave) {
+				inputs.buttonSave.onclick = saveDesign;
+			}
+			if (inputs.buttonLoad) {
+				inputs.buttonLoad.onclick = loadDesign;
 			}
 
 			if (inputs.buttonDownloadPng) {
