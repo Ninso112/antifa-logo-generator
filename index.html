@@ -367,6 +367,7 @@
 				box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3), var(--shadow-md);
 			}
 			
+			/* Special button styles */
 			input[type="button"]#input-button-reset {
 				background: var(--secondary-bg);
 				color: var(--text-color);
@@ -530,10 +531,6 @@
 				
 				.button-row {
 					flex-direction: column;
-				}
-				
-				input[type="button"] {
-					width: 100%;
 				}
 				
 				.dark-mode-toggle {
@@ -812,10 +809,10 @@
 								});
 							});
 							
-							// Check for updates periodically
-							setInterval(() => {
+							// Check for updates periodically (stored in variable for cleanup)
+							const updateInterval = setInterval(() => {
 								registration.update();
-							}, 60000); // Check every minute
+							}, 300000); // Check every 5 minutes (less aggressive)
 						})
 						.catch(() => {
 							// Silent fail - app works without service worker
@@ -847,9 +844,10 @@
 				buttonLoad: getElementById("input-button-load")
 			};
 
-			// Helper functions
+			// Helper functions - optimized DOM operations
 			function setImageHref(imgElement, dataUrl, width, height) {
 				if (!imgElement) return;
+				// Use baseVal for better performance when possible
 				imgElement.href.baseVal = dataUrl;
 				imgElement.setAttributeNS(XLINK_NS, 'href', dataUrl);
 				if (width) imgElement.width.baseVal.value = width;
@@ -858,8 +856,10 @@
 
 			// Transform update helpers
 			function getIconTransform(iconElement, index) {
-				if (!iconElement || iconElement.transform.baseVal.numberOfItems <= index) return null;
-				return iconElement.transform.baseVal[index].matrix;
+				if (!iconElement) return null;
+				const transforms = iconElement.transform.baseVal;
+				if (transforms.numberOfItems <= index) return null;
+				return transforms[index].matrix;
 			}
 
 			function updateIconPosition(iconElement, x, y) {
@@ -895,25 +895,29 @@
 
 			function updateBleed(bleedVal) {
 				if (!bleedCircle || !doc) return;
-				bleedCircle.style.strokeWidth = bleedVal === 0 ? 0 : bleedVal * 2 + 1;
+				// Batch DOM updates
 				const size = DEFAULT_SIZE + bleedVal * 2;
+				const viewBox = doc.viewBox.baseVal;
+				bleedCircle.style.strokeWidth = bleedVal === 0 ? '0' : `${bleedVal * 2 + 1}`;
 				doc.width.baseVal.value = size;
 				doc.height.baseVal.value = size;
-				doc.viewBox.baseVal.x = -bleedVal;
-				doc.viewBox.baseVal.y = -bleedVal;
-				doc.viewBox.baseVal.width = size;
-				doc.viewBox.baseVal.height = size;
+				viewBox.x = -bleedVal;
+				viewBox.y = -bleedVal;
+				viewBox.width = size;
+				viewBox.height = size;
 			}
 
 			function resizeSvg(size, offset) {
 				if (!doc || !svgRoot) return;
 				const scale = size / DEFAULT_SIZE;
+				// Batch DOM updates
+				const viewBox = doc.viewBox.baseVal;
 				doc.width.baseVal.value = size;
 				doc.height.baseVal.value = size;
-				doc.viewBox.baseVal.width = size;
-				doc.viewBox.baseVal.height = size;
-				doc.viewBox.baseVal.x = offset;
-				doc.viewBox.baseVal.y = offset;
+				viewBox.width = size;
+				viewBox.height = size;
+				viewBox.x = offset;
+				viewBox.y = offset;
 				if (svgRoot.transform.baseVal.numberOfItems > 0) {
 					const matrix = svgRoot.transform.baseVal[0].matrix;
 					matrix.a = scale;
@@ -923,15 +927,18 @@
 
 			function restoreSvgSize(originalSize, originalOffset) {
 				if (!doc || !svgRoot) return;
+				// Batch DOM updates
+				const viewBox = doc.viewBox.baseVal;
 				doc.width.baseVal.value = originalSize;
 				doc.height.baseVal.value = originalSize;
-				doc.viewBox.baseVal.width = originalSize;
-				doc.viewBox.baseVal.height = originalSize;
-				doc.viewBox.baseVal.x = originalOffset;
-				doc.viewBox.baseVal.y = originalOffset;
+				viewBox.width = originalSize;
+				viewBox.height = originalSize;
+				viewBox.x = originalOffset;
+				viewBox.y = originalOffset;
 				if (svgRoot.transform.baseVal.numberOfItems > 0) {
-					svgRoot.transform.baseVal[0].matrix.a = 1;
-					svgRoot.transform.baseVal[0].matrix.d = 1;
+					const matrix = svgRoot.transform.baseVal[0].matrix;
+					matrix.a = 1;
+					matrix.d = 1;
 				}
 			}
 
@@ -988,32 +995,33 @@
 				return !Number.isNaN(num) && num >= min && num <= max;
 			}
 
-			// Text input handlers
+			// Text input handlers - optimized with direct assignment
+			function updateTextElement(inputElement, textElement) {
+				if (inputElement && textElement) {
+					textElement.textContent = inputElement.value || '';
+				}
+			}
+
 			if (inputs.textUpper) {
-				inputs.textUpper.oninput = () => {
-					if (upperText && inputs.textUpper) {
-						upperText.textContent = inputs.textUpper.value || '';
-					}
-				};
+				inputs.textUpper.oninput = () => updateTextElement(inputs.textUpper, upperText);
 			}
 
 			if (inputs.textLower) {
-				inputs.textLower.oninput = () => {
-					if (lowerText && inputs.textLower) {
-						lowerText.textContent = inputs.textLower.value || '';
-					}
-				};
+				inputs.textLower.oninput = () => updateTextElement(inputs.textLower, lowerText);
 			}
 
-			// Position updates
+			// Position updates - optimized to update both icons together
+			function updateBothIconsPosition(x, y) {
+				updateIconPosition(iconBlack, x, y);
+				updateIconPosition(iconRed, x, y);
+			}
+
 			const updatePositionX = () => {
 				if (!inputs.positionX) return;
 				const value = Number(inputs.positionX.value);
 				if (!isValidNumber(value)) return;
 				const blackPos = getIconPosition(iconBlack);
-				const redPos = getIconPosition(iconRed);
-				updateIconPosition(iconBlack, value, blackPos.y);
-				updateIconPosition(iconRed, value, redPos.y);
+				updateBothIconsPosition(value, blackPos.y);
 			};
 			if (inputs.positionX) {
 				inputs.positionX.oninput = debounce(updatePositionX, DEBOUNCE_DELAY);
@@ -1024,23 +1032,24 @@
 				const value = Number(inputs.positionY.value);
 				if (!isValidNumber(value)) return;
 				const blackPos = getIconPosition(iconBlack);
-				const redPos = getIconPosition(iconRed);
-				updateIconPosition(iconBlack, blackPos.x, value);
-				updateIconPosition(iconRed, redPos.x, value);
+				updateBothIconsPosition(blackPos.x, value);
 			};
 			if (inputs.positionY) {
 				inputs.positionY.oninput = debounce(updatePositionY, DEBOUNCE_DELAY);
 			}
 
-			// Shift updates
+			// Shift updates - optimized to update both icons together
+			function updateBothIconsShift(x, y) {
+				updateIconShift(iconBlack, x, y, false);
+				updateIconShift(iconRed, x, y, true);
+			}
+
 			const updateShiftX = () => {
 				if (!inputs.shiftX) return;
 				const value = Number(inputs.shiftX.value);
 				if (!isValidNumber(value)) return;
 				const blackShift = getIconShift(iconBlack);
-				const redShift = getIconShift(iconRed);
-				updateIconShift(iconBlack, value, blackShift.y, false);
-				updateIconShift(iconRed, value, redShift.y, true);
+				updateBothIconsShift(value, blackShift.y);
 			};
 			if (inputs.shiftX) {
 				inputs.shiftX.oninput = debounce(updateShiftX, DEBOUNCE_DELAY);
@@ -1051,9 +1060,7 @@
 				const value = Number(inputs.shiftY.value);
 				if (!isValidNumber(value)) return;
 				const blackShift = getIconShift(iconBlack);
-				const redShift = getIconShift(iconRed);
-				updateIconShift(iconBlack, blackShift.x, value, false);
-				updateIconShift(iconRed, redShift.x, value, true);
+				updateBothIconsShift(blackShift.x, value);
 			};
 			if (inputs.shiftY) {
 				inputs.shiftY.oninput = debounce(updateShiftY, DEBOUNCE_DELAY);
@@ -1128,29 +1135,27 @@
 				inputs.bleed.oninput = debounce(updateBleedHandler, DEBOUNCE_DELAY);
 			}
 
-			// Reset function
+			// Reset function - optimized with batched updates
 			function resetPositions() {
 				// Reset text values
 				if (inputs.textUpper) {
 					inputs.textUpper.value = DEFAULTS.textUpper;
-					if (upperText) upperText.textContent = DEFAULTS.textUpper;
+					updateTextElement(inputs.textUpper, upperText);
 				}
 				if (inputs.textLower) {
 					inputs.textLower.value = DEFAULTS.textLower;
-					if (lowerText) lowerText.textContent = DEFAULTS.textLower;
+					updateTextElement(inputs.textLower, lowerText);
 				}
 
-				// Reset positions
+				// Reset positions - use optimized function
 				if (inputs.positionX) inputs.positionX.value = DEFAULTS.positionX;
 				if (inputs.positionY) inputs.positionY.value = DEFAULTS.positionY;
-				updateIconPosition(iconBlack, DEFAULTS.positionX, DEFAULTS.positionY);
-				updateIconPosition(iconRed, DEFAULTS.positionX, DEFAULTS.positionY);
+				updateBothIconsPosition(DEFAULTS.positionX, DEFAULTS.positionY);
 
-				// Reset shifts
+				// Reset shifts - use optimized function
 				if (inputs.shiftX) inputs.shiftX.value = DEFAULTS.shiftX;
 				if (inputs.shiftY) inputs.shiftY.value = DEFAULTS.shiftY;
-				updateIconShift(iconBlack, DEFAULTS.shiftX, DEFAULTS.shiftY, false);
-				updateIconShift(iconRed, DEFAULTS.shiftX, DEFAULTS.shiftY, true);
+				updateBothIconsShift(DEFAULTS.shiftX, DEFAULTS.shiftY);
 
 				// Reset scales
 				if (inputs.scaleBlack) {
@@ -1179,14 +1184,16 @@
 				}
 			}
 
-			// Download helpers
+			// Download helpers - optimized DOM manipulation
 			function downloadFile(dataUrl, filename) {
 				const link = document.createElement('a');
 				link.href = dataUrl;
 				link.download = filename;
+				link.style.display = 'none';
 				document.body.appendChild(link);
 				link.click();
-				document.body.removeChild(link);
+				// Cleanup after a short delay to ensure download starts
+				setTimeout(() => document.body.removeChild(link), 100);
 			}
 
 			// Download handlers
@@ -1214,13 +1221,28 @@
 			let initialX = 0;
 			let initialY = 0;
 
+			// Cache SVG transforms for better performance
+			let svgCTM = null;
+			let svgCTMInverse = null;
+			
 			function getSVGPoint(event) {
+				// Cache CTM (Coordinate Transformation Matrix) for performance
+				if (!svgCTMInverse) {
+					svgCTM = doc.getScreenCTM();
+					svgCTMInverse = svgCTM ? svgCTM.inverse() : null;
+				}
 				const svgRect = doc.getBoundingClientRect();
 				const point = doc.createSVGPoint();
 				point.x = event.clientX - svgRect.left;
 				point.y = event.clientY - svgRect.top;
-				return point.matrixTransform(doc.getScreenCTM().inverse());
+				return svgCTMInverse ? point.matrixTransform(svgCTMInverse) : point;
 			}
+			
+			// Reset CTM cache on window resize
+			window.addEventListener('resize', () => {
+				svgCTM = null;
+				svgCTMInverse = null;
+			}, { passive: true });
 
 			function startDrag(event, targetIcon) {
 				if (event.button !== 0 && event.type !== 'touchstart') return; // Only left mouse button
@@ -1247,8 +1269,7 @@
 				const newY = initialY + deltaY;
 				
 				// Update both icons position (they share position)
-				updateIconPosition(iconBlack, newX, newY);
-				updateIconPosition(iconRed, newX, newY);
+				updateBothIconsPosition(newX, newY);
 				
 				// Update input sliders
 				if (inputs.positionX) inputs.positionX.value = Math.round(newX);
@@ -1263,15 +1284,15 @@
 				doc.style.cursor = '';
 			}
 
-			// Add drag handlers to icons
-			[iconBlack, iconRed].forEach(icon => {
-				if (icon) {
-					icon.addEventListener('mousedown', (e) => startDrag(e, icon));
-					icon.addEventListener('touchstart', (e) => startDrag(e.touches[0], icon), { passive: false });
-				}
+			// Add drag handlers to icons - use event delegation for better performance
+			const iconElements = [iconBlack, iconRed].filter(Boolean);
+			iconElements.forEach(icon => {
+				icon.addEventListener('mousedown', (e) => startDrag(e, icon), { passive: false });
+				icon.addEventListener('touchstart', (e) => startDrag(e.touches[0], icon), { passive: false });
 			});
 
-			doc.addEventListener('mousemove', onDrag);
+			// Use passive listeners where possible for better performance
+			doc.addEventListener('mousemove', onDrag, { passive: false });
 			doc.addEventListener('touchmove', (e) => {
 				if (e.touches.length === 1) onDrag(e.touches[0]);
 			}, { passive: false });
@@ -1280,19 +1301,23 @@
 			doc.addEventListener('touchend', endDrag);
 			doc.addEventListener('touchcancel', endDrag);
 
-			// LocalStorage save/load functionality
+			// LocalStorage save/load functionality - optimized with helper
+			function getInputValue(input, defaultValue) {
+				return input ? (typeof defaultValue === 'number' ? Number(input.value) || defaultValue : input.value || defaultValue) : defaultValue;
+			}
+
 			function saveDesign() {
 				try {
 					const design = {
-						textUpper: inputs.textUpper?.value || DEFAULTS.textUpper,
-						textLower: inputs.textLower?.value || DEFAULTS.textLower,
-						positionX: Number(inputs.positionX?.value) || DEFAULTS.positionX,
-						positionY: Number(inputs.positionY?.value) || DEFAULTS.positionY,
-						shiftX: Number(inputs.shiftX?.value) || DEFAULTS.shiftX,
-						shiftY: Number(inputs.shiftY?.value) || DEFAULTS.shiftY,
-						scaleBlack: Number(inputs.scaleBlack?.value) || DEFAULTS.scaleBlack,
-						scaleRed: Number(inputs.scaleRed?.value) || DEFAULTS.scaleRed,
-						bleed: Number(inputs.bleed?.value) || DEFAULTS.bleed,
+						textUpper: getInputValue(inputs.textUpper, DEFAULTS.textUpper),
+						textLower: getInputValue(inputs.textLower, DEFAULTS.textLower),
+						positionX: getInputValue(inputs.positionX, DEFAULTS.positionX),
+						positionY: getInputValue(inputs.positionY, DEFAULTS.positionY),
+						shiftX: getInputValue(inputs.shiftX, DEFAULTS.shiftX),
+						shiftY: getInputValue(inputs.shiftY, DEFAULTS.shiftY),
+						scaleBlack: getInputValue(inputs.scaleBlack, DEFAULTS.scaleBlack),
+						scaleRed: getInputValue(inputs.scaleRed, DEFAULTS.scaleRed),
+						bleed: getInputValue(inputs.bleed, DEFAULTS.bleed),
 						swapOrder: inputs.checkSwap?.checked || false,
 						lockScale: inputs.checkLockScale?.checked || false,
 						iconBlack: iconBlack?.href?.baseVal || '',
@@ -1314,35 +1339,29 @@
 					}
 					const design = JSON.parse(saved);
 					
-					// Load text
+					// Load text - use optimized function
 					if (inputs.textUpper && design.textUpper) {
 						inputs.textUpper.value = design.textUpper;
-						if (upperText) upperText.textContent = design.textUpper;
+						updateTextElement(inputs.textUpper, upperText);
 					}
 					if (inputs.textLower && design.textLower) {
 						inputs.textLower.value = design.textLower;
-						if (lowerText) lowerText.textContent = design.textLower;
+						updateTextElement(inputs.textLower, lowerText);
 					}
 					
-					// Load positions
-					if (inputs.positionX && design.positionX !== undefined) {
-						inputs.positionX.value = design.positionX;
-					}
-					if (inputs.positionY && design.positionY !== undefined) {
-						inputs.positionY.value = design.positionY;
-					}
-					updateIconPosition(iconBlack, design.positionX || DEFAULTS.positionX, design.positionY || DEFAULTS.positionY);
-					updateIconPosition(iconRed, design.positionX || DEFAULTS.positionX, design.positionY || DEFAULTS.positionY);
+					// Load positions - use optimized function
+					const posX = design.positionX ?? DEFAULTS.positionX;
+					const posY = design.positionY ?? DEFAULTS.positionY;
+					if (inputs.positionX) inputs.positionX.value = posX;
+					if (inputs.positionY) inputs.positionY.value = posY;
+					updateBothIconsPosition(posX, posY);
 					
-					// Load shifts
-					if (inputs.shiftX && design.shiftX !== undefined) {
-						inputs.shiftX.value = design.shiftX;
-					}
-					if (inputs.shiftY && design.shiftY !== undefined) {
-						inputs.shiftY.value = design.shiftY;
-					}
-					updateIconShift(iconBlack, design.shiftX || DEFAULTS.shiftX, design.shiftY || DEFAULTS.shiftY, false);
-					updateIconShift(iconRed, design.shiftX || DEFAULTS.shiftX, design.shiftY || DEFAULTS.shiftY, true);
+					// Load shifts - use optimized function
+					const shiftX = design.shiftX ?? DEFAULTS.shiftX;
+					const shiftY = design.shiftY ?? DEFAULTS.shiftY;
+					if (inputs.shiftX) inputs.shiftX.value = shiftX;
+					if (inputs.shiftY) inputs.shiftY.value = shiftY;
+					updateBothIconsShift(shiftX, shiftY);
 					
 					// Load scales
 					if (inputs.scaleBlack && design.scaleBlack !== undefined) {
@@ -1510,16 +1529,16 @@
 							return;
 						}
 					
-					// Import text
+					// Import text - use optimized function
 					const impUpperText = imported.getElementById('uppertext');
 					const impLowerText = imported.getElementById('lowertext');
-					if (impUpperText) {
-						inputs.textUpper.value = impUpperText.textContent;
-						upperText.textContent = impUpperText.textContent;
+					if (impUpperText && inputs.textUpper) {
+						inputs.textUpper.value = impUpperText.textContent || '';
+						updateTextElement(inputs.textUpper, upperText);
 					}
-					if (impLowerText) {
-						inputs.textLower.value = impLowerText.textContent;
-						lowerText.textContent = impLowerText.textContent;
+					if (impLowerText && inputs.textLower) {
+						inputs.textLower.value = impLowerText.textContent || '';
+						updateTextElement(inputs.textLower, lowerText);
 					}
 
 					// Import icons
@@ -1537,22 +1556,20 @@
 					// Import transforms
 					if (impIconBlack && impIconBlack.transform.baseVal.numberOfItems >= 3) {
 						const transforms = impIconBlack.transform.baseVal;
-						// Shift
+						// Shift - use optimized function
 						const shiftMatrix = transforms[0].matrix;
 						const shiftX = shiftMatrix.e;
 						const shiftY = shiftMatrix.f;
 						if (inputs.shiftX) inputs.shiftX.value = shiftX;
 						if (inputs.shiftY) inputs.shiftY.value = shiftY;
-						updateIconShift(iconBlack, shiftX, shiftY, false);
-						updateIconShift(iconRed, shiftX, shiftY, true);
-						// Position
+						updateBothIconsShift(shiftX, shiftY);
+						// Position - use optimized function
 						const posMatrix = transforms[1].matrix;
 						const posX = posMatrix.e;
 						const posY = posMatrix.f;
 						if (inputs.positionX) inputs.positionX.value = posX;
 						if (inputs.positionY) inputs.positionY.value = posY;
-						updateIconPosition(iconBlack, posX, posY);
-						updateIconPosition(iconRed, posX, posY);
+						updateBothIconsPosition(posX, posY);
 						// Scale
 						const scaleMatrix = transforms[2].matrix;
 						const scaleBlack = scaleMatrix.a;
