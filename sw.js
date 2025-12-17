@@ -6,15 +6,19 @@ const urlsToCache = [
   './manifest.json'
 ];
 
+// Only cache same-origin requests
+function shouldCache(request) {
+  const url = new URL(request.url);
+  return url.origin === self.location.origin;
+}
+
 // Install event - cache resources
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => {
-        return cache.addAll(urlsToCache);
-      })
-      .catch((error) => {
-        console.log('Cache installation failed:', error);
+      .then((cache) => cache.addAll(urlsToCache))
+      .catch(() => {
+        // Silent fail - app will still work without cache
       })
   );
   self.skipWaiting();
@@ -25,11 +29,9 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
-        })
+        cacheNames
+          .filter((cacheName) => cacheName !== CACHE_NAME)
+          .map((cacheName) => caches.delete(cacheName))
       );
     })
   );
@@ -38,30 +40,38 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', (event) => {
+  // Only handle GET requests
+  if (event.request.method !== 'GET') {
+    return;
+  }
+  
+  // Only cache same-origin requests
+  if (!shouldCache(event.request)) {
+    return;
+  }
+  
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Return cached version or fetch from network
-        return response || fetch(event.request).then((response) => {
-          // Don't cache non-successful responses
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
-          
-          // Clone the response
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      
+      return fetch(event.request).then((response) => {
+        // Only cache successful responses from same origin
+        if (response && response.status === 200 && response.type === 'basic') {
           const responseToCache = response.clone();
-          
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);
           });
-          
-          return response;
-        }).catch(() => {
-          // Return offline page if available
-          if (event.request.destination === 'document') {
-            return caches.match('./index.html');
-          }
-        });
-      })
+        }
+        return response;
+      }).catch(() => {
+        // Return offline fallback for document requests
+        if (event.request.destination === 'document') {
+          return caches.match('./index.html');
+        }
+        return new Response('', { status: 408, statusText: 'Request Timeout' });
+      });
+    })
   );
 });

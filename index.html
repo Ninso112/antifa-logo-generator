@@ -25,7 +25,7 @@
 		
 		<script>
 			// Version
-			const VERSION = 'V0.89';
+			const VERSION = 'V0.90';
 		</script>
 		<style>
 			* {
@@ -33,56 +33,93 @@
 			}
 			
 			:root {
-				--primary-bg: #f0f0f0;
-				--primary-bg-hover: #e0e0e0;
-				--border-color: #333;
-				--text-color: #000;
-				--link-color: #0066cc;
-				--body-bg: #fff;
-				--input-bg: #fff;
-				--input-border: #ccc;
+				--primary-bg: #f5f5f5;
+				--primary-bg-hover: #e8e8e8;
+				--secondary-bg: #ffffff;
+				--border-color: #d0d0d0;
+				--border-color-hover: #a0a0a0;
+				--text-color: #1a1a1a;
+				--text-secondary: #666;
+				--link-color: #2563eb;
+				--link-hover: #1d4ed8;
+				--body-bg: #fafafa;
+				--input-bg: #ffffff;
+				--input-border: #d1d5db;
+				--input-focus: #2563eb;
+				--shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+				--shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+				--shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+				--radius: 8px;
+				--radius-sm: 6px;
 			}
 			
 			[data-theme="dark"] {
-				--primary-bg: #2d2d2d;
-				--primary-bg-hover: #3d3d3d;
-				--border-color: #ccc;
-				--text-color: #e0e0e0;
-				--link-color: #4da6ff;
-				--body-bg: #1a1a1a;
-				--input-bg: #2d2d2d;
-				--input-border: #555;
+				--primary-bg: #1f2937;
+				--primary-bg-hover: #374151;
+				--secondary-bg: #111827;
+				--border-color: #374151;
+				--border-color-hover: #4b5563;
+				--text-color: #f9fafb;
+				--text-secondary: #d1d5db;
+				--link-color: #60a5fa;
+				--link-hover: #93c5fd;
+				--body-bg: #0f172a;
+				--input-bg: #1f2937;
+				--input-border: #374151;
+				--input-focus: #60a5fa;
+				--shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+				--shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+				--shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
 			}
 			
 			body {
 				margin: 0 auto;
-				padding: 1rem;
+				padding: 1.5rem;
 				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 				max-width: 1200px;
 				color: var(--text-color);
-				line-height: 1.5;
+				line-height: 1.6;
 				background-color: var(--body-bg);
 				transition: background-color 0.3s ease, color 0.3s ease;
+				min-height: 100vh;
+			}
+			
+			header {
+				margin-bottom: 2rem;
+				text-align: center;
 			}
 			
 			h1 {
-				margin-top: 0;
-				font-size: 1.8rem;
+				margin: 0 0 0.5rem 0;
+				font-size: 2rem;
+				font-weight: 700;
+				letter-spacing: -0.02em;
+			}
+			
+			header p {
+				margin: 0;
+				color: var(--text-secondary);
 			}
 			
 			a {
 				color: var(--link-color);
 				text-decoration: none;
+				transition: color 0.2s ease;
 			}
 			
 			a:hover {
+				color: var(--link-hover);
 				text-decoration: underline;
 			}
 			
 			#svg-container {
 				display: flex;
 				justify-content: center;
-				margin: 1rem 0;
+				margin: 2rem 0;
+				padding: 1.5rem;
+				background: var(--secondary-bg);
+				border-radius: var(--radius);
+				box-shadow: var(--shadow-md);
 			}
 			
 			svg {
@@ -90,8 +127,25 @@
 				max-width: 100%;
 				height: auto;
 				display: block;
-				border-radius: 4px;
-				transition: filter 0.3s ease;
+				border-radius: var(--radius-sm);
+				transition: filter 0.3s ease, transform 0.2s ease;
+				touch-action: none;
+				user-select: none;
+				box-shadow: var(--shadow-sm);
+			}
+			
+			svg:hover {
+				transform: translateY(-2px);
+				box-shadow: var(--shadow-md);
+			}
+			
+			#icon image {
+				cursor: move;
+				cursor: grab;
+			}
+			
+			#icon image:active {
+				cursor: grabbing;
 			}
 			
 			[data-theme="dark"] svg {
@@ -100,9 +154,9 @@
 			
 			.dark-mode-toggle {
 				position: fixed;
-				top: 1rem;
-				right: 1rem;
-				background: var(--primary-bg);
+				top: 1.5rem;
+				right: 1.5rem;
+				background: var(--secondary-bg);
 				border: 2px solid var(--border-color);
 				border-radius: 50%;
 				width: 48px;
@@ -112,14 +166,16 @@
 				align-items: center;
 				justify-content: center;
 				font-size: 1.5rem;
-				transition: background-color 0.3s ease, transform 0.2s ease;
+				transition: all 0.3s ease;
 				z-index: 1000;
-				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+				box-shadow: var(--shadow-lg);
 			}
 			
 			.dark-mode-toggle:hover {
 				background: var(--primary-bg-hover);
-				transform: scale(1.1);
+				border-color: var(--border-color-hover);
+				transform: scale(1.1) rotate(15deg);
+				box-shadow: var(--shadow-lg);
 			}
 			
 			.dark-mode-toggle:active {
@@ -138,9 +194,13 @@
 			
 			form {
 				display: grid;
-				grid-template-columns: 30% 1fr;
-				gap: 0.75rem 1.5rem;
+				grid-template-columns: 200px 1fr;
+				gap: 1rem 1.5rem;
 				align-items: center;
+				background: var(--secondary-bg);
+				padding: 2rem;
+				border-radius: var(--radius);
+				box-shadow: var(--shadow-md);
 			}
 			
 			form > div {
@@ -149,11 +209,56 @@
 				flex-wrap: wrap;
 				gap: 1rem;
 				align-items: center;
+				padding-top: 1rem;
+				border-top: 1px solid var(--border-color);
+			}
+			
+			form > div:first-of-type {
+				border-top: none;
+				padding-top: 0;
+			}
+			
+			.checkbox-group {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 1.5rem;
+			}
+			
+			.checkbox-item {
+				display: flex;
+				align-items: center;
+				padding: 0.5rem;
+				border-radius: var(--radius-sm);
+				transition: background 0.2s ease;
+			}
+			
+			.checkbox-item:hover {
+				background: var(--primary-bg);
+			}
+			
+			.button-group {
+				display: flex;
+				flex-direction: column;
+				gap: 1rem;
+				width: 100%;
+			}
+			
+			.button-row {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 1rem;
+			}
+			
+			.button-row:first-child input[type="button"] {
+				flex: 1;
+				min-width: 150px;
 			}
 			
 			label {
 				font-size: 0.9rem;
-				font-weight: 500;
+				font-weight: 600;
+				color: var(--text-color);
+				letter-spacing: 0.01em;
 			}
 			
 			input[type="text"],
@@ -165,57 +270,178 @@
 			}
 			
 			input[type="text"] {
-				border: 1px solid var(--input-border);
-				border-radius: 4px;
+				border: 2px solid var(--input-border);
+				border-radius: var(--radius-sm);
 				font-size: 1rem;
 				background-color: var(--input-bg);
 				color: var(--text-color);
-				transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+				padding: 0.75rem;
+				transition: all 0.2s ease;
+			}
+			
+			input[type="text"]:hover {
+				border-color: var(--border-color-hover);
 			}
 			
 			input[type="text"]:focus {
-				outline: 2px solid var(--link-color);
-				outline-offset: 2px;
-				border-color: var(--link-color);
+				outline: none;
+				border-color: var(--input-focus);
+				box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+			}
+			
+			[data-theme="dark"] input[type="text"]:focus {
+				box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
 			}
 			
 			input[type="range"] {
 				cursor: pointer;
+				height: 8px;
+				background: var(--primary-bg);
+				border-radius: 4px;
+			}
+			
+			input[type="range"]::-webkit-slider-thumb {
+				appearance: none;
+				width: 20px;
+				height: 20px;
+				border-radius: 50%;
+				background: var(--link-color);
+				cursor: pointer;
+				box-shadow: var(--shadow-sm);
+				transition: all 0.2s ease;
+			}
+			
+			input[type="range"]::-webkit-slider-thumb:hover {
+				transform: scale(1.2);
+				box-shadow: var(--shadow-md);
+			}
+			
+			input[type="range"]::-moz-range-thumb {
+				width: 20px;
+				height: 20px;
+				border-radius: 50%;
+				background: var(--link-color);
+				cursor: pointer;
+				border: none;
+				box-shadow: var(--shadow-sm);
+				transition: all 0.2s ease;
+			}
+			
+			input[type="range"]::-moz-range-thumb:hover {
+				transform: scale(1.2);
+				box-shadow: var(--shadow-md);
 			}
 			
 			input[type="button"] {
 				cursor: pointer;
-				font-size: 1rem;
-				border: 2px solid var(--border-color);
-				background: var(--primary-bg);
-				color: var(--text-color);
-				border-radius: 4px;
-				transition: background-color 0.3s ease, transform 0.1s, border-color 0.3s ease, color 0.3s ease;
-				font-weight: 500;
+				font-size: 0.95rem;
+				border: 2px solid var(--link-color);
+				background: var(--link-color);
+				color: white;
+				border-radius: var(--radius-sm);
+				transition: all 0.2s ease;
+				font-weight: 600;
+				padding: 0.75rem 1.5rem;
 				max-width: 200px;
+				box-shadow: var(--shadow-sm);
 			}
 			
 			input[type="button"]:hover {
-				background: var(--primary-bg-hover);
+				background: var(--link-hover);
+				border-color: var(--link-hover);
+				transform: translateY(-2px);
+				box-shadow: var(--shadow-md);
 			}
 			
 			input[type="button"]:active {
-				transform: translateY(1px);
+				transform: translateY(0);
+				box-shadow: var(--shadow-sm);
 			}
 			
 			input[type="button"]:focus {
-				outline: 2px solid var(--link-color);
-				outline-offset: 2px;
+				outline: none;
+				box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3), var(--shadow-md);
+			}
+			
+			[data-theme="dark"] input[type="button"]:focus {
+				box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3), var(--shadow-md);
+			}
+			
+			/* Special button styles */
+			input[type="button"]#input-button-reset {
+				background: var(--secondary-bg);
+				color: var(--text-color);
+				border-color: var(--border-color);
+			}
+			
+			input[type="button"]#input-button-reset:hover {
+				background: var(--primary-bg-hover);
+				border-color: var(--border-color-hover);
+				color: var(--text-color);
+			}
+			
+			input[type="button"]#input-button-save {
+				background: #10b981;
+				border-color: #10b981;
+			}
+			
+			input[type="button"]#input-button-save:hover {
+				background: #059669;
+				border-color: #059669;
+			}
+			
+			input[type="button"]#input-button-load {
+				background: #f59e0b;
+				border-color: #f59e0b;
+			}
+			
+			input[type="button"]#input-button-load:hover {
+				background: #d97706;
+				border-color: #d97706;
 			}
 			
 			input[type="checkbox"] {
-				width: auto;
-				margin-right: 0.5rem;
+				width: 20px;
+				height: 20px;
+				margin-right: 0.75rem;
 				cursor: pointer;
+				accent-color: var(--link-color);
+				transform: scale(1.1);
+			}
+			
+			input[type="checkbox"] + label {
+				cursor: pointer;
+				user-select: none;
 			}
 			
 			input[type="file"] {
 				cursor: pointer;
+				padding: 0.5rem;
+				border: 2px dashed var(--border-color);
+				border-radius: var(--radius-sm);
+				background: var(--input-bg);
+				transition: all 0.2s ease;
+			}
+			
+			input[type="file"]:hover {
+				border-color: var(--link-color);
+				background: var(--primary-bg);
+			}
+			
+			input[type="file"]::file-selector-button {
+				padding: 0.5rem 1rem;
+				margin-right: 1rem;
+				border: none;
+				border-radius: var(--radius-sm);
+				background: var(--link-color);
+				color: white;
+				cursor: pointer;
+				font-weight: 600;
+				transition: background 0.2s ease;
+			}
+			
+			input[type="file"]::file-selector-button:hover {
+				background: var(--link-hover);
 			}
 			
 			input:disabled {
@@ -228,67 +454,134 @@
 			}
 			
 			[data-theme="dark"] form {
-				background-color: transparent;
+				background-color: var(--secondary-bg);
 			}
 			
 			/* Mobile Styles */
 			@media (max-width: 767px) {
 				body {
-					padding: 0.5rem;
+					padding: 1rem;
 				}
 				
 				h1 {
-					font-size: 1.5rem;
+					font-size: 1.75rem;
 					text-align: center;
+					margin-bottom: 0.75rem;
 				}
 				
 				p {
 					text-align: center;
 					font-size: 0.9rem;
+					margin-bottom: 1.5rem;
 				}
 				
 				#svg-container {
-					margin: 0.5rem 0;
+					margin: 1rem 0;
+					padding: 1rem;
 				}
 				
 				svg {
 					width: 100%;
 					max-width: 100vw;
+					touch-action: pan-x pan-y;
+				}
+				
+				svg:hover {
+					transform: none;
 				}
 				
 				form {
 					grid-template-columns: 1fr;
-					gap: 0.75rem;
+					gap: 1.25rem;
+					padding: 1.5rem;
 				}
 				
 				form > div {
 					flex-direction: column;
-					align-items: flex-start;
-					gap: 0.75rem;
+					align-items: stretch;
+					gap: 1rem;
+					padding-top: 1.25rem;
 				}
 				
 				label {
 					font-size: 0.95rem;
 					width: 100%;
+					margin-bottom: 0.5rem;
 				}
 				
 				input[type="text"],
 				input[type="range"],
 				input[type="file"],
 				input[type="button"] {
-					padding: 0.75rem;
+					padding: 0.875rem;
 					font-size: 1rem;
-					min-height: 44px;
+					min-height: 48px;
 				}
 				
 				input[type="button"] {
 					max-width: none;
+					width: 100%;
 					margin-top: 0.5rem;
 				}
 				
-				input[type="checkbox"] + label {
-					display: inline;
-					width: auto;
+				.checkbox-group {
+					flex-direction: column;
+					gap: 1rem;
+				}
+				
+				.button-row {
+					flex-direction: column;
+				}
+				
+				.dark-mode-toggle {
+					top: 0.75rem;
+					right: 0.75rem;
+					width: 44px;
+					height: 44px;
+					font-size: 1.3rem;
+				}
+			}
+			
+			/* Tablet Styles */
+			@media (min-width: 768px) and (max-width: 1024px) {
+				body {
+					padding: 1.5rem;
+				}
+				
+				header {
+					text-align: left;
+				}
+				
+				form {
+					grid-template-columns: 180px 1fr;
+					gap: 1rem 1.25rem;
+					padding: 1.75rem;
+				}
+				
+				.button-row:first-child input[type="button"] {
+					min-width: 140px;
+				}
+				
+				input[type="button"] {
+					font-size: 0.9rem;
+					padding: 0.7rem 1.25rem;
+				}
+			}
+			
+			/* Large Desktop */
+			@media (min-width: 1025px) {
+				header {
+					text-align: left;
+				}
+			}
+			
+			@media (min-width: 1400px) {
+				body {
+					max-width: 1400px;
+				}
+				
+				form {
+					padding: 2.5rem;
 				}
 			}
 		</style>
@@ -297,10 +590,12 @@
 		<button class="dark-mode-toggle" id="dark-mode-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
 			🌙
 		</button>
-		<h1 id="version-header">Antifa Sticker Generator</h1>
-		<p>
-			A purely client-side sticker generator. <a href="https://github.com/Ninso112/antifa-logo-generator" rel="noopener noreferrer" target="_blank" aria-label="View source code on GitHub">Source Code</a>.
-		</p>
+		<header>
+			<h1 id="version-header">Antifa Sticker Generator</h1>
+			<p>
+				A purely client-side sticker generator. <a href="https://github.com/Ninso112/antifa-logo-generator" rel="noopener noreferrer" target="_blank" aria-label="View source code on GitHub">Source Code</a>.
+			</p>
+		</header>
 		<div id="svg-container">
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 500" width="500" height="500" id="svg" role="img" aria-labelledby="svgTitle svgDesc">
 			<title id="svgTitle">Antifa Sticker</title>
@@ -341,33 +636,43 @@
 			<label for="input-text-lower">Lower text</label>
 			<input type="text" id="input-text-lower" name="lower" value="AKTION" aria-label="Lower text of the sticker">
 			<label for="input-range-position-x">X Position</label>
-			<input type="range" id="input-range-position-x" name="position-x" value="-9" min="-500" max="500" aria-label="X position of the icon">
+			<input type="range" id="input-range-position-x" name="position-x" value="-9" min="-500" max="500" aria-label="X position of the icon" title="Horizontal position of both icons (drag icons or use slider)">
 			<label for="input-range-position-y">Y Position</label>
-			<input type="range" id="input-range-position-y" name="position-y" value="-2" min="-500" max="500" aria-label="Y position of the icon">
+			<input type="range" id="input-range-position-y" name="position-y" value="-2" min="-500" max="500" aria-label="Y position of the icon" title="Vertical position of both icons (drag icons or use slider)">
 			<label for="input-range-shift-x">X Shift</label>
-			<input type="range" id="input-range-shift-x" name="distance-x" value="0" min="-250" max="250" aria-label="X offset between red and black icon">
+			<input type="range" id="input-range-shift-x" name="distance-x" value="0" min="-250" max="250" aria-label="X offset between red and black icon" title="Horizontal offset between red and black icons (positive = black right, red left)">
 			<label for="input-range-shift-y">Y Shift</label>
-			<input type="range" id="input-range-shift-y" name="distance-y" value="0" min="-250" max="250" aria-label="Y offset between red and black icon">
+			<input type="range" id="input-range-shift-y" name="distance-y" value="0" min="-250" max="250" aria-label="Y offset between red and black icon" title="Vertical offset between red and black icons (positive = black down, red up)">
 			<label for="input-range-scale-black">Black Scale</label>
-			<input type="range" id="input-range-scale-black" name="scale-black" value="0" min="-3" max="3" step="0.01" aria-label="Scale factor for black icon">
+			<input type="range" id="input-range-scale-black" name="scale-black" value="0" min="-3" max="3" step="0.01" aria-label="Scale factor for black icon" title="Scale factor for black icon (0 = 100%, negative = smaller, positive = larger)">
 			<label for="input-range-scale-red">Red Scale</label>
-			<input type="range" id="input-range-scale-red" name="scale-red" value="0" min="-3" max="3" step="0.01" aria-label="Scale factor for red icon">
+			<input type="range" id="input-range-scale-red" name="scale-red" value="0" min="-3" max="3" step="0.01" aria-label="Scale factor for red icon" title="Scale factor for red icon (0 = 100%, negative = smaller, positive = larger)">
 			<label for="input-file-icon-black">Black Icon (black+white+alpha only)</label>
 			<input type="file" id="input-file-icon-black" name="icon-black" accept="image/*" aria-label="Upload black icon">
 			<label for="input-file-icon-red">Red Icon (black+white+alpha only)</label>
 			<input type="file" id="input-file-icon-red" name="icon-red" accept="image/*" aria-label="Upload red icon">
 			<label for="input-range-bleed">Bleed (black in download)</label>
-			<input type="range" id="input-range-bleed" name="bleed" value="0" min="0" max="50" aria-label="Bleed for printing">
-			<div>
-				<input type="checkbox" id="input-check-swap-red-black" name="swap-red-black" aria-label="Red on top of black">
-				<label for="input-check-swap-red-black">Red on top of black</label>
-				<input type="checkbox" id="input-check-lock-scale" name="lock-scale" aria-label="Same scale for red and black">
-				<label for="input-check-lock-scale">Same scale for red and black</label>
+			<input type="range" id="input-range-bleed" name="bleed" value="0" min="0" max="50" aria-label="Bleed for printing" title="Add bleed area for printing (extra border that gets cut off, appears as black border in download)">
+			<div class="checkbox-group">
+				<div class="checkbox-item">
+					<input type="checkbox" id="input-check-swap-red-black" name="swap-red-black" aria-label="Red on top of black">
+					<label for="input-check-swap-red-black">Red on top of black</label>
+				</div>
+				<div class="checkbox-item">
+					<input type="checkbox" id="input-check-lock-scale" name="lock-scale" aria-label="Same scale for red and black">
+					<label for="input-check-lock-scale">Same scale for red and black</label>
+				</div>
 			</div>
-			<div>
-				<input type="button" id="input-button-download" value="Download SVG" aria-label="Download sticker as SVG">
-				<input type="button" id="input-button-download-png" value="Download PNG" aria-label="Download sticker as PNG">
-				<input type="button" id="input-button-reset" value="Reset Positions" aria-label="Reset all positions and scales to default values">
+			<div class="button-group">
+				<div class="button-row">
+					<input type="button" id="input-button-download" value="Download SVG" aria-label="Download sticker as SVG">
+					<input type="button" id="input-button-download-png" value="Download PNG" aria-label="Download sticker as PNG">
+				</div>
+				<div class="button-row">
+					<input type="button" id="input-button-reset" value="Reset Positions" aria-label="Reset all positions and scales to default values">
+					<input type="button" id="input-button-save" value="Save Design" aria-label="Save current design to browser storage">
+					<input type="button" id="input-button-load" value="Load Design" aria-label="Load saved design from browser storage">
+				</div>
 			</div>
 			<label for="input-file-import-svg">Import downloaded SVG</label>
 			<input type="file" id="input-file-import-svg" name="import-svg" accept="image/svg+xml" aria-label="Import previously downloaded SVG">
@@ -443,6 +748,7 @@
 			const darkModeToggle = document.getElementById('dark-mode-toggle');
 			const STORAGE_KEY = 'darkMode';
 			const THEME_ATTRIBUTE = 'data-theme';
+			const DESIGN_STORAGE_KEY = 'antifaStickerDesign';
 			
 			function initDarkMode() {
 				const savedTheme = localStorage.getItem(STORAGE_KEY);
@@ -486,13 +792,13 @@
 			// Service Worker Registration for PWA
 			if ('serviceWorker' in navigator) {
 				window.addEventListener('load', () => {
-					navigator.serviceWorker.register('./sw.js')
+					navigator.serviceWorker.register('./sw.js', { scope: './' })
 						.then((registration) => {
-							console.log('Service Worker registered:', registration.scope);
-							
 							// Check for updates
 							registration.addEventListener('updatefound', () => {
 								const newWorker = registration.installing;
+								if (!newWorker) return;
+								
 								newWorker.addEventListener('statechange', () => {
 									if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
 										// New service worker available, prompt user to reload
@@ -502,9 +808,14 @@
 									}
 								});
 							});
+							
+							// Check for updates periodically (stored in variable for cleanup)
+							const updateInterval = setInterval(() => {
+								registration.update();
+							}, 300000); // Check every 5 minutes (less aggressive)
 						})
-						.catch((error) => {
-							console.log('Service Worker registration failed:', error);
+						.catch(() => {
+							// Silent fail - app works without service worker
 						});
 				});
 			}
@@ -528,12 +839,15 @@
 				buttonDownload: getElementById("input-button-download"),
 				buttonDownloadPng: getElementById("input-button-download-png"),
 				fileImportSvg: getElementById("input-file-import-svg"),
-				buttonReset: getElementById("input-button-reset")
+				buttonReset: getElementById("input-button-reset"),
+				buttonSave: getElementById("input-button-save"),
+				buttonLoad: getElementById("input-button-load")
 			};
 
-			// Helper functions
+			// Helper functions - optimized DOM operations
 			function setImageHref(imgElement, dataUrl, width, height) {
 				if (!imgElement) return;
+				// Use baseVal for better performance when possible
 				imgElement.href.baseVal = dataUrl;
 				imgElement.setAttributeNS(XLINK_NS, 'href', dataUrl);
 				if (width) imgElement.width.baseVal.value = width;
@@ -542,8 +856,10 @@
 
 			// Transform update helpers
 			function getIconTransform(iconElement, index) {
-				if (!iconElement || iconElement.transform.baseVal.numberOfItems <= index) return null;
-				return iconElement.transform.baseVal[index].matrix;
+				if (!iconElement) return null;
+				const transforms = iconElement.transform.baseVal;
+				if (transforms.numberOfItems <= index) return null;
+				return transforms[index].matrix;
 			}
 
 			function updateIconPosition(iconElement, x, y) {
@@ -579,25 +895,29 @@
 
 			function updateBleed(bleedVal) {
 				if (!bleedCircle || !doc) return;
-				bleedCircle.style.strokeWidth = bleedVal === 0 ? 0 : bleedVal * 2 + 1;
+				// Batch DOM updates
 				const size = DEFAULT_SIZE + bleedVal * 2;
+				const viewBox = doc.viewBox.baseVal;
+				bleedCircle.style.strokeWidth = bleedVal === 0 ? '0' : `${bleedVal * 2 + 1}`;
 				doc.width.baseVal.value = size;
 				doc.height.baseVal.value = size;
-				doc.viewBox.baseVal.x = -bleedVal;
-				doc.viewBox.baseVal.y = -bleedVal;
-				doc.viewBox.baseVal.width = size;
-				doc.viewBox.baseVal.height = size;
+				viewBox.x = -bleedVal;
+				viewBox.y = -bleedVal;
+				viewBox.width = size;
+				viewBox.height = size;
 			}
 
 			function resizeSvg(size, offset) {
 				if (!doc || !svgRoot) return;
 				const scale = size / DEFAULT_SIZE;
+				// Batch DOM updates
+				const viewBox = doc.viewBox.baseVal;
 				doc.width.baseVal.value = size;
 				doc.height.baseVal.value = size;
-				doc.viewBox.baseVal.width = size;
-				doc.viewBox.baseVal.height = size;
-				doc.viewBox.baseVal.x = offset;
-				doc.viewBox.baseVal.y = offset;
+				viewBox.width = size;
+				viewBox.height = size;
+				viewBox.x = offset;
+				viewBox.y = offset;
 				if (svgRoot.transform.baseVal.numberOfItems > 0) {
 					const matrix = svgRoot.transform.baseVal[0].matrix;
 					matrix.a = scale;
@@ -607,34 +927,52 @@
 
 			function restoreSvgSize(originalSize, originalOffset) {
 				if (!doc || !svgRoot) return;
+				// Batch DOM updates
+				const viewBox = doc.viewBox.baseVal;
 				doc.width.baseVal.value = originalSize;
 				doc.height.baseVal.value = originalSize;
-				doc.viewBox.baseVal.width = originalSize;
-				doc.viewBox.baseVal.height = originalSize;
-				doc.viewBox.baseVal.x = originalOffset;
-				doc.viewBox.baseVal.y = originalOffset;
+				viewBox.width = originalSize;
+				viewBox.height = originalSize;
+				viewBox.x = originalOffset;
+				viewBox.y = originalOffset;
 				if (svgRoot.transform.baseVal.numberOfItems > 0) {
-					svgRoot.transform.baseVal[0].matrix.a = 1;
-					svgRoot.transform.baseVal[0].matrix.d = 1;
+					const matrix = svgRoot.transform.baseVal[0].matrix;
+					matrix.a = 1;
+					matrix.d = 1;
 				}
 			}
 
 			function loadImageFile(file, targetElement) {
-				if (!file) return;
+				if (!file || !targetElement) return;
+				
+				// Validate file type
+				if (!file.type.startsWith('image/')) {
+					alert('Please select a valid image file.');
+					return;
+				}
+				
 				const reader = new FileReader();
 				reader.onerror = () => {
-					alert('Error loading image.');
+					alert('Error reading image file. Please try again.');
+				};
+				reader.onabort = () => {
+					// File read was cancelled, silently handle
 				};
 				reader.onload = (e) => {
+					if (!e.target?.result) return;
+					
 					const img = new Image();
 					img.crossOrigin = 'anonymous';
 					img.onerror = () => {
 						alert('Error loading image. Please ensure it is a valid image format.');
 					};
 					img.onload = () => {
-						const width = img.width || Number(targetElement.width.baseVal.value) || DEFAULT_ICON_SIZE;
-						const height = img.height || Number(targetElement.height.baseVal.value) || DEFAULT_ICON_SIZE;
+						const width = img.width || Number(targetElement.width?.baseVal?.value) || DEFAULT_ICON_SIZE;
+						const height = img.height || Number(targetElement.height?.baseVal?.value) || DEFAULT_ICON_SIZE;
 						setImageHref(targetElement, e.target.result, width, height);
+					};
+					img.onabort = () => {
+						// Image load was cancelled
 					};
 					img.src = e.target.result;
 				};
@@ -646,34 +984,44 @@
 			}
 
 			function createSvgDataUrl(svgString) {
-				return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<?xml version="1.0" encoding="utf-8"?>\n' + svgString);
+				const xmlDeclaration = '<?xml version="1.0" encoding="utf-8"?>';
+				const fullSvg = xmlDeclaration + '\n' + svgString;
+				return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(fullSvg);
+			}
+			
+			// Validate numeric input
+			function isValidNumber(value, min = -Infinity, max = Infinity) {
+				const num = Number(value);
+				return !Number.isNaN(num) && num >= min && num <= max;
 			}
 
-			// Text input handlers
+			// Text input handlers - optimized with direct assignment
+			function updateTextElement(inputElement, textElement) {
+				if (inputElement && textElement) {
+					textElement.textContent = inputElement.value || '';
+				}
+			}
+
 			if (inputs.textUpper) {
-				inputs.textUpper.oninput = () => {
-					if (upperText) {
-						upperText.textContent = inputs.textUpper.value;
-					}
-				};
+				inputs.textUpper.oninput = () => updateTextElement(inputs.textUpper, upperText);
 			}
 
 			if (inputs.textLower) {
-				inputs.textLower.oninput = () => {
-					if (lowerText) {
-						lowerText.textContent = inputs.textLower.value;
-					}
-				};
+				inputs.textLower.oninput = () => updateTextElement(inputs.textLower, lowerText);
 			}
 
-			// Position updates
+			// Position updates - optimized to update both icons together
+			function updateBothIconsPosition(x, y) {
+				updateIconPosition(iconBlack, x, y);
+				updateIconPosition(iconRed, x, y);
+			}
+
 			const updatePositionX = () => {
 				if (!inputs.positionX) return;
 				const value = Number(inputs.positionX.value);
+				if (!isValidNumber(value)) return;
 				const blackPos = getIconPosition(iconBlack);
-				const redPos = getIconPosition(iconRed);
-				updateIconPosition(iconBlack, value, blackPos.y);
-				updateIconPosition(iconRed, value, redPos.y);
+				updateBothIconsPosition(value, blackPos.y);
 			};
 			if (inputs.positionX) {
 				inputs.positionX.oninput = debounce(updatePositionX, DEBOUNCE_DELAY);
@@ -682,23 +1030,26 @@
 			const updatePositionY = () => {
 				if (!inputs.positionY) return;
 				const value = Number(inputs.positionY.value);
+				if (!isValidNumber(value)) return;
 				const blackPos = getIconPosition(iconBlack);
-				const redPos = getIconPosition(iconRed);
-				updateIconPosition(iconBlack, blackPos.x, value);
-				updateIconPosition(iconRed, redPos.x, value);
+				updateBothIconsPosition(blackPos.x, value);
 			};
 			if (inputs.positionY) {
 				inputs.positionY.oninput = debounce(updatePositionY, DEBOUNCE_DELAY);
 			}
 
-			// Shift updates
+			// Shift updates - optimized to update both icons together
+			function updateBothIconsShift(x, y) {
+				updateIconShift(iconBlack, x, y, false);
+				updateIconShift(iconRed, x, y, true);
+			}
+
 			const updateShiftX = () => {
 				if (!inputs.shiftX) return;
 				const value = Number(inputs.shiftX.value);
+				if (!isValidNumber(value)) return;
 				const blackShift = getIconShift(iconBlack);
-				const redShift = getIconShift(iconRed);
-				updateIconShift(iconBlack, value, blackShift.y, false);
-				updateIconShift(iconRed, value, redShift.y, true);
+				updateBothIconsShift(value, blackShift.y);
 			};
 			if (inputs.shiftX) {
 				inputs.shiftX.oninput = debounce(updateShiftX, DEBOUNCE_DELAY);
@@ -707,10 +1058,9 @@
 			const updateShiftY = () => {
 				if (!inputs.shiftY) return;
 				const value = Number(inputs.shiftY.value);
+				if (!isValidNumber(value)) return;
 				const blackShift = getIconShift(iconBlack);
-				const redShift = getIconShift(iconRed);
-				updateIconShift(iconBlack, blackShift.x, value, false);
-				updateIconShift(iconRed, redShift.x, value, true);
+				updateBothIconsShift(blackShift.x, value);
 			};
 			if (inputs.shiftY) {
 				inputs.shiftY.oninput = debounce(updateShiftY, DEBOUNCE_DELAY);
@@ -785,29 +1135,27 @@
 				inputs.bleed.oninput = debounce(updateBleedHandler, DEBOUNCE_DELAY);
 			}
 
-			// Reset function
+			// Reset function - optimized with batched updates
 			function resetPositions() {
 				// Reset text values
 				if (inputs.textUpper) {
 					inputs.textUpper.value = DEFAULTS.textUpper;
-					if (upperText) upperText.textContent = DEFAULTS.textUpper;
+					updateTextElement(inputs.textUpper, upperText);
 				}
 				if (inputs.textLower) {
 					inputs.textLower.value = DEFAULTS.textLower;
-					if (lowerText) lowerText.textContent = DEFAULTS.textLower;
+					updateTextElement(inputs.textLower, lowerText);
 				}
 
-				// Reset positions
+				// Reset positions - use optimized function
 				if (inputs.positionX) inputs.positionX.value = DEFAULTS.positionX;
 				if (inputs.positionY) inputs.positionY.value = DEFAULTS.positionY;
-				updateIconPosition(iconBlack, DEFAULTS.positionX, DEFAULTS.positionY);
-				updateIconPosition(iconRed, DEFAULTS.positionX, DEFAULTS.positionY);
+				updateBothIconsPosition(DEFAULTS.positionX, DEFAULTS.positionY);
 
-				// Reset shifts
+				// Reset shifts - use optimized function
 				if (inputs.shiftX) inputs.shiftX.value = DEFAULTS.shiftX;
 				if (inputs.shiftY) inputs.shiftY.value = DEFAULTS.shiftY;
-				updateIconShift(iconBlack, DEFAULTS.shiftX, DEFAULTS.shiftY, false);
-				updateIconShift(iconRed, DEFAULTS.shiftX, DEFAULTS.shiftY, true);
+				updateBothIconsShift(DEFAULTS.shiftX, DEFAULTS.shiftY);
 
 				// Reset scales
 				if (inputs.scaleBlack) {
@@ -836,14 +1184,16 @@
 				}
 			}
 
-			// Download helpers
+			// Download helpers - optimized DOM manipulation
 			function downloadFile(dataUrl, filename) {
 				const link = document.createElement('a');
 				link.href = dataUrl;
 				link.download = filename;
+				link.style.display = 'none';
 				document.body.appendChild(link);
 				link.click();
-				document.body.removeChild(link);
+				// Cleanup after a short delay to ensure download starts
+				setTimeout(() => document.body.removeChild(link), 100);
 			}
 
 			// Download handlers
@@ -863,6 +1213,210 @@
 				};
 			}
 
+			// Drag and drop functionality for icons
+			let isDragging = false;
+			let dragTarget = null;
+			let dragStartX = 0;
+			let dragStartY = 0;
+			let initialX = 0;
+			let initialY = 0;
+
+			// Cache SVG transforms for better performance
+			let svgCTM = null;
+			let svgCTMInverse = null;
+			
+			function getSVGPoint(event) {
+				// Cache CTM (Coordinate Transformation Matrix) for performance
+				if (!svgCTMInverse) {
+					svgCTM = doc.getScreenCTM();
+					svgCTMInverse = svgCTM ? svgCTM.inverse() : null;
+				}
+				const svgRect = doc.getBoundingClientRect();
+				const point = doc.createSVGPoint();
+				point.x = event.clientX - svgRect.left;
+				point.y = event.clientY - svgRect.top;
+				return svgCTMInverse ? point.matrixTransform(svgCTMInverse) : point;
+			}
+			
+			// Reset CTM cache on window resize
+			window.addEventListener('resize', () => {
+				svgCTM = null;
+				svgCTMInverse = null;
+			}, { passive: true });
+
+			function startDrag(event, targetIcon) {
+				if (event.button !== 0 && event.type !== 'touchstart') return; // Only left mouse button
+				event.preventDefault();
+				isDragging = true;
+				dragTarget = targetIcon;
+				const point = getSVGPoint(event);
+				dragStartX = point.x;
+				dragStartY = point.y;
+				const pos = getIconPosition(targetIcon);
+				initialX = pos.x;
+				initialY = pos.y;
+				doc.style.cursor = 'grabbing';
+			}
+
+			function onDrag(event) {
+				if (!isDragging || !dragTarget) return;
+				event.preventDefault();
+				const point = getSVGPoint(event);
+				const deltaX = point.x - dragStartX;
+				const deltaY = point.y - dragStartY;
+				
+				const newX = initialX + deltaX;
+				const newY = initialY + deltaY;
+				
+				// Update both icons position (they share position)
+				updateBothIconsPosition(newX, newY);
+				
+				// Update input sliders
+				if (inputs.positionX) inputs.positionX.value = Math.round(newX);
+				if (inputs.positionY) inputs.positionY.value = Math.round(newY);
+			}
+
+			function endDrag(event) {
+				if (!isDragging) return;
+				event.preventDefault();
+				isDragging = false;
+				dragTarget = null;
+				doc.style.cursor = '';
+			}
+
+			// Add drag handlers to icons - use event delegation for better performance
+			const iconElements = [iconBlack, iconRed].filter(Boolean);
+			iconElements.forEach(icon => {
+				icon.addEventListener('mousedown', (e) => startDrag(e, icon), { passive: false });
+				icon.addEventListener('touchstart', (e) => startDrag(e.touches[0], icon), { passive: false });
+			});
+
+			// Use passive listeners where possible for better performance
+			doc.addEventListener('mousemove', onDrag, { passive: false });
+			doc.addEventListener('touchmove', (e) => {
+				if (e.touches.length === 1) onDrag(e.touches[0]);
+			}, { passive: false });
+			doc.addEventListener('mouseup', endDrag);
+			doc.addEventListener('mouseleave', endDrag);
+			doc.addEventListener('touchend', endDrag);
+			doc.addEventListener('touchcancel', endDrag);
+
+			// LocalStorage save/load functionality - optimized with helper
+			function getInputValue(input, defaultValue) {
+				return input ? (typeof defaultValue === 'number' ? Number(input.value) || defaultValue : input.value || defaultValue) : defaultValue;
+			}
+
+			function saveDesign() {
+				try {
+					const design = {
+						textUpper: getInputValue(inputs.textUpper, DEFAULTS.textUpper),
+						textLower: getInputValue(inputs.textLower, DEFAULTS.textLower),
+						positionX: getInputValue(inputs.positionX, DEFAULTS.positionX),
+						positionY: getInputValue(inputs.positionY, DEFAULTS.positionY),
+						shiftX: getInputValue(inputs.shiftX, DEFAULTS.shiftX),
+						shiftY: getInputValue(inputs.shiftY, DEFAULTS.shiftY),
+						scaleBlack: getInputValue(inputs.scaleBlack, DEFAULTS.scaleBlack),
+						scaleRed: getInputValue(inputs.scaleRed, DEFAULTS.scaleRed),
+						bleed: getInputValue(inputs.bleed, DEFAULTS.bleed),
+						swapOrder: inputs.checkSwap?.checked || false,
+						lockScale: inputs.checkLockScale?.checked || false,
+						iconBlack: iconBlack?.href?.baseVal || '',
+						iconRed: iconRed?.href?.baseVal || ''
+					};
+					localStorage.setItem(DESIGN_STORAGE_KEY, JSON.stringify(design));
+					alert('Design saved successfully!');
+				} catch (e) {
+					alert('Error saving design: ' + (e.message || 'Unknown error'));
+				}
+			}
+
+			function loadDesign() {
+				try {
+					const saved = localStorage.getItem(DESIGN_STORAGE_KEY);
+					if (!saved) {
+						alert('No saved design found.');
+						return;
+					}
+					const design = JSON.parse(saved);
+					
+					// Load text - use optimized function
+					if (inputs.textUpper && design.textUpper) {
+						inputs.textUpper.value = design.textUpper;
+						updateTextElement(inputs.textUpper, upperText);
+					}
+					if (inputs.textLower && design.textLower) {
+						inputs.textLower.value = design.textLower;
+						updateTextElement(inputs.textLower, lowerText);
+					}
+					
+					// Load positions - use optimized function
+					const posX = design.positionX ?? DEFAULTS.positionX;
+					const posY = design.positionY ?? DEFAULTS.positionY;
+					if (inputs.positionX) inputs.positionX.value = posX;
+					if (inputs.positionY) inputs.positionY.value = posY;
+					updateBothIconsPosition(posX, posY);
+					
+					// Load shifts - use optimized function
+					const shiftX = design.shiftX ?? DEFAULTS.shiftX;
+					const shiftY = design.shiftY ?? DEFAULTS.shiftY;
+					if (inputs.shiftX) inputs.shiftX.value = shiftX;
+					if (inputs.shiftY) inputs.shiftY.value = shiftY;
+					updateBothIconsShift(shiftX, shiftY);
+					
+					// Load scales
+					if (inputs.scaleBlack && design.scaleBlack !== undefined) {
+						inputs.scaleBlack.value = design.scaleBlack;
+						const scale = scaleValueToNumber(design.scaleBlack);
+						updateIconScale(iconBlack, scale);
+					}
+					if (inputs.scaleRed && design.scaleRed !== undefined) {
+						inputs.scaleRed.value = design.scaleRed;
+						const scale = scaleValueToNumber(design.scaleRed);
+						updateIconScale(iconRed, scale);
+					}
+					
+					// Load bleed
+					if (inputs.bleed && design.bleed !== undefined) {
+						inputs.bleed.value = design.bleed;
+						updateBleed(design.bleed);
+					}
+					
+					// Load checkboxes
+					if (inputs.checkSwap && design.swapOrder !== undefined) {
+						inputs.checkSwap.checked = design.swapOrder;
+						const first = design.swapOrder ? iconBlack : iconRed;
+						const second = design.swapOrder ? iconRed : iconBlack;
+						iconContainer.insertBefore(first, second);
+					}
+					if (inputs.checkLockScale && design.lockScale !== undefined) {
+						inputs.checkLockScale.checked = design.lockScale;
+						if (inputs.scaleRed) {
+							inputs.scaleRed.disabled = design.lockScale;
+						}
+					}
+					
+					// Load icons (if saved)
+					if (design.iconBlack && iconBlack) {
+						setImageHref(iconBlack, design.iconBlack);
+					}
+					if (design.iconRed && iconRed) {
+						setImageHref(iconRed, design.iconRed);
+					}
+					
+					alert('Design loaded successfully!');
+				} catch (e) {
+					alert('Error loading design: ' + (e.message || 'Unknown error'));
+				}
+			}
+
+			// Save/Load handlers
+			if (inputs.buttonSave) {
+				inputs.buttonSave.onclick = saveDesign;
+			}
+			if (inputs.buttonLoad) {
+				inputs.buttonLoad.onclick = loadDesign;
+			}
+
 			if (inputs.buttonDownloadPng) {
 				inputs.buttonDownloadPng.onclick = async () => {
 				const originalSize = Number(doc.width.baseVal.value);
@@ -872,7 +1426,7 @@
 				if (!imgSizeInput) return;
 				
 				const imgSize = parseInt(imgSizeInput, 10);
-				if (Number.isNaN(imgSize) || imgSize <= 0 || imgSize > DEFAULTS.pngMaxSize) {
+				if (!isValidNumber(imgSize, 1, DEFAULTS.pngMaxSize)) {
 					alert(`Invalid image size. Please enter a number between 1 and ${DEFAULTS.pngMaxSize}.`);
 					return;
 				}
@@ -894,12 +1448,18 @@
 						              imgEl.href?.baseVal;
 						if (!href || href.startsWith('data:')) continue;
 						
-						const resp = await fetch(href, { mode: 'cors' });
+						// Create abort controller for timeout
+						const controller = new AbortController();
+						const timeoutId = setTimeout(() => controller.abort(), 5000);
+						const resp = await fetch(href, { mode: 'cors', signal: controller.signal });
+						clearTimeout(timeoutId);
 						if (!resp.ok) throw new Error('fetch failed');
 						const blob = await resp.blob();
-						const dataUrl = await new Promise((resolve) => {
+						const dataUrl = await new Promise((resolve, reject) => {
 							const fr = new FileReader();
 							fr.onload = () => resolve(fr.result);
+							fr.onerror = reject;
+							fr.onabort = reject;
 							fr.readAsDataURL(blob);
 						});
 						imgEl.setAttributeNS(XLINK_NS, 'href', dataUrl);
@@ -928,7 +1488,6 @@
 				const image = new Image();
 				image.crossOrigin = 'anonymous';
 				image.onerror = () => {
-					console.error('Error loading image for PNG export');
 					alert('Error loading SVG image. SVG opened in new tab as fallback.');
 					window.open(createSvgDataUrl(serialized), '_blank');
 					restoreSvgSize(originalSize, originalOffset);
@@ -938,10 +1497,12 @@
 						ctx.drawImage(image, 0, 0);
 						downloadFile(canvas.toDataURL('image/png'), 'antifa.png');
 					} catch (e) {
-						console.error('PNG Export Error:', e);
 						alert('Export to PNG failed during finalization: canvas may be tainted. Opened SVG in new tab as fallback.');
 						window.open(createSvgDataUrl(serialized), '_blank');
 					}
+				};
+				image.onabort = () => {
+					restoreSvgSize(originalSize, originalOffset);
 				};
 				image.src = createSvgDataUrl(serialized);
 				};
@@ -968,16 +1529,16 @@
 							return;
 						}
 					
-					// Import text
+					// Import text - use optimized function
 					const impUpperText = imported.getElementById('uppertext');
 					const impLowerText = imported.getElementById('lowertext');
-					if (impUpperText) {
-						inputs.textUpper.value = impUpperText.textContent;
-						upperText.textContent = impUpperText.textContent;
+					if (impUpperText && inputs.textUpper) {
+						inputs.textUpper.value = impUpperText.textContent || '';
+						updateTextElement(inputs.textUpper, upperText);
 					}
-					if (impLowerText) {
-						inputs.textLower.value = impLowerText.textContent;
-						lowerText.textContent = impLowerText.textContent;
+					if (impLowerText && inputs.textLower) {
+						inputs.textLower.value = impLowerText.textContent || '';
+						updateTextElement(inputs.textLower, lowerText);
 					}
 
 					// Import icons
@@ -995,22 +1556,20 @@
 					// Import transforms
 					if (impIconBlack && impIconBlack.transform.baseVal.numberOfItems >= 3) {
 						const transforms = impIconBlack.transform.baseVal;
-						// Shift
+						// Shift - use optimized function
 						const shiftMatrix = transforms[0].matrix;
 						const shiftX = shiftMatrix.e;
 						const shiftY = shiftMatrix.f;
 						if (inputs.shiftX) inputs.shiftX.value = shiftX;
 						if (inputs.shiftY) inputs.shiftY.value = shiftY;
-						updateIconShift(iconBlack, shiftX, shiftY, false);
-						updateIconShift(iconRed, shiftX, shiftY, true);
-						// Position
+						updateBothIconsShift(shiftX, shiftY);
+						// Position - use optimized function
 						const posMatrix = transforms[1].matrix;
 						const posX = posMatrix.e;
 						const posY = posMatrix.f;
 						if (inputs.positionX) inputs.positionX.value = posX;
 						if (inputs.positionY) inputs.positionY.value = posY;
-						updateIconPosition(iconBlack, posX, posY);
-						updateIconPosition(iconRed, posX, posY);
+						updateBothIconsPosition(posX, posY);
 						// Scale
 						const scaleMatrix = transforms[2].matrix;
 						const scaleBlack = scaleMatrix.a;
@@ -1046,8 +1605,7 @@
 						updateBleed(bleedVal);
 					}
 					} catch (error) {
-						console.error('Import Error:', error);
-						alert('Error importing SVG: ' + error.message);
+						alert('Error importing SVG: ' + (error.message || 'Unknown error occurred'));
 					}
 				};
 				reader.readAsText(file);
