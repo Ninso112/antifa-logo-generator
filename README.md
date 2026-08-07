@@ -7,13 +7,13 @@ A client-side sticker generator for creating custom antifascist stickers. Adjust
 ## Features
 
 - Customizable text for top and bottom of the sticker
-- Adjustable positions and scales for icons
-- Drag-and-drop positioning for icons (in addition to sliders)
+- Adjustable positions and scales for icons, with a live value readout on every slider
+- Drag-and-drop positioning for icons (mouse, touch and pen)
 - Tooltips with helpful explanations for all controls
 - Option to upload custom icons (black & white with transparency only)
 - Toggle icon layer order (red on top of black or vice versa)
 - Adjustable bleed for printing
-- Download as SVG or PNG
+- Download as SVG or PNG at a freely chosen resolution (up to 8192 px)
 - SVG import to restore previous designs
 - Save/Load designs to/from browser localStorage
 - Dark mode toggle with persistent preference storage
@@ -28,18 +28,20 @@ A client-side sticker generator for creating custom antifascist stickers. Adjust
 3. Upload your own icons if desired (black & white with transparency only)
 4. Save your design: Click "Save Design" to store it in your browser's localStorage
 5. Load a saved design: Click "Load Design" to restore a previously saved design
-6. Export: Click "Download SVG" or "Download PNG" to save your design
+6. Export: Set the desired "PNG size", then click "Download SVG" or "Download PNG"
 7. Import: Use "Import downloaded SVG" to restore a previously exported SVG file
 
 ## Technical Details
 
 - Pure client-side application (no server required)
-- Progressive Web App (PWA) - installable and works offline
+- Progressive Web App (PWA) - installable and works offline; updates are
+  offered instead of silently pinning an old cached version
 - Optimized for desktop, tablet, and mobile devices
-- Drag-and-drop icon positioning with touch support
+- Drag-and-drop icon positioning built on Pointer Events (mouse, touch, pen)
 - LocalStorage integration for saving designs locally
-- Accessible with ARIA labels and keyboard navigation
-- Performance optimized with debouncing for smooth interactions
+- Accessible with ARIA labels, visible focus rings and keyboard navigation
+- Rendering updates are coalesced per animation frame for smooth interactions
+- Exports go through Blob URLs, so large custom icons do not hit data-URL limits
 - Dark mode support with system preference detection
 
 ## License

@@ -25,7 +25,7 @@
 		
 		<script>
 			// Version
-			const VERSION = 'V0.90';
+			const VERSION = 'V0.91';
 		</script>
 		<style>
 			* {
@@ -33,6 +33,7 @@
 			}
 			
 			:root {
+				color-scheme: light;
 				--primary-bg: #f5f5f5;
 				--primary-bg-hover: #e8e8e8;
 				--secondary-bg: #ffffff;
@@ -54,6 +55,7 @@
 			}
 			
 			[data-theme="dark"] {
+				color-scheme: dark;
 				--primary-bg: #1f2937;
 				--primary-bg-hover: #374151;
 				--secondary-bg: #111827;
@@ -129,21 +131,24 @@
 				display: block;
 				border-radius: var(--radius-sm);
 				transition: filter 0.3s ease, transform 0.2s ease;
-				touch-action: none;
+				/* Allow vertical page scrolling over the preview; only the
+				   draggable icons opt out of native touch gestures. */
+				touch-action: pan-y;
 				user-select: none;
 				box-shadow: var(--shadow-sm);
 			}
-			
+
 			svg:hover {
 				transform: translateY(-2px);
 				box-shadow: var(--shadow-md);
 			}
-			
+
 			#icon image {
 				cursor: move;
 				cursor: grab;
+				touch-action: none;
 			}
-			
+
 			#icon image:active {
 				cursor: grabbing;
 			}
@@ -260,16 +265,31 @@
 				color: var(--text-color);
 				letter-spacing: 0.01em;
 			}
-			
+
+			.range-value {
+				display: inline-block;
+				margin-left: 0.4rem;
+				padding: 0 0.35rem;
+				min-width: 3ch;
+				border-radius: 4px;
+				background: var(--primary-bg);
+				color: var(--text-secondary);
+				font-variant-numeric: tabular-nums;
+				font-weight: 500;
+				text-align: center;
+			}
+
 			input[type="text"],
+			input[type="number"],
 			input[type="range"],
 			input[type="file"],
 			input[type="button"] {
 				width: 100%;
 				padding: 0.5rem;
 			}
-			
-			input[type="text"] {
+
+			input[type="text"],
+			input[type="number"] {
 				border: 2px solid var(--input-border);
 				border-radius: var(--radius-sm);
 				font-size: 1rem;
@@ -279,17 +299,20 @@
 				transition: all 0.2s ease;
 			}
 			
-			input[type="text"]:hover {
+			input[type="text"]:hover,
+			input[type="number"]:hover {
 				border-color: var(--border-color-hover);
 			}
-			
-			input[type="text"]:focus {
+
+			input[type="text"]:focus,
+			input[type="number"]:focus {
 				outline: none;
 				border-color: var(--input-focus);
 				box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 			}
-			
-			[data-theme="dark"] input[type="text"]:focus {
+
+			[data-theme="dark"] input[type="text"]:focus,
+			[data-theme="dark"] input[type="number"]:focus {
 				box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
 			}
 			
@@ -358,13 +381,21 @@
 				box-shadow: var(--shadow-sm);
 			}
 			
-			input[type="button"]:focus {
-				outline: none;
+			input[type="button"]:focus-visible {
+				outline: 2px solid transparent;
 				box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3), var(--shadow-md);
 			}
-			
-			[data-theme="dark"] input[type="button"]:focus {
+
+			[data-theme="dark"] input[type="button"]:focus-visible {
 				box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3), var(--shadow-md);
+			}
+
+			input[type="range"]:focus-visible,
+			input[type="file"]:focus-visible,
+			input[type="checkbox"]:focus-visible,
+			.dark-mode-toggle:focus-visible {
+				outline: 3px solid var(--input-focus);
+				outline-offset: 2px;
 			}
 			
 			/* Special button styles */
@@ -456,15 +487,101 @@
 			[data-theme="dark"] form {
 				background-color: var(--secondary-bg);
 			}
-			
+
+			/* Toasts (non-blocking replacement for alert()) */
+			.toast-host {
+				position: fixed;
+				left: 50%;
+				bottom: 1.5rem;
+				transform: translateX(-50%);
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 0.5rem;
+				z-index: 2000;
+				width: min(90vw, 480px);
+				pointer-events: none;
+			}
+
+			.toast {
+				display: flex;
+				align-items: center;
+				gap: 0.75rem;
+				width: 100%;
+				padding: 0.75rem 1rem;
+				border: 2px solid var(--border-color);
+				border-left-width: 6px;
+				border-radius: var(--radius-sm);
+				background: var(--secondary-bg);
+				color: var(--text-color);
+				box-shadow: var(--shadow-lg);
+				font-size: 0.9rem;
+				pointer-events: auto;
+				animation: toast-in 0.2s ease;
+			}
+
+			.toast--success { border-left-color: #10b981; }
+			.toast--error { border-left-color: #ef4444; }
+			.toast--info { border-left-color: var(--link-color); }
+
+			.toast p {
+				margin: 0;
+				flex: 1;
+				text-align: left;
+			}
+
+			.toast button {
+				flex: none;
+				padding: 0.35rem 0.75rem;
+				border: 2px solid var(--link-color);
+				border-radius: var(--radius-sm);
+				background: var(--link-color);
+				color: #fff;
+				font: inherit;
+				font-weight: 600;
+				cursor: pointer;
+			}
+
+			.toast button:hover {
+				background: var(--link-hover);
+				border-color: var(--link-hover);
+			}
+
+			@keyframes toast-in {
+				from { opacity: 0; transform: translateY(0.75rem); }
+				to { opacity: 1; transform: none; }
+			}
+
+			/* Respect users who ask for less motion */
+			@media (prefers-reduced-motion: reduce) {
+				*,
+				*::before,
+				*::after {
+					animation-duration: 0.01ms !important;
+					animation-iteration-count: 1 !important;
+					transition-duration: 0.01ms !important;
+				}
+
+				svg:hover,
+				input[type="button"]:hover,
+				.dark-mode-toggle:hover {
+					transform: none;
+				}
+			}
+
 			/* Mobile Styles */
 			@media (max-width: 767px) {
 				body {
 					padding: 1rem;
 				}
 				
+				header {
+					/* Keep the title clear of the fixed theme toggle */
+					padding-inline: 3rem;
+				}
+
 				h1 {
-					font-size: 1.75rem;
+					font-size: 1.5rem;
 					text-align: center;
 					margin-bottom: 0.75rem;
 				}
@@ -483,7 +600,6 @@
 				svg {
 					width: 100%;
 					max-width: 100vw;
-					touch-action: pan-x pan-y;
 				}
 				
 				svg:hover {
@@ -510,6 +626,7 @@
 				}
 				
 				input[type="text"],
+				input[type="number"],
 				input[type="range"],
 				input[type="file"],
 				input[type="button"] {
@@ -663,6 +780,8 @@
 					<label for="input-check-lock-scale">Same scale for red and black</label>
 				</div>
 			</div>
+			<label for="input-number-png-size">PNG size (px)</label>
+			<input type="number" id="input-number-png-size" name="png-size" value="2048" min="1" max="8192" step="1" inputmode="numeric" aria-label="Width and height of the exported PNG in pixels" title="Edge length of the exported PNG in pixels (1–8192)">
 			<div class="button-group">
 				<div class="button-row">
 					<input type="button" id="input-button-download" value="Download SVG" aria-label="Download sticker as SVG">
@@ -684,8 +803,8 @@
 			const XLINK_NS = 'http://www.w3.org/1999/xlink';
 			const DEFAULT_SIZE = 500;
 			const DEFAULT_ICON_SIZE = 512;
-			const DEBOUNCE_DELAY = 16; // ~60fps
-			
+			const MAX_ICON_BYTES = 2 * 1024 * 1024; // 2 MB, keeps localStorage usable
+
 			// Default values
 			const DEFAULTS = {
 				textUpper: 'ANTIFASCHISTISCHE',
@@ -725,17 +844,55 @@
 				throw new Error('Required SVG elements not found');
 			}
 			
-			// Debounce helper
-			function debounce(func, wait) {
-				let timeout;
-				return function executedFunction(...args) {
-					const later = () => {
-						clearTimeout(timeout);
-						func(...args);
-					};
-					clearTimeout(timeout);
-					timeout = setTimeout(later, wait);
+			// Coalesce rapid input events into one update per animation frame.
+			// Unlike a debounce this never stalls: a continuously moving slider
+			// keeps repainting instead of waiting for the user to pause.
+			function rafThrottle(func) {
+				let frame = 0;
+				return function throttled() {
+					if (frame) return;
+					frame = requestAnimationFrame(() => {
+						frame = 0;
+						func();
+					});
 				};
+			}
+
+			// Non-blocking notifications (alert() freezes the page and is ugly in PWAs)
+			const toastHost = document.createElement('div');
+			toastHost.className = 'toast-host';
+			document.body.appendChild(toastHost);
+
+			function showToast(message, type = 'info', action) {
+				const toast = document.createElement('div');
+				toast.className = `toast toast--${type}`;
+				toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+
+				const text = document.createElement('p');
+				text.textContent = message;
+				toast.appendChild(text);
+
+				let timer = 0;
+				const dismiss = () => {
+					clearTimeout(timer);
+					toast.remove();
+				};
+
+				if (action) {
+					const button = document.createElement('button');
+					button.type = 'button';
+					button.textContent = action.label;
+					button.addEventListener('click', () => {
+						dismiss();
+						action.onClick();
+					});
+					toast.appendChild(button);
+				}
+
+				toastHost.appendChild(toast);
+				// Sticky toasts (those with an action) wait for the user
+				if (!action) timer = setTimeout(dismiss, type === 'error' ? 6000 : 3000);
+				return dismiss;
 			}
 
 			// Set version in header
@@ -750,41 +907,77 @@
 			const THEME_ATTRIBUTE = 'data-theme';
 			const DESIGN_STORAGE_KEY = 'antifaStickerDesign';
 			
-			function initDarkMode() {
-				const savedTheme = localStorage.getItem(STORAGE_KEY);
-				const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-				const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
-				setDarkMode(isDark);
-			}
-			
-			function setDarkMode(isDark) {
-				if (isDark) {
-					document.documentElement.setAttribute(THEME_ATTRIBUTE, 'dark');
-					if (darkModeToggle) darkModeToggle.textContent = '☀️';
-					localStorage.setItem(STORAGE_KEY, 'dark');
-				} else {
-					document.documentElement.removeAttribute(THEME_ATTRIBUTE);
-					if (darkModeToggle) darkModeToggle.textContent = '🌙';
-					localStorage.setItem(STORAGE_KEY, 'light');
+			const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+			// localStorage can throw in private-browsing modes, so never let it
+			// take the rest of the app down with it.
+			function readStored(key) {
+				try {
+					return localStorage.getItem(key);
+				} catch (e) {
+					return null;
 				}
 			}
-			
+
+			function writeStored(key, value) {
+				try {
+					localStorage.setItem(key, value);
+					return true;
+				} catch (e) {
+					return false;
+				}
+			}
+
+			// Only persist the theme when the user picks one explicitly.
+			// Writing on load would pin the theme forever and silently disable
+			// the "follow the system" behaviour below.
+			// The two media-scoped <meta name="theme-color"> tags cover the
+			// no-JS case; once JS runs we drive a single tag so the browser UI
+			// follows a manual toggle instead of the system preference.
+			const themeColorMeta = (() => {
+				const existing = document.querySelectorAll('meta[name="theme-color"]');
+				existing.forEach((meta) => meta.remove());
+				const meta = document.createElement('meta');
+				meta.name = 'theme-color';
+				document.head.appendChild(meta);
+				return meta;
+			})();
+
+			function setDarkMode(isDark, persist = false) {
+				themeColorMeta.content = isDark ? '#1a1a1a' : '#ffffff';
+				if (isDark) {
+					document.documentElement.setAttribute(THEME_ATTRIBUTE, 'dark');
+				} else {
+					document.documentElement.removeAttribute(THEME_ATTRIBUTE);
+				}
+				if (darkModeToggle) {
+					darkModeToggle.textContent = isDark ? '☀️' : '🌙';
+					darkModeToggle.setAttribute('aria-pressed', String(isDark));
+				}
+				if (persist) writeStored(STORAGE_KEY, isDark ? 'dark' : 'light');
+			}
+
+			function initDarkMode() {
+				const savedTheme = readStored(STORAGE_KEY);
+				setDarkMode(savedTheme ? savedTheme === 'dark' : darkModeQuery.matches);
+			}
+
 			function toggleDarkMode() {
 				const isDark = document.documentElement.getAttribute(THEME_ATTRIBUTE) === 'dark';
-				setDarkMode(!isDark);
+				setDarkMode(!isDark, true);
 			}
-			
+
 			// Initialize dark mode on page load
 			initDarkMode();
-			
+
 			// Add click handler
 			if (darkModeToggle) {
 				darkModeToggle.addEventListener('click', toggleDarkMode);
 			}
-			
-			// Listen for system theme changes
-			window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-				if (!localStorage.getItem(STORAGE_KEY)) {
+
+			// Listen for system theme changes (only while the user has no explicit choice)
+			darkModeQuery.addEventListener('change', (e) => {
+				if (!readStored(STORAGE_KEY)) {
 					setDarkMode(e.matches);
 				}
 			});
@@ -794,25 +987,50 @@
 				window.addEventListener('load', () => {
 					navigator.serviceWorker.register('./sw.js', { scope: './' })
 						.then((registration) => {
-							// Check for updates
+							let reloading = false;
+							// The waiting worker only takes over once we tell it to,
+							// so an update can never swap files out from under the
+							// page the user is currently working in.
+							navigator.serviceWorker.addEventListener('controllerchange', () => {
+								if (reloading) return;
+								reloading = true;
+								window.location.reload();
+							});
+
+							const promptForUpdate = (worker) => {
+								showToast('A new version is available.', 'info', {
+									label: 'Reload',
+									onClick: () => worker.postMessage({ type: 'SKIP_WAITING' })
+								});
+							};
+
+							if (registration.waiting && navigator.serviceWorker.controller) {
+								promptForUpdate(registration.waiting);
+							}
+
 							registration.addEventListener('updatefound', () => {
 								const newWorker = registration.installing;
 								if (!newWorker) return;
-								
+
 								newWorker.addEventListener('statechange', () => {
 									if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-										// New service worker available, prompt user to reload
-										if (confirm('New version available. Reload to update?')) {
-											window.location.reload();
-										}
+										promptForUpdate(newWorker);
 									}
 								});
 							});
-							
-							// Check for updates periodically (stored in variable for cleanup)
-							const updateInterval = setInterval(() => {
+
+							// Poll for updates, but only while the tab is visible and
+							// at most once every 5 minutes.
+							const UPDATE_INTERVAL = 300000;
+							let lastCheck = Date.now();
+							const checkForUpdate = () => {
+								if (document.visibilityState !== 'visible') return;
+								if (Date.now() - lastCheck < UPDATE_INTERVAL) return;
+								lastCheck = Date.now();
 								registration.update();
-							}, 300000); // Check every 5 minutes (less aggressive)
+							};
+							setInterval(checkForUpdate, UPDATE_INTERVAL);
+							document.addEventListener('visibilitychange', checkForUpdate);
 						})
 						.catch(() => {
 							// Silent fail - app works without service worker
@@ -836,6 +1054,7 @@
 				checkSwap: getElementById("input-check-swap-red-black"),
 				checkLockScale: getElementById("input-check-lock-scale"),
 				bleed: getElementById("input-range-bleed"),
+				pngSize: getElementById("input-number-png-size"),
 				buttonDownload: getElementById("input-button-download"),
 				buttonDownloadPng: getElementById("input-button-download-png"),
 				fileImportSvg: getElementById("input-file-import-svg"),
@@ -907,9 +1126,12 @@
 				viewBox.height = size;
 			}
 
-			function resizeSvg(size, offset) {
+			// `sourceSize` is the current edge length in user units (500 plus the
+			// bleed on both sides). Scaling by size / DEFAULT_SIZE instead would
+			// crop the design whenever a bleed is set.
+			function resizeSvg(size, offset, sourceSize) {
 				if (!doc || !svgRoot) return;
-				const scale = size / DEFAULT_SIZE;
+				const scale = size / (sourceSize || DEFAULT_SIZE);
 				// Batch DOM updates
 				const viewBox = doc.viewBox.baseVal;
 				doc.width.baseVal.value = size;
@@ -944,51 +1166,54 @@
 
 			function loadImageFile(file, targetElement) {
 				if (!file || !targetElement) return;
-				
+
 				// Validate file type
 				if (!file.type.startsWith('image/')) {
-					alert('Please select a valid image file.');
+					showToast('Please select a valid image file.', 'error');
 					return;
 				}
-				
+
+				if (file.size > MAX_ICON_BYTES) {
+					showToast(`Icon is too large (max ${Math.round(MAX_ICON_BYTES / 1024 / 1024)} MB).`, 'error');
+					return;
+				}
+
 				const reader = new FileReader();
 				reader.onerror = () => {
-					alert('Error reading image file. Please try again.');
+					showToast('Error reading image file. Please try again.', 'error');
 				};
 				reader.onabort = () => {
 					// File read was cancelled, silently handle
 				};
 				reader.onload = (e) => {
 					if (!e.target?.result) return;
-					
+
 					const img = new Image();
-					img.crossOrigin = 'anonymous';
 					img.onerror = () => {
-						alert('Error loading image. Please ensure it is a valid image format.');
+						showToast('Error loading image. Please ensure it is a valid image format.', 'error');
 					};
 					img.onload = () => {
-						const width = img.width || Number(targetElement.width?.baseVal?.value) || DEFAULT_ICON_SIZE;
-						const height = img.height || Number(targetElement.height?.baseVal?.value) || DEFAULT_ICON_SIZE;
+						const width = img.naturalWidth || Number(targetElement.width?.baseVal?.value) || DEFAULT_ICON_SIZE;
+						const height = img.naturalHeight || Number(targetElement.height?.baseVal?.value) || DEFAULT_ICON_SIZE;
 						setImageHref(targetElement, e.target.result, width, height);
-					};
-					img.onabort = () => {
-						// Image load was cancelled
 					};
 					img.src = e.target.result;
 				};
 				reader.readAsDataURL(file);
 			}
 
-			function serializeSvg() {
-				return new XMLSerializer().serializeToString(doc);
+			function serializeSvg(node = doc) {
+				return new XMLSerializer().serializeToString(node);
 			}
 
-			function createSvgDataUrl(svgString) {
+			// Blob URLs avoid the browser length limits that data: URLs hit once a
+			// custom icon is embedded, and they are same-origin so a canvas
+			// drawing them stays untainted.
+			function createSvgBlob(svgString) {
 				const xmlDeclaration = '<?xml version="1.0" encoding="utf-8"?>';
-				const fullSvg = xmlDeclaration + '\n' + svgString;
-				return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(fullSvg);
+				return new Blob([xmlDeclaration + '\n' + svgString], { type: 'image/svg+xml;charset=utf-8' });
 			}
-			
+
 			// Validate numeric input
 			function isValidNumber(value, min = -Infinity, max = Infinity) {
 				const num = Number(value);
@@ -1010,33 +1235,76 @@
 				inputs.textLower.oninput = () => updateTextElement(inputs.textLower, lowerText);
 			}
 
+			// Live value readouts appended to each slider's label, so the
+			// numbers are visible without having to guess from the handle.
+			const rangeReadouts = new Map();
+
+			function syncRangeReadout(input) {
+				const readout = rangeReadouts.get(input);
+				if (readout) readout.textContent = readout.format(Number(input.value));
+			}
+
+			function initRangeReadout(input, format) {
+				if (!input) return;
+				const label = document.querySelector(`label[for="${input.id}"]`);
+				if (!label) return;
+				const readout = document.createElement('span');
+				readout.className = 'range-value';
+				// The slider itself is already announced with its value
+				readout.setAttribute('aria-hidden', 'true');
+				readout.format = format;
+				label.appendChild(readout);
+				rangeReadouts.set(input, readout);
+				syncRangeReadout(input);
+			}
+
+			// Sets a slider programmatically and returns the value the browser
+			// actually accepted (min/max clamped), keeping UI and SVG in sync.
+			function setRangeValue(input, value) {
+				if (!input) return Number(value);
+				input.value = value;
+				syncRangeReadout(input);
+				return Number(input.value);
+			}
+
+			const formatPixels = (value) => `${Math.round(value)}`;
+			const formatPercent = (value) => `${Math.round(Math.pow(10, value) * 100)}%`;
+
+			initRangeReadout(inputs.positionX, formatPixels);
+			initRangeReadout(inputs.positionY, formatPixels);
+			initRangeReadout(inputs.shiftX, formatPixels);
+			initRangeReadout(inputs.shiftY, formatPixels);
+			initRangeReadout(inputs.scaleBlack, formatPercent);
+			initRangeReadout(inputs.scaleRed, formatPercent);
+			initRangeReadout(inputs.bleed, formatPixels);
+
+			// Wires an input to an rAF-throttled handler and keeps its readout current.
+			function onRangeInput(input, handler) {
+				if (!input) return;
+				const update = rafThrottle(handler);
+				input.addEventListener('input', () => {
+					syncRangeReadout(input);
+					update();
+				});
+			}
+
 			// Position updates - optimized to update both icons together
 			function updateBothIconsPosition(x, y) {
 				updateIconPosition(iconBlack, x, y);
 				updateIconPosition(iconRed, x, y);
 			}
 
-			const updatePositionX = () => {
-				if (!inputs.positionX) return;
+			onRangeInput(inputs.positionX, () => {
 				const value = Number(inputs.positionX.value);
 				if (!isValidNumber(value)) return;
-				const blackPos = getIconPosition(iconBlack);
-				updateBothIconsPosition(value, blackPos.y);
-			};
-			if (inputs.positionX) {
-				inputs.positionX.oninput = debounce(updatePositionX, DEBOUNCE_DELAY);
-			}
+				updateBothIconsPosition(value, getIconPosition(iconBlack).y);
+			});
 
-			const updatePositionY = () => {
-				if (!inputs.positionY) return;
+			onRangeInput(inputs.positionY, () => {
 				const value = Number(inputs.positionY.value);
 				if (!isValidNumber(value)) return;
-				const blackPos = getIconPosition(iconBlack);
-				updateBothIconsPosition(blackPos.x, value);
-			};
-			if (inputs.positionY) {
-				inputs.positionY.oninput = debounce(updatePositionY, DEBOUNCE_DELAY);
-			}
+				updateBothIconsPosition(getIconPosition(iconBlack).x, value);
+			});
 
 			// Shift updates - optimized to update both icons together
 			function updateBothIconsShift(x, y) {
@@ -1044,49 +1312,33 @@
 				updateIconShift(iconRed, x, y, true);
 			}
 
-			const updateShiftX = () => {
-				if (!inputs.shiftX) return;
+			onRangeInput(inputs.shiftX, () => {
 				const value = Number(inputs.shiftX.value);
 				if (!isValidNumber(value)) return;
-				const blackShift = getIconShift(iconBlack);
-				updateBothIconsShift(value, blackShift.y);
-			};
-			if (inputs.shiftX) {
-				inputs.shiftX.oninput = debounce(updateShiftX, DEBOUNCE_DELAY);
-			}
+				updateBothIconsShift(value, getIconShift(iconBlack).y);
+			});
 
-			const updateShiftY = () => {
-				if (!inputs.shiftY) return;
+			onRangeInput(inputs.shiftY, () => {
 				const value = Number(inputs.shiftY.value);
 				if (!isValidNumber(value)) return;
-				const blackShift = getIconShift(iconBlack);
-				updateBothIconsShift(blackShift.x, value);
-			};
-			if (inputs.shiftY) {
-				inputs.shiftY.oninput = debounce(updateShiftY, DEBOUNCE_DELAY);
-			}
+				updateBothIconsShift(getIconShift(iconBlack).x, value);
+			});
 
 			// Scale updates
-			const updateScaleBlack = () => {
-				if (!inputs.scaleBlack) return;
+			onRangeInput(inputs.scaleBlack, () => {
 				const scale = scaleValueToNumber(inputs.scaleBlack.value);
 				updateIconScale(iconBlack, scale);
 				if (inputs.checkLockScale?.checked) {
 					updateIconScale(iconRed, scale);
+					// Mirror the locked value so the disabled slider is not stale
+					setRangeValue(inputs.scaleRed, inputs.scaleBlack.value);
 				}
-			};
-			if (inputs.scaleBlack) {
-				inputs.scaleBlack.oninput = debounce(updateScaleBlack, DEBOUNCE_DELAY);
-			}
+			});
 
-			const updateScaleRed = () => {
-				if (!inputs.scaleRed || inputs.checkLockScale?.checked) return;
-				const scale = scaleValueToNumber(inputs.scaleRed.value);
-				updateIconScale(iconRed, scale);
-			};
-			if (inputs.scaleRed) {
-				inputs.scaleRed.oninput = debounce(updateScaleRed, DEBOUNCE_DELAY);
-			}
+			onRangeInput(inputs.scaleRed, () => {
+				if (inputs.checkLockScale?.checked) return;
+				updateIconScale(iconRed, scaleValueToNumber(inputs.scaleRed.value));
+			});
 
 			// File input handlers
 			if (inputs.fileIconBlack) {
@@ -1112,28 +1364,25 @@
 
 			if (inputs.checkLockScale) {
 				inputs.checkLockScale.onchange = () => {
+					const locked = inputs.checkLockScale.checked;
 					if (inputs.scaleRed) {
-						inputs.scaleRed.disabled = inputs.checkLockScale.checked;
+						inputs.scaleRed.disabled = locked;
 					}
-					if (inputs.checkLockScale.checked && inputs.scaleBlack) {
-						const scale = scaleValueToNumber(inputs.scaleBlack.value);
-						updateIconScale(iconRed, scale);
+					if (locked && inputs.scaleBlack) {
+						setRangeValue(inputs.scaleRed, inputs.scaleBlack.value);
+						updateIconScale(iconRed, scaleValueToNumber(inputs.scaleBlack.value));
 					} else if (inputs.scaleRed) {
-						const redScale = scaleValueToNumber(inputs.scaleRed.value);
-						updateIconScale(iconRed, redScale);
+						updateIconScale(iconRed, scaleValueToNumber(inputs.scaleRed.value));
 					}
 				};
 			}
 
 			// Bleed handler
-			const updateBleedHandler = () => {
-				if (inputs.bleed) {
-					updateBleed(parseInt(inputs.bleed.value, 10));
-				}
-			};
-			if (inputs.bleed) {
-				inputs.bleed.oninput = debounce(updateBleedHandler, DEBOUNCE_DELAY);
-			}
+			onRangeInput(inputs.bleed, () => {
+				const value = parseInt(inputs.bleed.value, 10);
+				if (!isValidNumber(value, 0)) return;
+				updateBleed(value);
+			});
 
 			// Reset function - optimized with batched updates
 			function resetPositions() {
@@ -1148,30 +1397,24 @@
 				}
 
 				// Reset positions - use optimized function
-				if (inputs.positionX) inputs.positionX.value = DEFAULTS.positionX;
-				if (inputs.positionY) inputs.positionY.value = DEFAULTS.positionY;
+				setRangeValue(inputs.positionX, DEFAULTS.positionX);
+				setRangeValue(inputs.positionY, DEFAULTS.positionY);
 				updateBothIconsPosition(DEFAULTS.positionX, DEFAULTS.positionY);
 
 				// Reset shifts - use optimized function
-				if (inputs.shiftX) inputs.shiftX.value = DEFAULTS.shiftX;
-				if (inputs.shiftY) inputs.shiftY.value = DEFAULTS.shiftY;
+				setRangeValue(inputs.shiftX, DEFAULTS.shiftX);
+				setRangeValue(inputs.shiftY, DEFAULTS.shiftY);
 				updateBothIconsShift(DEFAULTS.shiftX, DEFAULTS.shiftY);
 
 				// Reset scales
-				if (inputs.scaleBlack) {
-					inputs.scaleBlack.value = DEFAULTS.scaleBlack;
-					updateIconScale(iconBlack, DEFAULTS.scaleFactor);
-				}
-				if (inputs.scaleRed) {
-					inputs.scaleRed.value = DEFAULTS.scaleRed;
-					updateIconScale(iconRed, DEFAULTS.scaleFactor);
-				}
+				setRangeValue(inputs.scaleBlack, DEFAULTS.scaleBlack);
+				updateIconScale(iconBlack, DEFAULTS.scaleFactor);
+				setRangeValue(inputs.scaleRed, DEFAULTS.scaleRed);
+				updateIconScale(iconRed, DEFAULTS.scaleFactor);
 
 				// Reset bleed
-				if (inputs.bleed) {
-					inputs.bleed.value = DEFAULTS.bleed;
-					updateBleed(DEFAULTS.bleed);
-				}
+				setRangeValue(inputs.bleed, DEFAULTS.bleed);
+				updateBleed(DEFAULTS.bleed);
 
 				// Reset checkboxes
 				if (inputs.checkSwap) {
@@ -1185,15 +1428,19 @@
 			}
 
 			// Download helpers - optimized DOM manipulation
-			function downloadFile(dataUrl, filename) {
+			function downloadBlob(blob, filename) {
+				const url = URL.createObjectURL(blob);
 				const link = document.createElement('a');
-				link.href = dataUrl;
+				link.href = url;
 				link.download = filename;
 				link.style.display = 'none';
 				document.body.appendChild(link);
 				link.click();
-				// Cleanup after a short delay to ensure download starts
-				setTimeout(() => document.body.removeChild(link), 100);
+				// Cleanup after a short delay to ensure the download has started
+				setTimeout(() => {
+					link.remove();
+					URL.revokeObjectURL(url);
+				}, 10000);
 			}
 
 			// Download handlers
@@ -1202,7 +1449,7 @@
 					bleedCircle.style.stroke = BLEED_STROKE_EXPORT;
 					const serialized = serializeSvg();
 					bleedCircle.style.stroke = BLEED_STROKE_DEFAULT;
-					downloadFile(createSvgDataUrl(serialized), 'antifa.svg');
+					downloadBlob(createSvgBlob(serialized), 'antifa.svg');
 				};
 			}
 
@@ -1210,100 +1457,120 @@
 			if (inputs.buttonReset) {
 				inputs.buttonReset.onclick = () => {
 					resetPositions();
+					showToast('Positions, scales and texts reset.', 'success');
 				};
 			}
 
-			// Drag and drop functionality for icons
-			let isDragging = false;
-			let dragTarget = null;
+			// Drag and drop functionality for icons.
+			// Pointer events cover mouse, touch and pen with one code path, and
+			// pointer capture keeps the drag alive when the cursor leaves the SVG.
+			let dragPointerId = null;
+			let dragCtmInverse = null;
 			let dragStartX = 0;
 			let dragStartY = 0;
 			let initialX = 0;
 			let initialY = 0;
 
-			// Cache SVG transforms for better performance
-			let svgCTM = null;
-			let svgCTMInverse = null;
-			
-			function getSVGPoint(event) {
-				// Cache CTM (Coordinate Transformation Matrix) for performance
-				if (!svgCTMInverse) {
-					svgCTM = doc.getScreenCTM();
-					svgCTMInverse = svgCTM ? svgCTM.inverse() : null;
-				}
-				const svgRect = doc.getBoundingClientRect();
+			// getScreenCTM() maps user units to *viewport* coordinates, so
+			// clientX/clientY go in untouched - subtracting the bounding rect
+			// first would apply the element offset twice.
+			function getSVGPoint(event, ctmInverse) {
 				const point = doc.createSVGPoint();
-				point.x = event.clientX - svgRect.left;
-				point.y = event.clientY - svgRect.top;
-				return svgCTMInverse ? point.matrixTransform(svgCTMInverse) : point;
+				point.x = event.clientX;
+				point.y = event.clientY;
+				return ctmInverse ? point.matrixTransform(ctmInverse) : point;
 			}
-			
-			// Reset CTM cache on window resize
-			window.addEventListener('resize', () => {
-				svgCTM = null;
-				svgCTMInverse = null;
-			}, { passive: true });
 
-			function startDrag(event, targetIcon) {
-				if (event.button !== 0 && event.type !== 'touchstart') return; // Only left mouse button
+			// Keep the sliders authoritative: the icon may not be dragged
+			// outside the range the sliders can express.
+			function clampToRange(input, value) {
+				if (!input) return value;
+				const min = Number(input.min);
+				const max = Number(input.max);
+				return Math.min(Math.max(value, min), max);
+			}
+
+			function startDrag(event) {
+				if (event.pointerType === 'mouse' && event.button !== 0) return;
+				const ctm = doc.getScreenCTM();
+				if (!ctm) return;
 				event.preventDefault();
-				isDragging = true;
-				dragTarget = targetIcon;
-				const point = getSVGPoint(event);
+
+				// Sampled once per drag: panning/zooming mid-drag is not possible
+				// while the pointer is captured, and scrolling only shifts the
+				// origin, which cancels out in the delta below.
+				dragCtmInverse = ctm.inverse();
+				dragPointerId = event.pointerId;
+
+				const point = getSVGPoint(event, dragCtmInverse);
 				dragStartX = point.x;
 				dragStartY = point.y;
-				const pos = getIconPosition(targetIcon);
+				// Both icons share one position, so black is the reference
+				const pos = getIconPosition(iconBlack);
 				initialX = pos.x;
 				initialY = pos.y;
 				doc.style.cursor = 'grabbing';
+				try {
+					event.currentTarget.setPointerCapture(event.pointerId);
+				} catch (err) {
+					// Capture is an optimisation; the drag still works without it
+				}
 			}
 
+			let pendingDragX = 0;
+			let pendingDragY = 0;
+			const applyDragPosition = rafThrottle(() => {
+				updateBothIconsPosition(pendingDragX, pendingDragY);
+			});
+
 			function onDrag(event) {
-				if (!isDragging || !dragTarget) return;
+				if (dragPointerId === null || event.pointerId !== dragPointerId) return;
 				event.preventDefault();
-				const point = getSVGPoint(event);
-				const deltaX = point.x - dragStartX;
-				const deltaY = point.y - dragStartY;
-				
-				const newX = initialX + deltaX;
-				const newY = initialY + deltaY;
-				
-				// Update both icons position (they share position)
-				updateBothIconsPosition(newX, newY);
-				
-				// Update input sliders
-				if (inputs.positionX) inputs.positionX.value = Math.round(newX);
-				if (inputs.positionY) inputs.positionY.value = Math.round(newY);
+				const point = getSVGPoint(event, dragCtmInverse);
+
+				pendingDragX = clampToRange(inputs.positionX, initialX + (point.x - dragStartX));
+				pendingDragY = clampToRange(inputs.positionY, initialY + (point.y - dragStartY));
+
+				// Sliders reflect the drag immediately; the SVG follows once per frame
+				setRangeValue(inputs.positionX, Math.round(pendingDragX));
+				setRangeValue(inputs.positionY, Math.round(pendingDragY));
+				applyDragPosition();
 			}
 
 			function endDrag(event) {
-				if (!isDragging) return;
-				event.preventDefault();
-				isDragging = false;
-				dragTarget = null;
+				if (dragPointerId === null || event.pointerId !== dragPointerId) return;
+				const target = event.currentTarget;
+				if (target.hasPointerCapture?.(dragPointerId)) {
+					target.releasePointerCapture(dragPointerId);
+				}
+				dragPointerId = null;
+				dragCtmInverse = null;
 				doc.style.cursor = '';
+				// Land on the rounded value the sliders show
+				updateBothIconsPosition(Number(inputs.positionX?.value ?? pendingDragX), Number(inputs.positionY?.value ?? pendingDragY));
 			}
 
-			// Add drag handlers to icons - use event delegation for better performance
 			const iconElements = [iconBlack, iconRed].filter(Boolean);
-			iconElements.forEach(icon => {
-				icon.addEventListener('mousedown', (e) => startDrag(e, icon), { passive: false });
-				icon.addEventListener('touchstart', (e) => startDrag(e.touches[0], icon), { passive: false });
+			iconElements.forEach((icon) => {
+				icon.addEventListener('pointerdown', startDrag);
+				icon.addEventListener('pointermove', onDrag);
+				icon.addEventListener('pointerup', endDrag);
+				icon.addEventListener('pointercancel', endDrag);
 			});
 
-			// Use passive listeners where possible for better performance
-			doc.addEventListener('mousemove', onDrag, { passive: false });
-			doc.addEventListener('touchmove', (e) => {
-				if (e.touches.length === 1) onDrag(e.touches[0]);
-			}, { passive: false });
-			doc.addEventListener('mouseup', endDrag);
-			doc.addEventListener('mouseleave', endDrag);
-			doc.addEventListener('touchend', endDrag);
-			doc.addEventListener('touchcancel', endDrag);
+			// Safety net for the rare case where pointer capture was refused and
+			// the pointer is released outside the icon.
+			window.addEventListener('pointerup', endDrag);
+			window.addEventListener('pointercancel', endDrag);
 
 			// LocalStorage save/load functionality - optimized with helper
+			// Note: `Number(value) || fallback` would turn a legitimate 0 into the
+			// default, so finiteness is checked explicitly.
 			function getInputValue(input, defaultValue) {
-				return input ? (typeof defaultValue === 'number' ? Number(input.value) || defaultValue : input.value || defaultValue) : defaultValue;
+				if (!input) return defaultValue;
+				if (typeof defaultValue !== 'number') return input.value || defaultValue;
+				const num = Number(input.value);
+				return Number.isFinite(num) ? num : defaultValue;
 			}
 
 			function saveDesign() {
@@ -1321,91 +1588,89 @@
 						swapOrder: inputs.checkSwap?.checked || false,
 						lockScale: inputs.checkLockScale?.checked || false,
 						iconBlack: iconBlack?.href?.baseVal || '',
-						iconRed: iconRed?.href?.baseVal || ''
+						iconRed: iconRed?.href?.baseVal || '',
+						// Custom icons rarely match the default 512x512 box
+						iconBlackWidth: iconBlack?.width?.baseVal?.value ?? DEFAULT_ICON_SIZE,
+						iconBlackHeight: iconBlack?.height?.baseVal?.value ?? DEFAULT_ICON_SIZE,
+						iconRedWidth: iconRed?.width?.baseVal?.value ?? DEFAULT_ICON_SIZE,
+						iconRedHeight: iconRed?.height?.baseVal?.value ?? DEFAULT_ICON_SIZE
 					};
 					localStorage.setItem(DESIGN_STORAGE_KEY, JSON.stringify(design));
-					alert('Design saved successfully!');
+					showToast('Design saved.', 'success');
 				} catch (e) {
-					alert('Error saving design: ' + (e.message || 'Unknown error'));
+					const quotaExceeded = e instanceof DOMException &&
+						(e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED');
+					showToast(
+						quotaExceeded
+							? 'Not enough browser storage to save this design - try a smaller custom icon.'
+							: 'Error saving design: ' + (e.message || 'Unknown error'),
+						'error'
+					);
 				}
 			}
 
 			function loadDesign() {
 				try {
-					const saved = localStorage.getItem(DESIGN_STORAGE_KEY);
+					const saved = readStored(DESIGN_STORAGE_KEY);
 					if (!saved) {
-						alert('No saved design found.');
+						showToast('No saved design found.', 'info');
 						return;
 					}
 					const design = JSON.parse(saved);
-					
-					// Load text - use optimized function
-					if (inputs.textUpper && design.textUpper) {
+
+					// Load text - an empty string is a valid saved value
+					if (inputs.textUpper && typeof design.textUpper === 'string') {
 						inputs.textUpper.value = design.textUpper;
 						updateTextElement(inputs.textUpper, upperText);
 					}
-					if (inputs.textLower && design.textLower) {
+					if (inputs.textLower && typeof design.textLower === 'string') {
 						inputs.textLower.value = design.textLower;
 						updateTextElement(inputs.textLower, lowerText);
 					}
-					
+
 					// Load positions - use optimized function
-					const posX = design.positionX ?? DEFAULTS.positionX;
-					const posY = design.positionY ?? DEFAULTS.positionY;
-					if (inputs.positionX) inputs.positionX.value = posX;
-					if (inputs.positionY) inputs.positionY.value = posY;
+					const posX = setRangeValue(inputs.positionX, design.positionX ?? DEFAULTS.positionX);
+					const posY = setRangeValue(inputs.positionY, design.positionY ?? DEFAULTS.positionY);
 					updateBothIconsPosition(posX, posY);
-					
+
 					// Load shifts - use optimized function
-					const shiftX = design.shiftX ?? DEFAULTS.shiftX;
-					const shiftY = design.shiftY ?? DEFAULTS.shiftY;
-					if (inputs.shiftX) inputs.shiftX.value = shiftX;
-					if (inputs.shiftY) inputs.shiftY.value = shiftY;
+					const shiftX = setRangeValue(inputs.shiftX, design.shiftX ?? DEFAULTS.shiftX);
+					const shiftY = setRangeValue(inputs.shiftY, design.shiftY ?? DEFAULTS.shiftY);
 					updateBothIconsShift(shiftX, shiftY);
-					
+
 					// Load scales
-					if (inputs.scaleBlack && design.scaleBlack !== undefined) {
-						inputs.scaleBlack.value = design.scaleBlack;
-						const scale = scaleValueToNumber(design.scaleBlack);
-						updateIconScale(iconBlack, scale);
-					}
-					if (inputs.scaleRed && design.scaleRed !== undefined) {
-						inputs.scaleRed.value = design.scaleRed;
-						const scale = scaleValueToNumber(design.scaleRed);
-						updateIconScale(iconRed, scale);
-					}
-					
+					const scaleBlack = setRangeValue(inputs.scaleBlack, design.scaleBlack ?? DEFAULTS.scaleBlack);
+					updateIconScale(iconBlack, scaleValueToNumber(scaleBlack));
+					const scaleRed = setRangeValue(inputs.scaleRed, design.scaleRed ?? DEFAULTS.scaleRed);
+					updateIconScale(iconRed, scaleValueToNumber(scaleRed));
+
 					// Load bleed
-					if (inputs.bleed && design.bleed !== undefined) {
-						inputs.bleed.value = design.bleed;
-						updateBleed(design.bleed);
-					}
-					
+					updateBleed(setRangeValue(inputs.bleed, design.bleed ?? DEFAULTS.bleed));
+
 					// Load checkboxes
-					if (inputs.checkSwap && design.swapOrder !== undefined) {
-						inputs.checkSwap.checked = design.swapOrder;
-						const first = design.swapOrder ? iconBlack : iconRed;
-						const second = design.swapOrder ? iconRed : iconBlack;
-						iconContainer.insertBefore(first, second);
+					if (inputs.checkSwap) {
+						const swap = Boolean(design.swapOrder);
+						inputs.checkSwap.checked = swap;
+						iconContainer.insertBefore(swap ? iconBlack : iconRed, swap ? iconRed : iconBlack);
 					}
-					if (inputs.checkLockScale && design.lockScale !== undefined) {
-						inputs.checkLockScale.checked = design.lockScale;
+					if (inputs.checkLockScale) {
+						inputs.checkLockScale.checked = Boolean(design.lockScale);
 						if (inputs.scaleRed) {
-							inputs.scaleRed.disabled = design.lockScale;
+							inputs.scaleRed.disabled = Boolean(design.lockScale);
 						}
 					}
-					
-					// Load icons (if saved)
+
+					// Load icons (if saved), restoring their original dimensions
 					if (design.iconBlack && iconBlack) {
-						setImageHref(iconBlack, design.iconBlack);
+						setImageHref(iconBlack, design.iconBlack, design.iconBlackWidth, design.iconBlackHeight);
 					}
 					if (design.iconRed && iconRed) {
-						setImageHref(iconRed, design.iconRed);
+						setImageHref(iconRed, design.iconRed, design.iconRedWidth, design.iconRedHeight);
 					}
-					
-					alert('Design loaded successfully!');
+
+					showToast('Design loaded.', 'success');
 				} catch (e) {
-					alert('Error loading design: ' + (e.message || 'Unknown error'));
+					showToast('Error loading design: ' + (e.message || 'Unknown error'), 'error');
 				}
 			}
 
@@ -1417,38 +1682,35 @@
 				inputs.buttonLoad.onclick = loadDesign;
 			}
 
-			if (inputs.buttonDownloadPng) {
-				inputs.buttonDownloadPng.onclick = async () => {
-				const originalSize = Number(doc.width.baseVal.value);
-				const originalOffset = Number(doc.viewBox.baseVal.x);
-				const imgSizeInput = prompt(`Enter image size (e.g. ${DEFAULTS.pngDefaultSize})`, String(DEFAULTS.pngDefaultSize));
-				
-				if (!imgSizeInput) return;
-				
-				const imgSize = parseInt(imgSizeInput, 10);
-				if (!isValidNumber(imgSize, 1, DEFAULTS.pngMaxSize)) {
-					alert(`Invalid image size. Please enter a number between 1 and ${DEFAULTS.pngMaxSize}.`);
-					return;
-				}
+			function loadImageFromUrl(url) {
+				return new Promise((resolve, reject) => {
+					const image = new Image();
+					image.onload = () => resolve(image);
+					image.onerror = () => reject(new Error('The SVG could not be rasterised.'));
+					image.onabort = () => reject(new Error('Rendering was cancelled.'));
+					image.src = url;
+				});
+			}
 
-				// Resize SVG for export
-				bleedCircle.style.stroke = BLEED_STROKE_EXPORT;
-				const offset = originalOffset * imgSize / originalSize;
-				resizeSvg(imgSize, offset);
+			function canvasToBlob(canvas) {
+				return new Promise((resolve, reject) => {
+					canvas.toBlob((blob) => {
+						blob ? resolve(blob) : reject(new Error('The canvas could not be encoded as PNG.'));
+					}, 'image/png');
+				});
+			}
 
-				// Clone and inline external images
-				const clone = doc.cloneNode(true);
+			// Replaces any remote <image> href with an inlined data URL, since a
+			// rasterised SVG may not load external references.
+			async function inlineExternalImages(root) {
 				let failures = 0;
-				const images = clone.querySelectorAll('image');
-				
-				for (const imgEl of images) {
+				for (const imgEl of root.querySelectorAll('image')) {
+					const href = imgEl.getAttributeNS(XLINK_NS, 'href') ||
+						imgEl.getAttribute('href') ||
+						imgEl.href?.baseVal;
+					if (!href || href.startsWith('data:')) continue;
+
 					try {
-						const href = imgEl.getAttributeNS(XLINK_NS, 'href') || 
-						              imgEl.getAttribute('href') || 
-						              imgEl.href?.baseVal;
-						if (!href || href.startsWith('data:')) continue;
-						
-						// Create abort controller for timeout
 						const controller = new AbortController();
 						const timeoutId = setTimeout(() => controller.abort(), 5000);
 						const resp = await fetch(href, { mode: 'cors', signal: controller.signal });
@@ -1463,154 +1725,199 @@
 							fr.readAsDataURL(blob);
 						});
 						imgEl.setAttributeNS(XLINK_NS, 'href', dataUrl);
+						imgEl.setAttribute('href', dataUrl);
 					} catch (e) {
 						failures++;
 					}
 				}
+				return failures;
+			}
 
-				// Restore original size
-				bleedCircle.style.stroke = BLEED_STROKE_DEFAULT;
-				restoreSvgSize(originalSize, originalOffset);
+			if (inputs.buttonDownloadPng) {
+				inputs.buttonDownloadPng.onclick = async () => {
+					const button = inputs.buttonDownloadPng;
+					if (button.disabled) return;
 
-				const serialized = new XMLSerializer().serializeToString(clone);
-				
-				if (failures > 0) {
-					alert(`Could not inline ${failures} external image(s) due to CORS. PNG export aborted. The SVG will open in a new tab; use "Download SVG" or host images with CORS enabled to export PNG.`);
-					window.open(createSvgDataUrl(serialized), '_blank');
-					return;
-				}
+					const imgSize = parseInt(inputs.pngSize?.value ?? DEFAULTS.pngDefaultSize, 10);
+					if (!isValidNumber(imgSize, 1, DEFAULTS.pngMaxSize)) {
+						showToast(`Please enter a PNG size between 1 and ${DEFAULTS.pngMaxSize} pixels.`, 'error');
+						inputs.pngSize?.focus();
+						return;
+					}
 
-				// Render to canvas
-				const canvas = document.createElement('canvas');
-				canvas.width = imgSize;
-				canvas.height = imgSize;
-				const ctx = canvas.getContext("2d");
-				const image = new Image();
-				image.crossOrigin = 'anonymous';
-				image.onerror = () => {
-					alert('Error loading SVG image. SVG opened in new tab as fallback.');
-					window.open(createSvgDataUrl(serialized), '_blank');
-					restoreSvgSize(originalSize, originalOffset);
-				};
-				image.onload = () => {
+					const originalSize = Number(doc.width.baseVal.value);
+					const originalOffset = Number(doc.viewBox.baseVal.x);
+					const originalLabel = button.value;
+					button.disabled = true;
+					button.value = 'Rendering...';
+
+					let serialized;
+					let failures = 0;
 					try {
-						ctx.drawImage(image, 0, 0);
-						downloadFile(canvas.toDataURL('image/png'), 'antifa.png');
+						// Scale the export up, keeping the bleed inside the frame
+						bleedCircle.style.stroke = BLEED_STROKE_EXPORT;
+						resizeSvg(imgSize, originalOffset * imgSize / originalSize, originalSize);
+
+						const clone = doc.cloneNode(true);
+						failures = await inlineExternalImages(clone);
+						serialized = serializeSvg(clone);
+					} finally {
+						// Always put the on-screen preview back, even on failure
+						bleedCircle.style.stroke = BLEED_STROKE_DEFAULT;
+						restoreSvgSize(originalSize, originalOffset);
+					}
+
+					const svgBlob = createSvgBlob(serialized);
+
+					if (failures > 0) {
+						showToast(
+							`Could not embed ${failures} external image(s) (CORS). Downloading the SVG instead.`,
+							'error'
+						);
+						downloadBlob(svgBlob, 'antifa.svg');
+						button.disabled = false;
+						button.value = originalLabel;
+						return;
+					}
+
+					const url = URL.createObjectURL(svgBlob);
+					try {
+						const image = await loadImageFromUrl(url);
+						const canvas = document.createElement('canvas');
+						canvas.width = imgSize;
+						canvas.height = imgSize;
+						const ctx = canvas.getContext('2d');
+						if (!ctx) throw new Error('Canvas 2D context unavailable.');
+						ctx.drawImage(image, 0, 0, imgSize, imgSize);
+						downloadBlob(await canvasToBlob(canvas), 'antifa.png');
 					} catch (e) {
-						alert('Export to PNG failed during finalization: canvas may be tainted. Opened SVG in new tab as fallback.');
-						window.open(createSvgDataUrl(serialized), '_blank');
+						showToast(`PNG export failed (${e.message}). Downloading the SVG instead.`, 'error');
+						downloadBlob(svgBlob, 'antifa.svg');
+					} finally {
+						URL.revokeObjectURL(url);
+						button.disabled = false;
+						button.value = originalLabel;
 					}
 				};
-				image.onabort = () => {
-					restoreSvgSize(originalSize, originalOffset);
-				};
-				image.src = createSvgDataUrl(serialized);
-				};
+			}
+
+			// Only inline images are accepted back in; anything remote (or a
+			// javascript: URL from a hand-edited file) is ignored.
+			function safeIconHref(href) {
+				return typeof href === 'string' && href.startsWith('data:image/') ? href : null;
+			}
+
+			// Turns a raw scale factor back into the slider's log10 value.
+			function scaleNumberToValue(scale) {
+				return scale > 0 ? Math.log10(scale) : DEFAULTS.scaleBlack;
 			}
 
 			if (inputs.fileImportSvg) {
-				inputs.fileImportSvg.onchange = (e) => {
-				const file = e.target.files[0];
-				if (!file) return;
-				
-				const reader = new FileReader();
-				reader.onerror = () => {
-					alert('Error reading file.');
-				};
-				reader.onload = (e) => {
-					try {
-						const parser = new DOMParser();
-						const imported = parser.parseFromString(e.target.result, 'image/svg+xml');
-						
-						// Check for parsing errors
-						const parserError = imported.querySelector('parsererror');
-						if (parserError) {
-							alert('Error parsing SVG. Please ensure it is a valid SVG file.');
-							return;
+				inputs.fileImportSvg.onchange = (event) => {
+					const file = event.target.files?.[0];
+					if (!file) return;
+
+					const reader = new FileReader();
+					reader.onerror = () => {
+						showToast('Error reading file.', 'error');
+					};
+					reader.onload = (e) => {
+						try {
+							const parser = new DOMParser();
+							const imported = parser.parseFromString(e.target.result, 'image/svg+xml');
+
+							// Check for parsing errors
+							if (imported.querySelector('parsererror')) {
+								showToast('Error parsing SVG. Please ensure it is a valid SVG file.', 'error');
+								return;
+							}
+
+							const impIconBlack = imported.getElementById('iconblack');
+							const impIconRed = imported.getElementById('iconred');
+							if (!impIconBlack && !impIconRed) {
+								showToast('This SVG was not created by the generator - nothing to import.', 'error');
+								return;
+							}
+
+							// Import text - use optimized function
+							const impUpperText = imported.getElementById('uppertext');
+							const impLowerText = imported.getElementById('lowertext');
+							if (impUpperText && inputs.textUpper) {
+								inputs.textUpper.value = impUpperText.textContent || '';
+								updateTextElement(inputs.textUpper, upperText);
+							}
+							if (impLowerText && inputs.textLower) {
+								inputs.textLower.value = impLowerText.textContent || '';
+								updateTextElement(inputs.textLower, lowerText);
+							}
+
+							// Import icons
+							const blackHref = safeIconHref(impIconBlack?.href?.baseVal);
+							if (blackHref) {
+								setImageHref(iconBlack, blackHref,
+									impIconBlack.width?.baseVal?.value, impIconBlack.height?.baseVal?.value);
+							}
+							const redHref = safeIconHref(impIconRed?.href?.baseVal);
+							if (redHref) {
+								setImageHref(iconRed, redHref,
+									impIconRed.width?.baseVal?.value, impIconRed.height?.baseVal?.value);
+							}
+
+							// Import transforms
+							if (impIconBlack && impIconBlack.transform.baseVal.numberOfItems >= 3) {
+								const transforms = impIconBlack.transform.baseVal;
+								// Shift - use optimized function
+								const shiftMatrix = transforms[0].matrix;
+								const shiftX = setRangeValue(inputs.shiftX, shiftMatrix.e);
+								const shiftY = setRangeValue(inputs.shiftY, shiftMatrix.f);
+								updateBothIconsShift(shiftX, shiftY);
+								// Position - use optimized function
+								const posMatrix = transforms[1].matrix;
+								const posX = setRangeValue(inputs.positionX, posMatrix.e);
+								const posY = setRangeValue(inputs.positionY, posMatrix.f);
+								updateBothIconsPosition(posX, posY);
+								// Scale
+								const scaleValue = setRangeValue(inputs.scaleBlack, scaleNumberToValue(transforms[2].matrix.a));
+								updateIconScale(iconBlack, scaleValueToNumber(scaleValue));
+							}
+							if (impIconRed && impIconRed.transform.baseVal.numberOfItems >= 3) {
+								const scaleValue = setRangeValue(inputs.scaleRed, scaleNumberToValue(impIconRed.transform.baseVal[2].matrix.a));
+								updateIconScale(iconRed, scaleValueToNumber(scaleValue));
+							}
+
+							// An imported file carries two independent scales, so the
+							// lock has to come off or the red slider stays stuck.
+							if (inputs.checkLockScale) {
+								inputs.checkLockScale.checked = false;
+								if (inputs.scaleRed) inputs.scaleRed.disabled = false;
+							}
+
+							// Import swap order
+							const impIconContainer = imported.getElementById('icon');
+							const swapped = impIconContainer?.children[0]?.id === 'iconblack';
+							if (inputs.checkSwap) inputs.checkSwap.checked = swapped;
+							iconContainer.insertBefore(swapped ? iconBlack : iconRed, swapped ? iconRed : iconBlack);
+
+							// Import bleed - the exported stroke width is bleed * 2 + 1
+							const impBleed = imported.getElementById('bleed');
+							if (impBleed) {
+								const strokeWidth = parseFloat(impBleed.style.strokeWidth) || 0;
+								const bleedVal = Math.max(Math.round((strokeWidth - 1) / 2), 0);
+								updateBleed(setRangeValue(inputs.bleed, bleedVal));
+							}
+
+							showToast('Design imported.', 'success');
+						} catch (error) {
+							showToast('Error importing SVG: ' + (error.message || 'Unknown error occurred'), 'error');
 						}
-					
-					// Import text - use optimized function
-					const impUpperText = imported.getElementById('uppertext');
-					const impLowerText = imported.getElementById('lowertext');
-					if (impUpperText && inputs.textUpper) {
-						inputs.textUpper.value = impUpperText.textContent || '';
-						updateTextElement(inputs.textUpper, upperText);
-					}
-					if (impLowerText && inputs.textLower) {
-						inputs.textLower.value = impLowerText.textContent || '';
-						updateTextElement(inputs.textLower, lowerText);
-					}
-
-					// Import icons
-					const impIconBlack = imported.getElementById('iconblack');
-					const impIconRed = imported.getElementById('iconred');
-					if (impIconBlack) {
-						const href = impIconBlack.href.baseVal;
-						setImageHref(iconBlack, href);
-					}
-					if (impIconRed) {
-						const href = impIconRed.href.baseVal;
-						setImageHref(iconRed, href);
-					}
-
-					// Import transforms
-					if (impIconBlack && impIconBlack.transform.baseVal.numberOfItems >= 3) {
-						const transforms = impIconBlack.transform.baseVal;
-						// Shift - use optimized function
-						const shiftMatrix = transforms[0].matrix;
-						const shiftX = shiftMatrix.e;
-						const shiftY = shiftMatrix.f;
-						if (inputs.shiftX) inputs.shiftX.value = shiftX;
-						if (inputs.shiftY) inputs.shiftY.value = shiftY;
-						updateBothIconsShift(shiftX, shiftY);
-						// Position - use optimized function
-						const posMatrix = transforms[1].matrix;
-						const posX = posMatrix.e;
-						const posY = posMatrix.f;
-						if (inputs.positionX) inputs.positionX.value = posX;
-						if (inputs.positionY) inputs.positionY.value = posY;
-						updateBothIconsPosition(posX, posY);
-						// Scale
-						const scaleMatrix = transforms[2].matrix;
-						const scaleBlack = scaleMatrix.a;
-						if (inputs.scaleBlack) {
-							inputs.scaleBlack.value = Math.log10(scaleBlack);
-						}
-						updateIconScale(iconBlack, scaleBlack);
-					}
-					if (impIconRed && impIconRed.transform.baseVal.numberOfItems >= 3) {
-						const scaleMatrix = impIconRed.transform.baseVal[2].matrix;
-						const scaleRed = scaleMatrix.a;
-						if (inputs.scaleRed) {
-							inputs.scaleRed.value = Math.log10(scaleRed);
-						}
-						updateIconScale(iconRed, scaleRed);
-					}
-
-					// Import swap order
-					const impIconContainer = imported.getElementById('icon');
-					if (impIconContainer && impIconContainer.children[0]?.id === 'iconblack') {
-						inputs.checkSwap.checked = true;
-						iconContainer.insertBefore(iconBlack, iconRed);
-					} else {
-						inputs.checkSwap.checked = false;
-						iconContainer.insertBefore(iconRed, iconBlack);
-					}
-
-					// Import bleed
-					const impBleed = imported.getElementById('bleed');
-					if (impBleed) {
-						const bleedVal = Math.max(parseInt(impBleed.style.strokeWidth, 10) - 1, 0);
-						inputs.bleed.value = bleedVal;
-						updateBleed(bleedVal);
-					}
-					} catch (error) {
-						alert('Error importing SVG: ' + (error.message || 'Unknown error occurred'));
-					}
-				};
-				reader.readAsText(file);
+					};
+					reader.readAsText(file);
 				};
 			}
+
+			// A form with no submit handler would navigate away (losing the design)
+			// if a browser ever decided to submit it implicitly.
+			document.querySelector('form')?.addEventListener('submit', (e) => e.preventDefault());
 		</script>
 	</body>
 </html>
